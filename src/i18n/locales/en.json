@@ -56,6 +56,7 @@
     "page1": "Sheet",
     "page2": "Gear & Spells",
     "add": "Add",
+    "save": "Save",
     "namePlaceholder": "Name",
     "webhook": "Discord webhook URL"
   },

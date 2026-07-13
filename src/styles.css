@@ -1099,6 +1099,14 @@ button.sheet-stat:hover {
   justify-content: space-between;
   gap: 0.4rem;
 }
+.item-card-actions {
+  display: flex;
+  gap: 0.2rem;
+  flex-shrink: 0;
+}
+.item-card.editing {
+  grid-column: 1 / -1;
+}
 .item-card-name {
   overflow-wrap: anywhere;
 }
