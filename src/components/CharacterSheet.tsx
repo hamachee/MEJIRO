@@ -4,7 +4,12 @@ import { useCharacterStore } from '../store/characterStore';
 import { useRollStore } from '../store/rollStore';
 import { label } from '../lib/localize';
 import { useLang } from '../lib/useLang';
-import { MAX_CURSE_DICE, type Character, type RatedItem } from '../types/character';
+import {
+  MAX_ENTANGLEMENT,
+  curseDiceCap,
+  type Character,
+  type RatedItem,
+} from '../types/character';
 import type { L10n as L10nLabel, Stat, SystemTemplate } from '../types/template';
 import { ResourceTracker } from './ResourceTracker';
 import { TrickInfo } from './TrickInfo';
@@ -124,7 +129,10 @@ function IdentityCard({
   const { identity } = character;
 
   // Curse dice shift constantly in play (like hunger), so unlike the rest of
-  // the identity block they stay editable outside edit mode too.
+  // the identity block they stay editable outside edit mode too. Capacity
+  // follows Entanglement (• = 5, ••/••• = 7, •••• = 9) and all cap dots are
+  // shown so the maximum is always visible.
+  const curseCap = curseDiceCap(identity.entanglement);
   const curseRow = (
     <div className="curse-row">
       <span className="field-label">{t('roller.curseDice')}</span>
@@ -139,14 +147,14 @@ function IdentityCard({
         <span className="dots curse-dots">
           <Dots
             value={character.curseDice}
-            max={Math.max(MAX_DOTS, character.curseDice)}
+            max={curseCap}
             editable
             onSet={(n) => patch({ curseDice: n })}
           />
         </span>
         <button
           aria-label={`+ ${t('roller.curseDice')}`}
-          disabled={character.curseDice >= MAX_CURSE_DICE}
+          disabled={character.curseDice >= curseCap}
           onClick={() => patch({ curseDice: character.curseDice + 1 })}
         >
           +
@@ -160,7 +168,7 @@ function IdentityCard({
       <section className="card identity">
         <div className="identity-name">
           <h1>{character.name}</h1>
-          <Dots value={identity.entanglement} />
+          <Dots value={identity.entanglement} max={MAX_ENTANGLEMENT} />
         </div>
         <div className="identity-row muted">
           {[identity.lineage, identity.family].filter(Boolean).join(' · ') || '—'}
@@ -204,8 +212,15 @@ function IdentityCard({
           <span className="field-label">{t('sheet.entanglement')}</span>
           <Dots
             value={identity.entanglement}
+            max={MAX_ENTANGLEMENT}
             editable
-            onSet={(n) => patch({ identity: { ...identity, entanglement: n } })}
+            onSet={(n) =>
+              patch({
+                identity: { ...identity, entanglement: n },
+                // Lowering entanglement shrinks curse capacity too.
+                curseDice: Math.min(character.curseDice, curseDiceCap(n)),
+              })
+            }
           />
         </div>
       </div>
@@ -248,12 +263,15 @@ function InjuryCard({
 
   const box = (absIndex: number) => {
     const isMarked = absIndex < marked;
+    const position = absIndex + 1;
     return (
       <button
         key={absIndex}
         className={`injury-box ${isMarked ? 'marked' : ''}`}
-        aria-label={`${absIndex + 1}`}
-        onClick={() => setMarked(isMarked ? absIndex : absIndex + 1)}
+        aria-label={`${position}`}
+        // Same convention as dot ratings: clicking a box fills up to and
+        // including it; only clicking the topmost filled box steps down one.
+        onClick={() => setMarked(marked === position ? position - 1 : position)}
       />
     );
   };
@@ -562,7 +580,10 @@ export function CharacterSheet({ character, template, editing }: Props) {
         {!editing && <p className="muted hint">{t('roller.selectPrompt')}</p>}
       </section>
 
-      <InjuryCard character={character} template={template} />
+      <div className="two-col">
+        <InjuryCard character={character} template={template} />
+        <ConditionsCard character={character} />
+      </div>
 
       <div className="two-col">
         <RatedListCard
@@ -594,7 +615,6 @@ export function CharacterSheet({ character, template, editing }: Props) {
         />
       </div>
 
-      <ConditionsCard character={character} />
       <TricksCard character={character} />
 
       <section className="card">

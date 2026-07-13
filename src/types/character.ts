@@ -22,8 +22,18 @@ export interface Identity {
   entanglement: number;
 }
 
-/** How many curse dice a character can hold (Entanglement ••••). */
-export const MAX_CURSE_DICE = 9;
+/** The Entanglement rating cap in the core rules. */
+export const MAX_ENTANGLEMENT = 4;
+
+/**
+ * How many curse dice a character can hold at a given Entanglement:
+ * • = 5, •• / ••• = 7, •••• = 9.
+ */
+export function curseDiceCap(entanglement: number): number {
+  if (entanglement >= 4) return 9;
+  if (entanglement >= 2) return 7;
+  return 5;
+}
 
 /** A user-entered named entry with a dot rating (edges, paths). */
 export interface RatedItem {
