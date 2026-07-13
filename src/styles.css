@@ -420,6 +420,16 @@ button.danger:hover:not(:disabled) {
   color: #ff9a9a;
   border-color: #8a1a1a;
 }
+.badge.wicked {
+  background: rgba(180, 74, 224, 0.2);
+  color: #dfa2f5;
+  border-color: #b44ae0;
+}
+.badge.cruel {
+  background: rgba(120, 30, 90, 0.3);
+  color: #f08cc0;
+  border-color: #a03470;
+}
 
 .dice-tray {
   display: flex;
@@ -518,6 +528,32 @@ button.danger:hover:not(:disabled) {
 }
 .trick-desc {
   font-size: 0.8rem;
+  display: block;
+  margin-top: 0.15rem;
+  white-space: pre-wrap;
+}
+.trick-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.trick-name-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: transparent;
+  border: none;
+  padding: 0;
+  text-align: left;
+  color: inherit;
+}
+.trick-name-toggle:hover {
+  background: transparent;
+  color: var(--accent);
+}
+.chevron {
+  color: var(--muted);
+  font-size: 0.75rem;
 }
 .trick-cost {
   font-size: 0.8rem;

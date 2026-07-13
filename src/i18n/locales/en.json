@@ -59,6 +59,8 @@
     "title": "Result",
     "success": "Success",
     "failure": "Failure",
+    "wicked": "Wicked Success",
+    "cruel": "Cruel Failure",
     "botch": "Botch",
     "successes": "Hits",
     "threshold": "Extra hits",
@@ -86,6 +88,7 @@
       "major": "Major"
     },
     "namePlaceholder": "Trick name",
+    "descPlaceholder": "Description (optional)",
     "add": "Add trick",
     "defaultOne": "One-hit trick",
     "defaultTwo": "Two-hit trick",

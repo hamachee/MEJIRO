@@ -1,6 +1,7 @@
 import type { SystemTemplate } from '../types/template';
 import type { CharacterTrick } from '../types/character';
 import type { RollRequest, RollResult } from '../types/roll';
+import { hasCurseHit } from './roll';
 import { label } from '../lib/localize';
 
 /** Localised strings for Discord embeds, independent of the UI language. */
@@ -14,6 +15,8 @@ const STRINGS: Record<string, Record<string, string>> = {
     result: 'Result',
     success: '✅ Success',
     failure: '❌ Failure',
+    wicked: '😈 Wicked Success',
+    cruel: '🩸 Cruel Failure',
     botch: '💀 Botch',
     threshold: 'Extra hits',
     enhancement: 'Enhancement',
@@ -36,6 +39,8 @@ const STRINGS: Record<string, Record<string, string>> = {
     result: '결과',
     success: '✅ 성공',
     failure: '❌ 실패',
+    wicked: '😈 사악한 성공',
+    cruel: '🩸 잔혹한 실패',
     botch: '💀 대실패',
     threshold: '초과 히트',
     enhancement: '강화',
@@ -103,11 +108,13 @@ export function buildRollEmbed(
       : null,
   ].filter(Boolean);
 
+  // A curse hit tints the outcome: wicked success / cruel failure.
+  const curseHit = hasCurseHit(result);
   const outcome = result.botched
     ? s(lang, 'botch')
     : result.passed
-      ? s(lang, 'success')
-      : s(lang, 'failure');
+      ? s(lang, curseHit ? 'wicked' : 'success')
+      : s(lang, curseHit ? 'cruel' : 'failure');
 
   const fields = [
     { name: s(lang, 'pool'), value: poolParts.join(' + ') || '—', inline: false },

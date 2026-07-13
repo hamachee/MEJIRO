@@ -7,6 +7,7 @@ import { postTricks } from '../engine/discord';
 import type { Character } from '../types/character';
 import type { SystemTemplate } from '../types/template';
 import { Stepper } from './Stepper';
+import { TrickInfo } from './TrickInfo';
 
 type PostState = 'idle' | 'posting' | 'done' | 'error';
 
@@ -128,7 +129,7 @@ export function TrickPurchase({ character, template }: Props) {
                     onChange={() => toggleTrick(tr.id)}
                   />
                   <span className="trick-body">
-                    <span className="trick-name">{tr.name}</span>
+                    <TrickInfo trick={tr} />
                   </span>
                   <span className="trick-cost">
                     {t('tricks.cost')} {tr.cost}
