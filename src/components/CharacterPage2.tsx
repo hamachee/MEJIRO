@@ -28,7 +28,13 @@ function TagChips({ tags }: { tags: string[] }) {
   );
 }
 
-function GearSection({ character }: { character: Character }) {
+function GearSection({
+  character,
+  editing,
+}: {
+  character: Character;
+  editing: boolean;
+}) {
   const { t } = useTranslation();
   const patch = useCharacterStore((s) => s.patch);
   const [name, setName] = useState('');
@@ -62,13 +68,17 @@ function GearSection({ character }: { character: Character }) {
           <div key={item.id} className="item-card">
             <div className="item-card-head">
               <strong className="item-card-name">{item.name}</strong>
-              <button
-                className="chip ghost"
-                aria-label={`remove ${item.name}`}
-                onClick={() => patch({ gear: items.filter((x) => x.id !== item.id) })}
-              >
-                ✕
-              </button>
+              {editing && (
+                <button
+                  className="chip ghost"
+                  aria-label={`remove ${item.name}`}
+                  onClick={() =>
+                    patch({ gear: items.filter((x) => x.id !== item.id) })
+                  }
+                >
+                  ✕
+                </button>
+              )}
             </div>
             {item.type && <div className="muted item-card-type">{item.type}</div>}
             <TagChips tags={item.tags} />
@@ -78,42 +88,52 @@ function GearSection({ character }: { character: Character }) {
           </div>
         ))}
       </div>
-      <div className="form-row">
-        <input
-          placeholder={t('sheet.namePlaceholder')}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && add()}
-        />
-        <input
-          placeholder={t('gear.typePlaceholder')}
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && add()}
-        />
-        <input
-          className="grow"
-          placeholder={t('gear.tagsPlaceholder')}
-          value={tags}
-          onChange={(e) => setTags(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && add()}
-        />
-      </div>
-      <div className="form-row">
-        <input
-          className="grow"
-          placeholder={t('tricks.descPlaceholder')}
-          value={desc}
-          onChange={(e) => setDesc(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && add()}
-        />
-        <button onClick={add}>{t('sheet.add')}</button>
-      </div>
+      {editing && (
+        <>
+          <div className="form-row">
+            <input
+              placeholder={t('sheet.namePlaceholder')}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && add()}
+            />
+            <input
+              placeholder={t('gear.typePlaceholder')}
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && add()}
+            />
+            <input
+              className="grow"
+              placeholder={t('gear.tagsPlaceholder')}
+              value={tags}
+              onChange={(e) => setTags(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && add()}
+            />
+          </div>
+          <div className="form-row">
+            <input
+              className="grow"
+              placeholder={t('tricks.descPlaceholder')}
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && add()}
+            />
+            <button onClick={add}>{t('sheet.add')}</button>
+          </div>
+        </>
+      )}
     </section>
   );
 }
 
-function SpellSection({ character }: { character: Character }) {
+function SpellSection({
+  character,
+  editing,
+}: {
+  character: Character;
+  editing: boolean;
+}) {
   const { t } = useTranslation();
   const patch = useCharacterStore((s) => s.patch);
   const [name, setName] = useState('');
@@ -147,15 +167,17 @@ function SpellSection({ character }: { character: Character }) {
           <div key={item.id} className="item-card">
             <div className="item-card-head">
               <strong className="item-card-name">{item.name}</strong>
-              <button
-                className="chip ghost"
-                aria-label={`remove ${item.name}`}
-                onClick={() =>
-                  patch({ spells: items.filter((x) => x.id !== item.id) })
-                }
-              >
-                ✕
-              </button>
+              {editing && (
+                <button
+                  className="chip ghost"
+                  aria-label={`remove ${item.name}`}
+                  onClick={() =>
+                    patch({ spells: items.filter((x) => x.id !== item.id) })
+                  }
+                >
+                  ✕
+                </button>
+              )}
             </div>
             {item.cost && (
               <div className="muted item-card-type">
@@ -169,47 +191,56 @@ function SpellSection({ character }: { character: Character }) {
           </div>
         ))}
       </div>
-      <div className="form-row">
-        <input
-          placeholder={t('sheet.namePlaceholder')}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && add()}
-        />
-        <input
-          placeholder={t('spells.costPlaceholder')}
-          value={cost}
-          onChange={(e) => setCost(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && add()}
-        />
-        <input
-          className="grow"
-          placeholder={t('spells.attunementsPlaceholder')}
-          value={attunements}
-          onChange={(e) => setAttunements(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && add()}
-        />
-      </div>
-      <div className="form-row">
-        <textarea
-          className="grow"
-          rows={2}
-          placeholder={t('spells.advancementsPlaceholder')}
-          value={advancements}
-          onChange={(e) => setAdvancements(e.target.value)}
-        />
-        <button onClick={add}>{t('sheet.add')}</button>
-      </div>
+      {editing && (
+        <>
+          <div className="form-row">
+            <input
+              placeholder={t('sheet.namePlaceholder')}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && add()}
+            />
+            <input
+              placeholder={t('spells.costPlaceholder')}
+              value={cost}
+              onChange={(e) => setCost(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && add()}
+            />
+            <input
+              className="grow"
+              placeholder={t('spells.attunementsPlaceholder')}
+              value={attunements}
+              onChange={(e) => setAttunements(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && add()}
+            />
+          </div>
+          <div className="form-row">
+            <textarea
+              className="grow"
+              rows={2}
+              placeholder={t('spells.advancementsPlaceholder')}
+              value={advancements}
+              onChange={(e) => setAdvancements(e.target.value)}
+            />
+            <button onClick={add}>{t('sheet.add')}</button>
+          </div>
+        </>
+      )}
     </section>
   );
 }
 
+interface Page2Props {
+  character: Character;
+  editing: boolean;
+}
+
 /** Sheet page 2: equipment and spells. */
-export function CharacterPage2({ character }: { character: Character }) {
+export function CharacterPage2({ character, editing }: Page2Props) {
   return (
     <div className="stack">
-      <GearSection character={character} />
-      <SpellSection character={character} />
+      <GearSection character={character} editing={editing} />
+      <SpellSection character={character} editing={editing} />
     </div>
   );
 }
