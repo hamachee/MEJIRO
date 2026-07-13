@@ -3,9 +3,11 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
-// Repo is served from https://<user>.github.io/mejiro/ on GitHub Pages.
-// Override with BASE_PATH=/ for root deployments (Netlify/Vercel) or local dev.
-const base = process.env.BASE_PATH ?? '/mejiro/';
+// GitHub Pages serves the site at https://<user>.github.io/<repo>/ and the
+// path is case-sensitive, so the base must match the repo name exactly.
+// CI derives it from the repo name; override with BASE_PATH=/ for root
+// deployments (Netlify/Vercel).
+const base = process.env.BASE_PATH ?? '/MEJIRO/';
 
 export default defineConfig({
   base,
