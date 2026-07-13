@@ -482,9 +482,33 @@ button.danger:hover:not(:disabled) {
   border-radius: 10px;
   cursor: pointer;
 }
-.trick.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+/* Complication severity picker (purchase phase) */
+.severity-row {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin: 0.25rem 0 0.6rem;
+}
+.severity {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.88rem;
+}
+.severity.active {
+  background: var(--failure);
+  border-color: var(--failure);
+  color: #fff;
+}
+.severity-cost {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.severity.active .severity-cost {
+  color: rgba(255, 255, 255, 0.8);
 }
 .trick-body {
   flex: 1;
@@ -577,4 +601,297 @@ button.danger:hover:not(:disabled) {
 
 .lang-switcher {
   padding: 0.35rem 0.5rem;
+}
+
+/* Character view toolbar */
+.character-view .toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.character-view {
+  /* keep the sticky roll bar from covering the last cards */
+  padding-bottom: 7rem;
+}
+
+/* Identity */
+.identity-name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.identity-name h1 {
+  margin: 0;
+}
+.identity-row {
+  font-size: 0.9rem;
+}
+
+/* Dots */
+.dots {
+  display: inline-flex;
+  gap: 0.22rem;
+  align-items: center;
+}
+.dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent);
+  background: transparent;
+  padding: 0;
+  display: inline-block;
+}
+.dot.filled {
+  background: var(--accent);
+}
+button.dot {
+  cursor: pointer;
+  transition: transform 0.05s ease;
+}
+button.dot:hover {
+  transform: scale(1.2);
+  background: var(--accent-2);
+}
+button.dot.filled:hover {
+  background: var(--accent);
+}
+
+/* Sheet stats (tap to build pool / edit dots) */
+.attr-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+}
+@media (max-width: 680px) {
+  .attr-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.attr-col .group-title {
+  margin-top: 0;
+}
+.skill-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 0.35rem;
+}
+.sheet-stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.4rem 0.55rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  text-align: left;
+}
+button.sheet-stat:hover {
+  background: var(--card-2);
+  border-color: var(--border);
+}
+.sheet-stat.selected {
+  background: var(--accent-2);
+  border-color: var(--accent);
+}
+.sheet-stat.editing {
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+  border-radius: 0;
+}
+.hint {
+  font-size: 0.82rem;
+  margin: 0.5rem 0 0;
+}
+
+/* Sticky roll bar */
+.roll-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0.6rem 1rem;
+  background: rgba(28, 28, 43, 0.95);
+  border-top: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+}
+@media (min-width: 1100px) {
+  .roll-bar {
+    border: 1px solid var(--border);
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+}
+.roll-bar-pool {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+.roll-bar-total {
+  font-size: 1.9rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.roll-bar-parts {
+  font-size: 0.85rem;
+}
+.roll-bar-controls {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.roll-bar-controls input[type='number'] {
+  width: 4rem;
+}
+
+/* Injury track */
+.injury-track {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+.injury-box {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: 6px;
+  border: 1.5px solid var(--border);
+  background: var(--bg-2);
+}
+.injury-box.marked {
+  background: var(--failure);
+  border-color: var(--failure);
+}
+.taken-out {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+  cursor: pointer;
+}
+.taken-out.on {
+  color: #ff9a9a;
+  font-weight: 600;
+}
+
+/* Named lists (edges, paths, tricks) */
+.named-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.named-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.3rem 0;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+}
+.named-name {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Conditions */
+.condition-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.condition {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.4rem 0.25rem 0.65rem;
+  border-radius: 999px;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+.condition button {
+  padding: 0 0.35rem;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.condition button:hover {
+  color: #ff9a9a;
+  background: transparent;
+}
+
+/* Curse dice */
+.die.curse {
+  border-color: #a03434;
+  box-shadow: inset 0 0 0 1px #a03434;
+}
+.die.curse.hit {
+  background: #6e2437;
+  border-color: #c04a4a;
+}
+
+/* English sublabel for unofficial translations */
+.label-en {
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin-left: 0.35rem;
+  font-weight: 400;
+}
+.sheet-stat.selected .label-en {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Desktop: sheet + result side column */
+.play-layout.with-result {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 1rem;
+  align-items: start;
+}
+.result-col {
+  position: sticky;
+  top: 4.5rem;
+  max-height: calc(100vh - 12rem);
+  overflow-y: auto;
+}
+
+/* Discord post status on the result card */
+.post-status {
+  margin-top: 0.5rem;
+  font-size: 0.88rem;
+}
+
+/* Result modal */
+.modal-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(10, 10, 18, 0.65);
+  backdrop-filter: blur(3px);
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+.modal {
+  width: 100%;
+  max-width: 560px;
+  max-height: 85vh;
+  overflow-y: auto;
 }

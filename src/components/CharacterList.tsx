@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCharacterStore } from '../store/characterStore';
-import { exportCharacter } from '../storage/characters';
+import { exportCharacter, defaultTricks } from '../storage/characters';
 import { TEMPLATE_LIST, getTemplate, DEFAULT_TEMPLATE_ID } from '../templates';
 import { label } from '../lib/localize';
 import { useLang } from '../lib/useLang';
@@ -25,7 +25,15 @@ export function CharacterList() {
   const onCreate = async () => {
     const template = getTemplate(templateId);
     if (!template) return;
-    const character = await create(template, name);
+    const character = await create(
+      template,
+      name,
+      defaultTricks([
+        t('tricks.defaultOne'),
+        t('tricks.defaultTwo'),
+        t('tricks.defaultThree'),
+      ]),
+    );
     setName('');
     navigate(`/character/${character.id}`);
   };

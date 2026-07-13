@@ -1,5 +1,10 @@
 import { getDB } from './db';
-import type { Character, CharacterExport, ResourceState } from '../types/character';
+import type {
+  Character,
+  CharacterExport,
+  CharacterTrick,
+  ResourceState,
+} from '../types/character';
 import type { SystemTemplate } from '../types/template';
 
 function uid(): string {
@@ -18,30 +23,82 @@ function initialResources(template: SystemTemplate): Record<string, ResourceStat
   return out;
 }
 
+/** Default number of injury boxes on a fresh sheet (user-adjustable). */
+const DEFAULT_INJURY_BOXES = 8;
+
+/**
+ * Seed tricks for a new character: generic hit-cost placeholders the user
+ * renames or replaces with their own (names come from the UI language).
+ */
+export function defaultTricks(names: [string, string, string]): CharacterTrick[] {
+  return names.map((name, i) => ({ id: uid(), name, cost: i + 1 }));
+}
+
 /** Create (but do not yet persist) a blank character for a template. */
-export function newCharacter(template: SystemTemplate, name: string): Character {
+export function newCharacter(
+  template: SystemTemplate,
+  name: string,
+  tricks: CharacterTrick[] = [],
+): Character {
   const now = Date.now();
   return {
     id: uid(),
     templateId: template.id,
     name: name.trim() || 'Unnamed',
+    identity: { lineage: '', family: '', entanglement: 0 },
+    webhookUrl: '',
     attributes: Object.fromEntries(template.attributes.map((a) => [a.id, 1])),
     skills: Object.fromEntries(template.skills.map((s) => [s.id, 0])),
+    edges: [],
+    paths: [],
+    conditions: [],
+    tricks,
+    injuries: { boxes: DEFAULT_INJURY_BOXES, marked: 0, takenOut: false },
     resources: initialResources(template),
     createdAt: now,
     updatedAt: now,
   };
 }
 
+/**
+ * Fill in any fields missing from characters saved by older app versions
+ * (or hand-edited import files) so the rest of the app can rely on the
+ * current {@link Character} shape.
+ */
+export function normalizeCharacter(raw: Partial<Character> & Pick<Character, 'id' | 'templateId' | 'name'>): Character {
+  const now = Date.now();
+  return {
+    attributes: {},
+    skills: {},
+    resources: {},
+    createdAt: now,
+    updatedAt: now,
+    ...raw,
+    identity: { lineage: '', family: '', entanglement: 0, ...raw.identity },
+    webhookUrl: raw.webhookUrl ?? '',
+    edges: raw.edges ?? [],
+    paths: raw.paths ?? [],
+    conditions: raw.conditions ?? [],
+    tricks: raw.tricks ?? [],
+    injuries: {
+      boxes: DEFAULT_INJURY_BOXES,
+      marked: 0,
+      takenOut: false,
+      ...raw.injuries,
+    },
+  };
+}
+
 export async function listCharacters(): Promise<Character[]> {
   const db = await getDB();
   const all = await db.getAllFromIndex('characters', 'by-updated');
-  return all.reverse(); // newest first
+  return all.reverse().map(normalizeCharacter); // newest first
 }
 
 export async function getCharacter(id: string): Promise<Character | undefined> {
   const db = await getDB();
-  return db.get('characters', id);
+  const raw = await db.get('characters', id);
+  return raw ? normalizeCharacter(raw) : undefined;
 }
 
 export async function saveCharacter(character: Character): Promise<Character> {
@@ -56,12 +113,16 @@ export async function deleteCharacter(id: string): Promise<void> {
   await db.delete('characters', id);
 }
 
-/** Serialise a character to a portable JSON envelope. */
+/**
+ * Serialise a character to a portable JSON envelope. The webhook URL is
+ * stripped: it grants posting access to a Discord channel, so it must not
+ * leak when a sheet is shared.
+ */
 export function exportCharacter(character: Character): string {
   const envelope: CharacterExport = {
     format: 'mejiro-character',
     version: 1,
-    character,
+    character: { ...character, webhookUrl: '' },
   };
   return JSON.stringify(envelope, null, 2);
 }
@@ -76,5 +137,10 @@ export function parseCharacterImport(json: string): Character {
     throw new Error('Not a MEJIRO character file');
   }
   const now = Date.now();
-  return { ...data.character, id: uid(), createdAt: now, updatedAt: now };
+  return normalizeCharacter({
+    ...data.character,
+    id: uid(),
+    createdAt: now,
+    updatedAt: now,
+  });
 }

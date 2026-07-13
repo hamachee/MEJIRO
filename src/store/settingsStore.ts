@@ -8,7 +8,6 @@ interface SettingsState {
   loaded: boolean;
   load: () => Promise<void>;
   update: (patch: Partial<AppSettings>) => Promise<void>;
-  activeWebhookUrl: () => string | null;
 }
 
 export const useSettingsStore = create<SettingsState>((set, get) => ({
@@ -24,11 +23,5 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     if (patch.uiLang) await i18n.changeLanguage(patch.uiLang);
     await saveSettings(next);
     set({ settings: next });
-  },
-  activeWebhookUrl: () => {
-    const { webhooks, activeWebhookId } = get().settings;
-    const hook =
-      webhooks.find((w) => w.id === activeWebhookId) ?? webhooks[0];
-    return hook?.url ?? null;
   },
 }));

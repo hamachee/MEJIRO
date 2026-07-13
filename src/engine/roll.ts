@@ -36,30 +36,34 @@ export function roll(
   rng: Rng = Math.random,
 ): RollResult {
   const { sides, explodeOn, botchOn } = template.dice;
-  const { enhancementMode } = template.roll;
+  const { enhancementMode, enhancementRequiresHit } = template.roll;
 
   const baseRatings = Math.max(0, request.attributeRating) + Math.max(0, request.skillRating);
   const enhancement = Math.max(0, request.enhancement);
   const poolSize =
     baseRatings + (enhancementMode === 'poolDice' ? enhancement : 0);
+  const curseDice = template.dice.curseDice
+    ? Math.min(Math.max(0, request.curseDice), poolSize)
+    : 0;
 
   const dice: DieResult[] = [];
   let explosions = 0;
 
-  const addDie = (exploded: boolean) => {
+  const addDie = (exploded: boolean, isCurse: boolean) => {
     const value = rollDie(sides, rng);
-    dice.push({ value, successes: dieSuccesses(value, template), exploded });
+    dice.push({ value, successes: dieSuccesses(value, template), exploded, isCurse });
     if (
       explodeOn !== undefined &&
       value >= explodeOn &&
       explosions < MAX_EXPLOSIONS
     ) {
       explosions++;
-      addDie(true);
+      addDie(true, isCurse);
     }
   };
 
-  for (let i = 0; i < poolSize; i++) addDie(false);
+  // Curse dice replace regular dice, so the first `curseDice` of the pool are cursed.
+  for (let i = 0; i < poolSize; i++) addDie(false, i < curseDice);
 
   const rawDiceSuccesses = dice.reduce((sum, d) => sum + d.successes, 0);
 
@@ -73,8 +77,11 @@ export function roll(
     diceSuccesses = Math.max(0, diceSuccesses);
   }
 
-  const enhancementSuccesses =
-    enhancementMode === 'flatSuccess' ? enhancement : 0;
+  // Curseborne: enhancements apply only when the dice produced at least one hit.
+  const enhancementApplies =
+    enhancementMode === 'flatSuccess' &&
+    (!enhancementRequiresHit || diceSuccesses > 0);
+  const enhancementSuccesses = enhancementApplies ? enhancement : 0;
   const totalSuccesses = diceSuccesses + enhancementSuccesses;
 
   const passed = !botched && totalSuccesses >= request.difficulty;
@@ -85,6 +92,7 @@ export function roll(
   return {
     dice,
     poolSize,
+    curseDice,
     diceSuccesses,
     enhancementSuccesses,
     totalSuccesses,

@@ -1,4 +1,5 @@
-import type { SystemTemplate, Trick } from '../types/template';
+import type { SystemTemplate } from '../types/template';
+import type { CharacterTrick } from '../types/character';
 import type { RollRequest, RollResult } from '../types/roll';
 import { label } from '../lib/localize';
 
@@ -8,14 +9,20 @@ const STRINGS: Record<string, Record<string, string>> = {
     roll: 'Roll',
     pool: 'Pool',
     dice: 'Dice',
-    successes: 'Successes',
+    successes: 'Hits',
     difficulty: 'Difficulty',
     result: 'Result',
     success: '✅ Success',
     failure: '❌ Failure',
     botch: '💀 Botch',
-    threshold: 'Threshold successes',
+    threshold: 'Extra hits',
     enhancement: 'Enhancement',
+    curseDice: 'Curse dice',
+    complication: 'Complication',
+    complicationResolved: 'Complication resolved',
+    minor: 'Minor',
+    moderate: 'Moderate',
+    major: 'Major',
     tricks: 'Tricks purchased',
     spent: 'Spent',
     remaining: 'Remaining',
@@ -24,14 +31,20 @@ const STRINGS: Record<string, Record<string, string>> = {
     roll: '굴림',
     pool: '풀',
     dice: '주사위',
-    successes: '성공',
+    successes: '히트',
     difficulty: '난이도',
     result: '결과',
     success: '✅ 성공',
     failure: '❌ 실패',
     botch: '💀 대실패',
-    threshold: '초과 성공',
+    threshold: '초과 히트',
     enhancement: '강화',
+    curseDice: '저주 주사위',
+    complication: '컴플리케이션',
+    complicationResolved: '컴플리케이션 해소',
+    minor: '경미',
+    moderate: '보통',
+    major: '심각',
     tricks: '구매한 트릭',
     spent: '사용',
     remaining: '잔여',
@@ -50,10 +63,16 @@ export interface DiscordContext {
   characterName: string;
 }
 
-/** Format the dice as a compact string, marking successes in bold. */
+/**
+ * Format the dice as a compact string, marking hits in bold and curse dice
+ * with a skull so the table can adjudicate their effects.
+ */
 function formatDice(result: RollResult): string {
   return result.dice
-    .map((d) => (d.successes > 0 ? `**${d.value}**` : `${d.value}`))
+    .map((d) => {
+      const n = d.successes > 0 ? `**${d.value}**` : `${d.value}`;
+      return d.isCurse ? `💀${n}` : n;
+    })
     .join(', ');
 }
 
@@ -68,9 +87,17 @@ export function buildRollEmbed(
   const attr =
     template.attributes.find((a) => a.id === request.attributeId);
   const skill = template.skills.find((sk) => sk.id === request.skillId);
+  // Non-English stat names are unofficial translations; keep the English
+  // original alongside so everyone at the table recognises the roll.
+  const statName = (l10n: Parameters<typeof label>[0]) => {
+    const localized = label(l10n, lang);
+    return l10n.en && l10n.en !== localized
+      ? `${localized} (${l10n.en})`
+      : localized;
+  };
   const poolParts = [
-    attr ? `${label(attr.label, lang)} ${request.attributeRating}` : null,
-    skill ? `${label(skill.label, lang)} ${request.skillRating}` : null,
+    attr ? `${statName(attr.label)} ${request.attributeRating}` : null,
+    skill ? `${statName(skill.label)} ${request.skillRating}` : null,
     request.enhancement > 0
       ? `${s(lang, 'enhancement')} +${request.enhancement}`
       : null,
@@ -101,6 +128,13 @@ export function buildRollEmbed(
       inline: true,
     },
   ];
+  if (result.curseDice > 0) {
+    fields.push({
+      name: s(lang, 'curseDice'),
+      value: `${result.curseDice}`,
+      inline: true,
+    });
+  }
 
   return {
     embeds: [
@@ -115,30 +149,58 @@ export function buildRollEmbed(
   };
 }
 
+/** What the player did with their extra hits after the roll. */
+export interface PurchaseSummary {
+  tricks: CharacterTrick[];
+  /** Extra-hit budget after post-roll enhancement. */
+  budget: number;
+  /** Enhancement added during the purchase phase (already in `budget`). */
+  enhancement: number;
+  /** Complication severity bought off (1-3), if any. */
+  complication?: number;
+}
+
+const SEVERITY_KEYS: Record<number, string> = {
+  1: 'minor',
+  2: 'moderate',
+  3: 'major',
+};
+
 /** Build the tricks-purchased embed payload (stage two). */
 export function buildTricksEmbed(
   template: SystemTemplate,
-  tricks: Trick[],
-  budget: number,
+  purchase: PurchaseSummary,
   ctx: DiscordContext,
 ) {
   const { lang } = ctx;
-  const spent = tricks.reduce((sum, t) => sum + t.cost, 0);
-  const lines = tricks.map((t) => `• ${label(t.label, lang)} (${t.cost})`);
+  const { tricks, budget, enhancement, complication } = purchase;
+  const spent =
+    tricks.reduce((sum, t) => sum + t.cost, 0) + (complication ?? 0);
+  const lines = tricks.map((t) => `• ${t.name} (${t.cost})`);
+  if (complication) {
+    const sev = s(lang, SEVERITY_KEYS[complication] ?? 'minor');
+    lines.unshift(`• ${s(lang, 'complicationResolved')}: ${sev} (${complication})`);
+  }
+
+  const fields = [
+    { name: s(lang, 'spent'), value: `${spent}`, inline: true },
+    { name: s(lang, 'remaining'), value: `${budget - spent}`, inline: true },
+  ];
+  if (enhancement > 0) {
+    fields.unshift({
+      name: s(lang, 'enhancement'),
+      value: `+${enhancement}`,
+      inline: true,
+    });
+  }
+
   return {
     embeds: [
       {
         title: `${ctx.characterName} — ${s(lang, 'tricks')}`,
         description: lines.join('\n') || '—',
         color: THEME_COLOR,
-        fields: [
-          { name: s(lang, 'spent'), value: `${spent}`, inline: true },
-          {
-            name: s(lang, 'remaining'),
-            value: `${budget - spent}`,
-            inline: true,
-          },
-        ],
+        fields,
         footer: { text: label(template.name, lang) },
       },
     ],
@@ -168,12 +230,11 @@ export function postRollResult(
   return post(ctx.webhookUrl, buildRollEmbed(template, request, result, ctx));
 }
 
-/** Post the purchased tricks (stage two). */
+/** Post the purchase-phase summary (stage two). */
 export function postTricks(
   template: SystemTemplate,
-  tricks: Trick[],
-  budget: number,
+  purchase: PurchaseSummary,
   ctx: DiscordContext,
 ): Promise<void> {
-  return post(ctx.webhookUrl, buildTricksEmbed(template, tricks, budget, ctx));
+  return post(ctx.webhookUrl, buildTricksEmbed(template, purchase, ctx));
 }

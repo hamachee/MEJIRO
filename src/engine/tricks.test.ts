@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { validatePurchase, canAfford } from './tricks';
-import type { Trick } from '../types/template';
+import type { CharacterTrick } from '../types/character';
 
-const t = (id: string, cost: number): Trick => ({
-  id,
-  label: { en: id },
+const t = (name: string, cost: number): CharacterTrick => ({
+  id: name,
+  name,
   cost,
 });
 
