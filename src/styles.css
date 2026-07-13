@@ -720,10 +720,26 @@ button.dot.filled:hover {
 .attr-col .group-title {
   margin-top: 0;
 }
+/* Skills read top-to-bottom, then across: 4 columns × 4 rows. */
 .skill-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-  gap: 0.35rem;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, auto);
+  grid-auto-flow: column;
+  gap: 0.35rem 0.6rem;
+}
+@media (max-width: 900px) {
+  .skill-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(8, auto);
+  }
+}
+@media (max-width: 520px) {
+  .skill-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    grid-auto-flow: row;
+  }
 }
 .sheet-stat {
   display: flex;
