@@ -415,7 +415,9 @@ function TricksCard({ character }: { character: Character }) {
   const { t } = useTranslation();
   const patch = useCharacterStore((s) => s.patch);
   const [name, setName] = useState('');
-  const [cost, setCost] = useState(1);
+  // Held as a string so clearing the field doesn't snap to a sticky "0"
+  // (the "01" problem); parsed and clamped only when the trick is added.
+  const [cost, setCost] = useState('1');
   const [desc, setDesc] = useState('');
   const { tricks } = character;
 
@@ -427,13 +429,13 @@ function TricksCard({ character }: { character: Character }) {
         {
           id: uid(),
           name: name.trim(),
-          cost: Math.max(1, cost),
+          cost: Math.max(1, Number(cost) || 1),
           description: desc.trim() || undefined,
         },
       ],
     });
     setName('');
-    setCost(1);
+    setCost('1');
     setDesc('');
   };
 
@@ -474,7 +476,7 @@ function TricksCard({ character }: { character: Character }) {
             type="number"
             min={1}
             value={cost}
-            onChange={(e) => setCost(Number(e.target.value))}
+            onChange={(e) => setCost(e.target.value)}
           />
         </label>
         <button onClick={add}>{t('tricks.add')}</button>
