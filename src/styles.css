@@ -1107,6 +1107,34 @@ button.sheet-stat:hover {
   font-size: 0.83rem;
   white-space: pre-wrap;
 }
+.item-card-type {
+  font-size: 0.78rem;
+  margin-top: 0.15rem;
+}
+.tag-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.35rem;
+}
+.tag-chip {
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+/* Identity card wider than the curse card on desktop */
+.identity-split {
+  grid-template-columns: 3fr 2fr;
+}
+@media (max-width: 820px) {
+  .identity-split {
+    grid-template-columns: 1fr;
+  }
+}
 
 .torment-field {
   min-height: 5.5rem;

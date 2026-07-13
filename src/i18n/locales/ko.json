@@ -52,6 +52,7 @@
     "shortTerm1": "단기 목표 1",
     "shortTerm2": "단기 목표 2",
     "longTerm": "장기 목표",
+    "motifs": "모티프",
     "page1": "시트",
     "page2": "장비·주문",
     "add": "추가",
@@ -108,6 +109,16 @@
     "defaultOne": "1히트 트릭",
     "defaultTwo": "2히트 트릭",
     "defaultThree": "3히트 트릭"
+  },
+  "gear": {
+    "typePlaceholder": "유형",
+    "tagsPlaceholder": "태그 (쉼표로 구분)"
+  },
+  "spells": {
+    "cost": "비용",
+    "costPlaceholder": "비용",
+    "attunementsPlaceholder": "어튠먼트 (쉼표로 구분)",
+    "advancementsPlaceholder": "발전 (자유 서식, 여러 줄)"
   },
   "resource": {
     "undo": "실행 취소",
