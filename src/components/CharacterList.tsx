@@ -8,6 +8,11 @@ import { label } from '../lib/localize';
 import { useLang } from '../lib/useLang';
 import type { Character } from '../types/character';
 
+/** Make a string safe to use as one dot-separated part of a filename. */
+function filenamePart(s: string): string {
+  return s.trim().replace(/[\\/:*?"<>|]+/g, '_') || 'unknown';
+}
+
 export function CharacterList() {
   const { t } = useTranslation();
   const lang = useLang();
@@ -45,7 +50,10 @@ export function CharacterList() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${character.name || 'character'}.mejiro.json`;
+    const tpl = getTemplate(character.templateId);
+    const system = filenamePart(tpl ? label(tpl.name, lang) : character.templateId);
+    const charName = filenamePart(character.name);
+    a.download = `MEJIRO.${system}.${charName}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
