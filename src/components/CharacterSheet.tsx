@@ -313,14 +313,19 @@ function InjuryCard({
   const { injuries } = character;
 
   const levels = template.injuryTrack?.levels;
+  // Taken Out is tracked independently (injuries.takenOut) rather than as
+  // the last box of the cumulative fill, so it can be marked without first
+  // filling every level before it.
+  const trackLevels = levels?.filter((l) => !l.terminal) ?? [];
+  const terminalLevel = levels?.find((l) => l.terminal);
+
   const total = levels?.length
-    ? levels.reduce((sum, l) => sum + l.boxes, 0)
+    ? trackLevels.reduce((sum, l) => sum + l.boxes, 0)
     : injuries.boxes;
   const marked = Math.min(injuries.marked, total);
 
-  // Marking a box also derives Taken Out (the last box filled).
   const setMarked = (n: number) =>
-    patch({ injuries: { ...injuries, marked: n, takenOut: n >= total } });
+    patch({ injuries: { ...injuries, marked: Math.max(0, Math.min(n, total)) } });
 
   const box = (absIndex: number) => {
     const isMarked = absIndex < marked;
@@ -337,21 +342,26 @@ function InjuryCard({
     );
   };
 
+  // A standalone toggle, unaffected by (and not requiring) the fill track.
+  const takenOutBox = (key: number) => (
+    <button
+      key={key}
+      className={`injury-box ${injuries.takenOut ? 'marked' : ''}`}
+      aria-label={t('sheet.takenOut')}
+      onClick={() => patch({ injuries: { ...injuries, takenOut: !injuries.takenOut } })}
+    />
+  );
+
   if (levels?.length) {
     let offset = 0;
-    const groups = levels.map((level) => {
+    const groups = trackLevels.map((level) => {
       const start = offset;
       offset += level.boxes;
       // Only the current severity is lit: the level holding the deepest
       // marked box. Shallower levels dim again as damage progresses.
       const lit = marked > start && marked <= offset;
       return (
-        <div
-          key={start}
-          className={`injury-level ${lit ? 'lit' : ''} ${
-            level.terminal ? 'terminal' : ''
-          }`}
-        >
+        <div key={start} className={`injury-level ${lit ? 'lit' : ''}`}>
           <div className="injury-boxes">
             {Array.from({ length: level.boxes }, (_, i) => box(start + i))}
           </div>
@@ -361,6 +371,21 @@ function InjuryCard({
         </div>
       );
     });
+    if (terminalLevel) {
+      groups.push(
+        <div
+          key="terminal"
+          className={`injury-level terminal ${injuries.takenOut ? 'lit' : ''}`}
+        >
+          <div className="injury-boxes">
+            {Array.from({ length: terminalLevel.boxes }, (_, i) => takenOutBox(i))}
+          </div>
+          <span className="injury-level-label">
+            <L l10n={terminalLevel.label} />
+          </span>
+        </div>,
+      );
+    }
     return (
       <section className="card">
         <h2>{t('sheet.injuries')}</h2>
