@@ -4,7 +4,7 @@ import { useCharacterStore } from '../store/characterStore';
 import { useRollStore } from '../store/rollStore';
 import { label } from '../lib/localize';
 import { useLang } from '../lib/useLang';
-import type { Character, RatedItem } from '../types/character';
+import { MAX_CURSE_DICE, type Character, type RatedItem } from '../types/character';
 import type { L10n as L10nLabel, Stat, SystemTemplate } from '../types/template';
 import { ResourceTracker } from './ResourceTracker';
 import { TrickInfo } from './TrickInfo';
@@ -40,14 +40,16 @@ function Dots({
   value,
   editable,
   onSet,
+  max = MAX_DOTS,
 }: {
   value: number;
   editable?: boolean;
   onSet?: (n: number) => void;
+  max?: number;
 }) {
   return (
     <span className="dots" role={editable ? 'radiogroup' : undefined}>
-      {Array.from({ length: MAX_DOTS }, (_, i) => {
+      {Array.from({ length: max }, (_, i) => {
         const n = i + 1;
         const filled = n <= value;
         return editable ? (
@@ -121,6 +123,38 @@ function IdentityCard({
   const patch = useCharacterStore((s) => s.patch);
   const { identity } = character;
 
+  // Curse dice shift constantly in play (like hunger), so unlike the rest of
+  // the identity block they stay editable outside edit mode too.
+  const curseRow = (
+    <div className="curse-row">
+      <span className="field-label">{t('roller.curseDice')}</span>
+      <div className="curse-controls">
+        <button
+          aria-label={`− ${t('roller.curseDice')}`}
+          disabled={character.curseDice <= 0}
+          onClick={() => patch({ curseDice: character.curseDice - 1 })}
+        >
+          −
+        </button>
+        <span className="dots curse-dots">
+          <Dots
+            value={character.curseDice}
+            max={Math.max(MAX_DOTS, character.curseDice)}
+            editable
+            onSet={(n) => patch({ curseDice: n })}
+          />
+        </span>
+        <button
+          aria-label={`+ ${t('roller.curseDice')}`}
+          disabled={character.curseDice >= MAX_CURSE_DICE}
+          onClick={() => patch({ curseDice: character.curseDice + 1 })}
+        >
+          +
+        </button>
+      </div>
+    </div>
+  );
+
   if (!editing) {
     return (
       <section className="card identity">
@@ -131,6 +165,7 @@ function IdentityCard({
         <div className="identity-row muted">
           {[identity.lineage, identity.family].filter(Boolean).join(' · ') || '—'}
         </div>
+        {curseRow}
       </section>
     );
   }
@@ -174,6 +209,7 @@ function IdentityCard({
           />
         </div>
       </div>
+      {curseRow}
       <div className="form-row">
         <label className="field grow">
           <span className="field-label">{t('sheet.webhook')}</span>
