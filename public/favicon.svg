@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="12" fill="#5b4b8a"/>
+  <!-- stylised d10 -->
+  <path d="M32 8 L54 26 L44 52 L20 52 L10 26 Z" fill="#1a1a2e" stroke="#c9b8ff" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M32 8 L32 34 L10 26 M32 34 L54 26 M32 34 L20 52 M32 34 L44 52" fill="none" stroke="#c9b8ff" stroke-width="1.5" opacity="0.7"/>
+  <text x="32" y="30" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">目</text>
+</svg>

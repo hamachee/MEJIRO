@@ -1,0 +1,87 @@
+{
+  "app": {
+    "title": "MEJIRO",
+    "tagline": "TTRPG Sheet & Roller"
+  },
+  "nav": {
+    "characters": "Characters",
+    "settings": "Settings"
+  },
+  "characters": {
+    "title": "Characters",
+    "empty": "No characters yet. Create one to get started.",
+    "new": "New character",
+    "namePlaceholder": "Character name",
+    "system": "System",
+    "create": "Create",
+    "import": "Import",
+    "export": "Export",
+    "delete": "Delete",
+    "open": "Open",
+    "confirmDelete": "Delete this character? This cannot be undone.",
+    "importError": "Could not import file: {{message}}"
+  },
+  "sheet": {
+    "attributes": "Attributes",
+    "skills": "Skills",
+    "resources": "Resources",
+    "back": "Back",
+    "saved": "Saved",
+    "rename": "Name"
+  },
+  "roller": {
+    "title": "Dice Pool",
+    "attribute": "Attribute",
+    "skill": "Skill",
+    "enhancement": "Enhancement",
+    "difficulty": "Difficulty",
+    "pool": "Pool",
+    "roll": "Roll",
+    "selectPrompt": "Select an attribute and a skill to build your pool.",
+    "none": "None"
+  },
+  "result": {
+    "title": "Result",
+    "success": "Success",
+    "failure": "Failure",
+    "botch": "Botch",
+    "successes": "Successes",
+    "threshold": "Threshold successes",
+    "dice": "Dice",
+    "postToDiscord": "Post to Discord",
+    "posted": "Posted to Discord",
+    "postError": "Discord post failed: {{message}}",
+    "noWebhook": "Set a Discord webhook in Settings first."
+  },
+  "tricks": {
+    "title": "Tricks",
+    "budget": "Budget",
+    "remaining": "Remaining",
+    "cost": "Cost",
+    "postTricks": "Post tricks",
+    "none": "No tricks available for this system.",
+    "overBudget": "Over budget"
+  },
+  "resource": {
+    "undo": "Undo",
+    "log": "Change log",
+    "empty": "No changes yet."
+  },
+  "settings": {
+    "title": "Settings",
+    "uiLanguage": "Interface language",
+    "discordLanguage": "Discord output language",
+    "webhooks": "Discord webhooks",
+    "webhookLabel": "Label",
+    "webhookUrl": "Webhook URL",
+    "addWebhook": "Add webhook",
+    "removeWebhook": "Remove",
+    "activeWebhook": "Active webhook",
+    "noWebhooks": "No webhooks yet.",
+    "save": "Save"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "close": "Close"
+  }
+}
