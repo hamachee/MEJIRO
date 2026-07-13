@@ -38,6 +38,13 @@ export interface ConditionItem {
   name: string;
 }
 
+/** A user-entered card-style entry (gear, spells): name plus free text. */
+export interface CardItem {
+  id: string;
+  name: string;
+  description?: string;
+}
+
 /**
  * A trick the player may buy with extra hits after a roll. User-entered
  * (name + cost) so no rulebook content ships with the app; new characters
@@ -81,7 +88,14 @@ export interface Character {
   skills: Record<string, number>;
   edges: RatedItem[];
   paths: RatedItem[];
+  contacts: RatedItem[];
+  bonds: RatedItem[];
   conditions: ConditionItem[];
+  /** Page 2: equipment and spells, card-style with free-text descriptions. */
+  gear: CardItem[];
+  spells: CardItem[];
+  /** Free-form Torment & Damnation notes. */
+  torment: string;
   tricks: CharacterTrick[];
   injuries: InjuryTrack;
   /**
