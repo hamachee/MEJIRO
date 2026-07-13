@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { roll, type Rng } from './roll';
+import { roll, hasCurseHit, type Rng } from './roll';
 import curseborne from '../templates/curseborne.json';
 import type { SystemTemplate } from '../types/template';
 import type { RollRequest } from '../types/roll';
@@ -92,6 +92,18 @@ describe('roll — Curseborne (d10, 8-9 = 1 hit, 10 = 2 hits)', () => {
     const rng = scriptedRng([10, 8, 2, 2, 2]);
     const result = roll(template, baseRequest({ curseDice: 2 }), rng);
     expect(result.diceSuccesses).toBe(3);
+  });
+
+  it('detects a curse hit (wicked success / cruel failure trigger)', () => {
+    // curse die hits (8) -> wicked/cruel applies
+    const hit = roll(template, baseRequest({ curseDice: 1 }), scriptedRng([8, 2, 2, 2, 2]));
+    expect(hasCurseHit(hit)).toBe(true);
+    // curse die misses (2), a normal die hits -> plain outcome
+    const miss = roll(template, baseRequest({ curseDice: 1 }), scriptedRng([2, 8, 2, 2, 2]));
+    expect(hasCurseHit(miss)).toBe(false);
+    // no curse dice at all
+    const none = roll(template, baseRequest(), scriptedRng([8, 8, 8, 8, 8]));
+    expect(hasCurseHit(none)).toBe(false);
   });
 
   it('is deterministic under a fixed RNG', () => {

@@ -44,6 +44,8 @@ export interface CharacterTrick {
   id: string;
   name: string;
   cost: number;
+  /** Optional user-written note, shown folded under the trick name. */
+  description?: string;
 }
 
 /** The injury track: a row of boxes, marked left to right, plus Taken Out. */

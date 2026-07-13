@@ -59,6 +59,8 @@
     "title": "결과",
     "success": "성공",
     "failure": "실패",
+    "wicked": "사악한 성공",
+    "cruel": "잔혹한 실패",
     "botch": "대실패",
     "successes": "히트",
     "threshold": "초과 히트",
@@ -86,6 +88,7 @@
       "major": "심각"
     },
     "namePlaceholder": "트릭 이름",
+    "descPlaceholder": "설명 (선택)",
     "add": "트릭 추가",
     "defaultOne": "1히트 트릭",
     "defaultTwo": "2히트 트릭",

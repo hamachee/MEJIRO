@@ -6,6 +6,8 @@ import { validatePurchase } from '../engine/tricks';
 import { postTricks } from '../engine/discord';
 import type { Character } from '../types/character';
 import type { SystemTemplate } from '../types/template';
+import { Stepper } from './Stepper';
+import { TrickInfo } from './TrickInfo';
 
 type PostState = 'idle' | 'posting' | 'done' | 'error';
 
@@ -89,15 +91,11 @@ export function TrickPurchase({ character, template }: Props) {
       </div>
 
       <div className="form-row">
-        <label className="field">
-          <span className="field-label">{t('roller.enhancement')}</span>
-          <input
-            type="number"
-            min={0}
-            value={enhancement}
-            onChange={(e) => setEnhancement(Number(e.target.value))}
-          />
-        </label>
+        <Stepper
+          label={t('roller.enhancement')}
+          value={enhancement}
+          onChange={setEnhancement}
+        />
       </div>
 
       <div className="field">
@@ -131,7 +129,7 @@ export function TrickPurchase({ character, template }: Props) {
                     onChange={() => toggleTrick(tr.id)}
                   />
                   <span className="trick-body">
-                    <span className="trick-name">{tr.name}</span>
+                    <TrickInfo trick={tr} />
                   </span>
                   <span className="trick-cost">
                     {t('tricks.cost')} {tr.cost}

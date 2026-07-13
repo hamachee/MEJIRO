@@ -4,6 +4,7 @@ import { label } from '../lib/localize';
 import { useLang } from '../lib/useLang';
 import type { Character } from '../types/character';
 import type { SystemTemplate } from '../types/template';
+import { Stepper } from './Stepper';
 
 interface Props {
   character: Character;
@@ -51,26 +52,18 @@ export function RollBar({ character, template }: Props) {
       </div>
       <div className="roll-bar-controls">
         {template.dice.curseDice && (
-          <label className="field">
-            <span className="field-label">{t('roller.curseDice')}</span>
-            <input
-              type="number"
-              min={0}
-              max={pool}
-              value={Math.min(curseDice, pool)}
-              onChange={(e) => setCurseDice(Number(e.target.value))}
-            />
-          </label>
-        )}
-        <label className="field">
-          <span className="field-label">{t('roller.difficulty')}</span>
-          <input
-            type="number"
-            min={0}
-            value={difficulty}
-            onChange={(e) => setDifficulty(Number(e.target.value))}
+          <Stepper
+            label={t('roller.curseDice')}
+            value={Math.min(curseDice, pool)}
+            onChange={setCurseDice}
+            max={pool}
           />
-        </label>
+        )}
+        <Stepper
+          label={t('roller.difficulty')}
+          value={difficulty}
+          onChange={setDifficulty}
+        />
         <button
           className="primary roll-button"
           disabled={!canRoll}

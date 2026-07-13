@@ -4,6 +4,14 @@ import type { DieResult, RollRequest, RollResult } from '../types/roll';
 /** A random source returning a float in [0, 1). Injected for deterministic tests. */
 export type Rng = () => number;
 
+/**
+ * Whether any curse die scored a hit. Curseborne: a curse hit turns a
+ * success wicked and a failure cruel — the curse takes an interest.
+ */
+export function hasCurseHit(result: RollResult): boolean {
+  return result.dice.some((d) => d.isCurse && d.successes > 0);
+}
+
 /** Roll a single die with `sides`, returning 1..sides. */
 function rollDie(sides: number, rng: Rng): number {
   return Math.floor(rng() * sides) + 1;

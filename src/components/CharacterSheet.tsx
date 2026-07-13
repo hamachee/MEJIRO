@@ -7,6 +7,7 @@ import { useLang } from '../lib/useLang';
 import type { Character, RatedItem } from '../types/character';
 import type { L10n as L10nLabel, Stat, SystemTemplate } from '../types/template';
 import { ResourceTracker } from './ResourceTracker';
+import { TrickInfo } from './TrickInfo';
 
 function uid(): string {
   return crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
@@ -373,15 +374,25 @@ function TricksCard({ character }: { character: Character }) {
   const patch = useCharacterStore((s) => s.patch);
   const [name, setName] = useState('');
   const [cost, setCost] = useState(1);
+  const [desc, setDesc] = useState('');
   const { tricks } = character;
 
   const add = () => {
     if (!name.trim()) return;
     patch({
-      tricks: [...tricks, { id: uid(), name: name.trim(), cost: Math.max(1, cost) }],
+      tricks: [
+        ...tricks,
+        {
+          id: uid(),
+          name: name.trim(),
+          cost: Math.max(1, cost),
+          description: desc.trim() || undefined,
+        },
+      ],
     });
     setName('');
     setCost(1);
+    setDesc('');
   };
 
   return (
@@ -391,7 +402,9 @@ function TricksCard({ character }: { character: Character }) {
       <ul className="named-list">
         {tricks.map((tr) => (
           <li key={tr.id} className="named-item">
-            <span className="named-name">{tr.name}</span>
+            <span className="named-name">
+              <TrickInfo trick={tr} />
+            </span>
             <span className="trick-cost">
               {t('tricks.cost')} {tr.cost}
             </span>
@@ -423,6 +436,15 @@ function TricksCard({ character }: { character: Character }) {
           />
         </label>
         <button onClick={add}>{t('tricks.add')}</button>
+      </div>
+      <div className="form-row">
+        <input
+          className="grow"
+          placeholder={t('tricks.descPlaceholder')}
+          value={desc}
+          onChange={(e) => setDesc(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && add()}
+        />
       </div>
     </section>
   );

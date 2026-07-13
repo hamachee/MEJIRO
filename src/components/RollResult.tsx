@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useRollStore, effectiveTotals } from '../store/rollStore';
+import { hasCurseHit } from '../engine/roll';
 
 export function RollResult() {
   const { t } = useTranslation();
@@ -11,12 +12,18 @@ export function RollResult() {
   if (!result) return null;
 
   // Enhancement is added post-roll, so the verdict tracks it live.
+  // A curse hit tints the outcome: wicked success / cruel failure.
   const { total, passed } = effectiveTotals(result, enhancement);
+  const curseHit = hasCurseHit(result);
   const outcome = result.botched
     ? { text: t('result.botch'), cls: 'botch' }
     : passed
-      ? { text: t('result.success'), cls: 'success' }
-      : { text: t('result.failure'), cls: 'failure' };
+      ? curseHit
+        ? { text: t('result.wicked'), cls: 'wicked' }
+        : { text: t('result.success'), cls: 'success' }
+      : curseHit
+        ? { text: t('result.cruel'), cls: 'cruel' }
+        : { text: t('result.failure'), cls: 'failure' };
 
   return (
     <section className="card result">
