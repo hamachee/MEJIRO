@@ -263,7 +263,9 @@ function InjuryCard({
     const groups = levels.map((level) => {
       const start = offset;
       offset += level.boxes;
-      const lit = marked >= offset; // every box in this level is marked
+      // Only the current severity is lit: the level holding the deepest
+      // marked box. Shallower levels dim again as damage progresses.
+      const lit = marked > start && marked <= offset;
       return (
         <div
           key={start}

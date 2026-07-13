@@ -809,17 +809,32 @@ button.sheet-stat:hover {
   flex-wrap: wrap;
   gap: 0.35rem;
 }
+/* Injury boxes: square dots with a clean two-state look — the global
+   button hover/focus styling is suppressed so there is no in-between state. */
 .injury-box {
-  width: 26px;
-  height: 26px;
+  width: 16px;
+  height: 16px;
   padding: 0;
-  border-radius: 6px;
-  border: 1.5px solid var(--border);
-  background: var(--bg-2);
+  border-radius: 3px;
+  border: 1.5px solid var(--failure);
+  background: transparent;
+  transition: transform 0.05s ease;
+}
+.injury-box:hover:not(:disabled) {
+  background: transparent;
+  transform: scale(1.2);
+}
+.injury-box:focus {
+  outline: none;
+}
+.injury-box:focus-visible {
+  outline: 2px solid var(--accent);
 }
 .injury-box.marked {
   background: var(--failure);
-  border-color: var(--failure);
+}
+.injury-box.marked:hover:not(:disabled) {
+  background: var(--failure);
 }
 
 /* Grouped injury track — severity levels split by dividers, labels light up */
@@ -863,7 +878,8 @@ button.sheet-stat:hover {
   font-style: italic;
 }
 /* The Taken-Out box reads as the gravest mark. */
-.injury-level.terminal .injury-box.marked {
+.injury-level.terminal .injury-box.marked,
+.injury-level.terminal .injury-box.marked:hover:not(:disabled) {
   background: #8a1a1a;
   border-color: #ff6b6b;
 }
