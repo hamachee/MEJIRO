@@ -837,14 +837,15 @@ button.sheet-stat:hover {
   background: transparent;
 }
 
-/* Curse dice */
+/* Curse dice — vivid violet, clearly not the failure red */
 .die.curse {
-  border-color: #a03434;
-  box-shadow: inset 0 0 0 1px #a03434;
+  border-color: #b44ae0;
+  box-shadow: inset 0 0 0 1px #b44ae0;
 }
 .die.curse.hit {
-  background: #6e2437;
-  border-color: #c04a4a;
+  background: #7d2ea8;
+  border-color: #cf6cf2;
+  color: #fff;
 }
 
 /* English sublabel for unofficial translations */

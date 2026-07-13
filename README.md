@@ -84,7 +84,8 @@ language.
 ## Roadmap
 
 GM mode, additional systems (WoD, CoC), roll history, PDF import/export,
-shareable data-URL sheets, and a compact picture-in-picture mini-roller.
+shareable data-URL sheets, a compact picture-in-picture mini-roller, and
+color themes (dark / light / per-system / custom).
 
 ## License
 
