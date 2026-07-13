@@ -194,11 +194,22 @@ button {
   color: var(--text);
 }
 input,
-select {
+select,
+textarea {
   background: var(--bg-2);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 0.5rem 0.6rem;
+}
+textarea {
+  font: inherit;
+  color: var(--text);
+  width: 100%;
+  resize: vertical;
+}
+textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
 }
 input[type='number'] {
   width: 5rem;
@@ -990,6 +1001,64 @@ button.sheet-stat:hover {
 .post-status {
   margin-top: 0.5rem;
   font-size: 0.88rem;
+}
+
+/* Sheet page tabs — bookmark-style on the left margin */
+.page-tabs {
+  position: fixed;
+  left: 0;
+  top: 40%;
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.page-tab {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  padding: 0.7rem 0.3rem;
+  font-size: 0.78rem;
+  border-radius: 0 8px 8px 0;
+  border-left: none;
+  background: var(--card);
+  color: var(--muted);
+}
+.page-tab.active {
+  background: var(--accent-2);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* Card grids (gear, spells) */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+}
+.item-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.6rem 0.7rem;
+}
+.item-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+.item-card-name {
+  overflow-wrap: anywhere;
+}
+.item-card-desc {
+  margin: 0.35rem 0 0;
+  font-size: 0.83rem;
+  white-space: pre-wrap;
+}
+
+.torment-field {
+  min-height: 5.5rem;
 }
 
 /* Result modal */

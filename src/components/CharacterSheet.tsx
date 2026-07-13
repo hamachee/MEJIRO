@@ -575,8 +575,35 @@ export function CharacterSheet({ character, template, editing }: Props) {
         />
       </div>
 
+      <div className="two-col">
+        <RatedListCard
+          title={t('sheet.contacts')}
+          items={character.contacts}
+          editing={editing}
+          onChange={(contacts) => patch({ contacts })}
+        />
+        <RatedListCard
+          title={t('sheet.bonds')}
+          items={character.bonds}
+          editing={editing}
+          onChange={(bonds) => patch({ bonds })}
+        />
+      </div>
+
       <ConditionsCard character={character} />
       <TricksCard character={character} />
+
+      <section className="card">
+        <h2>{t('sheet.torment')}</h2>
+        <textarea
+          className="torment-field"
+          rows={4}
+          placeholder={t('sheet.tormentPlaceholder')}
+          defaultValue={character.torment}
+          onBlur={(e) => patch({ torment: e.target.value })}
+        />
+      </section>
+
       {template.resources.length > 0 && (
         <ResourceTracker character={character} template={template} />
       )}
