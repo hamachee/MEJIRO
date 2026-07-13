@@ -227,70 +227,74 @@ function IdentityCard({
 
 function InjuryCard({
   character,
-  editing,
+  template,
 }: {
   character: Character;
-  editing: boolean;
+  template: SystemTemplate;
 }) {
   const { t } = useTranslation();
   const patch = useCharacterStore((s) => s.patch);
   const { injuries } = character;
 
-  const setMarked = (n: number) =>
-    patch({ injuries: { ...injuries, marked: n } });
+  const levels = template.injuryTrack?.levels;
+  const total = levels?.length
+    ? levels.reduce((sum, l) => sum + l.boxes, 0)
+    : injuries.boxes;
+  const marked = Math.min(injuries.marked, total);
 
+  // Marking a box also derives Taken Out (the last box filled).
+  const setMarked = (n: number) =>
+    patch({ injuries: { ...injuries, marked: n, takenOut: n >= total } });
+
+  const box = (absIndex: number) => {
+    const isMarked = absIndex < marked;
+    return (
+      <button
+        key={absIndex}
+        className={`injury-box ${isMarked ? 'marked' : ''}`}
+        aria-label={`${absIndex + 1}`}
+        onClick={() => setMarked(isMarked ? absIndex : absIndex + 1)}
+      />
+    );
+  };
+
+  if (levels?.length) {
+    let offset = 0;
+    const groups = levels.map((level) => {
+      const start = offset;
+      offset += level.boxes;
+      const lit = marked >= offset; // every box in this level is marked
+      return (
+        <div
+          key={start}
+          className={`injury-level ${lit ? 'lit' : ''} ${
+            level.terminal ? 'terminal' : ''
+          }`}
+        >
+          <div className="injury-boxes">
+            {Array.from({ length: level.boxes }, (_, i) => box(start + i))}
+          </div>
+          <span className="injury-level-label">
+            <L l10n={level.label} />
+          </span>
+        </div>
+      );
+    });
+    return (
+      <section className="card">
+        <h2>{t('sheet.injuries')}</h2>
+        <div className="injury-track grouped">{groups}</div>
+      </section>
+    );
+  }
+
+  // Fallback: flat track for templates without a structured injury track.
   return (
     <section className="card">
-      <div className="result-head">
-        <h2>{t('sheet.injuries')}</h2>
-        <label className={`taken-out ${injuries.takenOut ? 'on' : ''}`}>
-          <input
-            type="checkbox"
-            checked={injuries.takenOut}
-            onChange={(e) =>
-              patch({ injuries: { ...injuries, takenOut: e.target.checked } })
-            }
-          />
-          {t('sheet.takenOut')}
-        </label>
-      </div>
+      <h2>{t('sheet.injuries')}</h2>
       <div className="injury-track">
-        {Array.from({ length: injuries.boxes }, (_, i) => {
-          const marked = i < injuries.marked;
-          return (
-            <button
-              key={i}
-              className={`injury-box ${marked ? 'marked' : ''}`}
-              aria-label={`${i + 1}`}
-              onClick={() => setMarked(marked ? i : i + 1)}
-            />
-          );
-        })}
+        {Array.from({ length: total }, (_, i) => box(i))}
       </div>
-      {editing && (
-        <div className="form-row">
-          <button
-            onClick={() =>
-              patch({
-                injuries: {
-                  ...injuries,
-                  boxes: Math.max(1, injuries.boxes - 1),
-                  marked: Math.min(injuries.marked, Math.max(1, injuries.boxes - 1)),
-                },
-              })
-            }
-          >
-            − {t('sheet.box')}
-          </button>
-          <button
-            onClick={() =>
-              patch({ injuries: { ...injuries, boxes: injuries.boxes + 1 } })
-            }
-          >
-            + {t('sheet.box')}
-          </button>
-        </div>
-      )}
     </section>
   );
 }
@@ -554,7 +558,7 @@ export function CharacterSheet({ character, template, editing }: Props) {
         {!editing && <p className="muted hint">{t('roller.selectPrompt')}</p>}
       </section>
 
-      <InjuryCard character={character} editing={editing} />
+      <InjuryCard character={character} template={template} />
 
       <div className="two-col">
         <RatedListCard

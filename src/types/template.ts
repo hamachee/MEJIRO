@@ -80,6 +80,23 @@ export interface ResourceDef {
   max?: number;
 }
 
+/**
+ * One named severity band of the injury track (e.g. Bloodied, Near Death).
+ * Its label lights up once all of its boxes are marked.
+ */
+export interface InjuryLevel {
+  /** How many boxes belong to this level. */
+  boxes: number;
+  label: L10n;
+  /** Highlight this level more strongly when reached (e.g. Taken Out). */
+  terminal?: boolean;
+}
+
+/** Injury track definition: an ordered set of severity levels. */
+export interface InjuryTrackDef {
+  levels: InjuryLevel[];
+}
+
 export interface SystemTemplate {
   id: string;
   name: L10n;
@@ -92,4 +109,6 @@ export interface SystemTemplate {
   dice: DiceConfig;
   roll: RollConfig;
   resources: ResourceDef[];
+  /** Optional structured injury track; falls back to a flat box count. */
+  injuryTrack?: InjuryTrackDef;
 }
