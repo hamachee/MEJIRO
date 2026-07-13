@@ -86,7 +86,7 @@ export function CharacterView() {
         {page === 1 ? (
           <CharacterSheet character={active} template={template} editing={editing} />
         ) : (
-          <CharacterPage2 character={active} />
+          <CharacterPage2 character={active} editing={editing} />
         )}
         {wide && result && <aside className="result-col stack">{resultPanel}</aside>}
       </div>
