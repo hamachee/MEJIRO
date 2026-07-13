@@ -23,8 +23,16 @@ function initialResources(template: SystemTemplate): Record<string, ResourceStat
   return out;
 }
 
-/** Default number of injury boxes on a fresh sheet (user-adjustable). */
+/** Fallback injury box count when a template defines no injury track. */
 const DEFAULT_INJURY_BOXES = 8;
+
+/** Total injury boxes for a template (sum of its levels, or the fallback). */
+export function injuryTotal(template: SystemTemplate): number {
+  const levels = template.injuryTrack?.levels;
+  return levels?.length
+    ? levels.reduce((sum, l) => sum + l.boxes, 0)
+    : DEFAULT_INJURY_BOXES;
+}
 
 /**
  * Seed tricks for a new character: generic hit-cost placeholders the user
@@ -53,7 +61,7 @@ export function newCharacter(
     paths: [],
     conditions: [],
     tricks,
-    injuries: { boxes: DEFAULT_INJURY_BOXES, marked: 0, takenOut: false },
+    injuries: { boxes: injuryTotal(template), marked: 0, takenOut: false },
     curseDice: 1,
     resources: initialResources(template),
     createdAt: now,

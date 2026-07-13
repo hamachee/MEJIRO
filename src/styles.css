@@ -810,17 +810,51 @@ button.sheet-stat:hover {
   background: var(--failure);
   border-color: var(--failure);
 }
-.taken-out {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.9rem;
-  color: var(--muted);
-  cursor: pointer;
+
+/* Grouped injury track — severity levels split by dividers, labels light up */
+.injury-track.grouped {
+  align-items: stretch;
+  gap: 0;
 }
-.taken-out.on {
+.injury-level {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0 0.7rem;
+}
+.injury-level + .injury-level {
+  border-left: 1px solid var(--border);
+}
+.injury-level .injury-boxes {
+  display: flex;
+  gap: 0.35rem;
+}
+.injury-level-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  opacity: 0.5;
+  text-align: center;
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+.injury-level.lit .injury-level-label {
+  opacity: 1;
   color: #ff9a9a;
-  font-weight: 600;
+  font-weight: 700;
+}
+.injury-level.terminal.lit .injury-level-label {
+  color: #ff6b6b;
+  text-shadow: 0 0 6px rgba(255, 60, 60, 0.5);
+}
+.injury-level.terminal .injury-level-label {
+  font-style: italic;
+}
+/* The Taken-Out box reads as the gravest mark. */
+.injury-level.terminal .injury-box.marked {
+  background: #8a1a1a;
+  border-color: #ff6b6b;
 }
 
 /* Named lists (edges, paths, tricks) */
