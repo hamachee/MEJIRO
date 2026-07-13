@@ -128,39 +128,38 @@ function IdentityCard({
   const patch = useCharacterStore((s) => s.patch);
   const { identity } = character;
 
-  // Curse dice shift constantly in play (like hunger), so unlike the rest of
-  // the identity block they stay editable outside edit mode too. Capacity
-  // follows Entanglement (• = 5, ••/••• = 7, •••• = 9) and all cap dots are
-  // shown so the maximum is always visible.
-  const curseCap = curseDiceCap(identity.entanglement);
-  const curseRow = (
-    <div className="curse-row">
-      <span className="field-label">{t('roller.curseDice')}</span>
-      <div className="curse-controls">
-        <button
-          aria-label={`− ${t('roller.curseDice')}`}
-          disabled={character.curseDice <= 0}
-          onClick={() => patch({ curseDice: character.curseDice - 1 })}
-        >
-          −
-        </button>
-        <span className="dots curse-dots">
-          <Dots
-            value={character.curseDice}
-            max={curseCap}
-            editable
-            onSet={(n) => patch({ curseDice: n })}
-          />
-        </span>
-        <button
-          aria-label={`+ ${t('roller.curseDice')}`}
-          disabled={character.curseDice >= curseCap}
-          onClick={() => patch({ curseDice: character.curseDice + 1 })}
-        >
-          +
-        </button>
+  const setIdentity = (field: keyof typeof identity) =>
+    (e: React.FocusEvent<HTMLInputElement>) =>
+      patch({ identity: { ...identity, [field]: e.target.value.trim() } });
+
+  // Role path and aspirations, folded away until needed. Goals shift during
+  // play, so the fields stay editable in both modes.
+  const goalsFold = (
+    <details className="fold">
+      <summary>{t('sheet.pathGoals')}</summary>
+      <div className="form-row">
+        <label className="field grow">
+          <span className="field-label">{t('sheet.rolePath')}</span>
+          <input defaultValue={identity.rolePath} onBlur={setIdentity('rolePath')} />
+        </label>
       </div>
-    </div>
+      <div className="form-row">
+        <label className="field grow">
+          <span className="field-label">{t('sheet.shortTerm1')}</span>
+          <input defaultValue={identity.shortTerm1} onBlur={setIdentity('shortTerm1')} />
+        </label>
+        <label className="field grow">
+          <span className="field-label">{t('sheet.shortTerm2')}</span>
+          <input defaultValue={identity.shortTerm2} onBlur={setIdentity('shortTerm2')} />
+        </label>
+      </div>
+      <div className="form-row">
+        <label className="field grow">
+          <span className="field-label">{t('sheet.longTerm')}</span>
+          <input defaultValue={identity.longTerm} onBlur={setIdentity('longTerm')} />
+        </label>
+      </div>
+    </details>
   );
 
   if (!editing) {
@@ -168,12 +167,13 @@ function IdentityCard({
       <section className="card identity">
         <div className="identity-name">
           <h1>{character.name}</h1>
-          <Dots value={identity.entanglement} max={MAX_ENTANGLEMENT} />
         </div>
         <div className="identity-row muted">
-          {[identity.lineage, identity.family].filter(Boolean).join(' · ') || '—'}
+          {[identity.lineage, identity.family, identity.concept]
+            .filter(Boolean)
+            .join(' · ') || '—'}
         </div>
-        {curseRow}
+        {goalsFold}
       </section>
     );
   }
@@ -192,39 +192,20 @@ function IdentityCard({
       <div className="form-row">
         <label className="field grow">
           <span className="field-label">{t('sheet.lineage')}</span>
-          <input
-            defaultValue={identity.lineage}
-            onBlur={(e) =>
-              patch({ identity: { ...identity, lineage: e.target.value.trim() } })
-            }
-          />
+          <input defaultValue={identity.lineage} onBlur={setIdentity('lineage')} />
         </label>
         <label className="field grow">
           <span className="field-label">{t('sheet.family')}</span>
-          <input
-            defaultValue={identity.family}
-            onBlur={(e) =>
-              patch({ identity: { ...identity, family: e.target.value.trim() } })
-            }
-          />
+          <input defaultValue={identity.family} onBlur={setIdentity('family')} />
         </label>
-        <div className="field">
-          <span className="field-label">{t('sheet.entanglement')}</span>
-          <Dots
-            value={identity.entanglement}
-            max={MAX_ENTANGLEMENT}
-            editable
-            onSet={(n) =>
-              patch({
-                identity: { ...identity, entanglement: n },
-                // Lowering entanglement shrinks curse capacity too.
-                curseDice: Math.min(character.curseDice, curseDiceCap(n)),
-              })
-            }
-          />
-        </div>
       </div>
-      {curseRow}
+      <div className="form-row">
+        <label className="field grow">
+          <span className="field-label">{t('sheet.concept')}</span>
+          <input defaultValue={identity.concept} onBlur={setIdentity('concept')} />
+        </label>
+      </div>
+      {goalsFold}
       <div className="form-row">
         <label className="field grow">
           <span className="field-label">{t('sheet.webhook')}</span>
@@ -235,6 +216,72 @@ function IdentityCard({
             onBlur={(e) => patch({ webhookUrl: e.target.value.trim() })}
           />
         </label>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Entanglement and curse dice, together in their own card. Curse dice shift
+ * constantly in play (like hunger), so they stay editable outside edit mode;
+ * capacity follows Entanglement (• = 5, ••/••• = 7, •••• = 9) and every
+ * capacity dot is drawn so the maximum stays visible.
+ */
+function CurseCard({
+  character,
+  editing,
+}: {
+  character: Character;
+  editing: boolean;
+}) {
+  const { t } = useTranslation();
+  const patch = useCharacterStore((s) => s.patch);
+  const { identity } = character;
+  const curseCap = curseDiceCap(identity.entanglement);
+
+  return (
+    <section className="card">
+      <div className="curse-row">
+        <span className="field-label">{t('sheet.entanglement')}</span>
+        <Dots
+          value={identity.entanglement}
+          max={MAX_ENTANGLEMENT}
+          editable={editing}
+          onSet={(n) =>
+            patch({
+              identity: { ...identity, entanglement: n },
+              // Lowering entanglement shrinks curse capacity too.
+              curseDice: Math.min(character.curseDice, curseDiceCap(n)),
+            })
+          }
+        />
+      </div>
+      <div className="curse-row">
+        <span className="field-label">{t('roller.curseDice')}</span>
+        <div className="curse-controls">
+          <button
+            aria-label={`− ${t('roller.curseDice')}`}
+            disabled={character.curseDice <= 0}
+            onClick={() => patch({ curseDice: character.curseDice - 1 })}
+          >
+            −
+          </button>
+          <span className="dots curse-dots">
+            <Dots
+              value={character.curseDice}
+              max={curseCap}
+              editable
+              onSet={(n) => patch({ curseDice: n })}
+            />
+          </span>
+          <button
+            aria-label={`+ ${t('roller.curseDice')}`}
+            disabled={character.curseDice >= curseCap}
+            onClick={() => patch({ curseDice: character.curseDice + 1 })}
+          >
+            +
+          </button>
+        </div>
       </div>
     </section>
   );
@@ -535,6 +582,7 @@ export function CharacterSheet({ character, template, editing }: Props) {
   return (
     <div className="stack">
       <IdentityCard character={character} editing={editing} />
+      <CurseCard character={character} editing={editing} />
 
       <section className="card">
         <h2>{t('sheet.attributes')}</h2>
@@ -617,16 +665,28 @@ export function CharacterSheet({ character, template, editing }: Props) {
 
       <TricksCard character={character} />
 
-      <section className="card">
-        <h2>{t('sheet.torment')}</h2>
-        <textarea
-          className="torment-field"
-          rows={4}
-          placeholder={t('sheet.tormentPlaceholder')}
-          defaultValue={character.torment}
-          onBlur={(e) => patch({ torment: e.target.value })}
-        />
-      </section>
+      <div className="two-col">
+        <section className="card">
+          <h2>{t('sheet.torment')}</h2>
+          <textarea
+            className="torment-field"
+            rows={4}
+            placeholder={t('sheet.tormentPlaceholder')}
+            defaultValue={character.torment}
+            onBlur={(e) => patch({ torment: e.target.value })}
+          />
+        </section>
+        <section className="card">
+          <h2>{t('sheet.damnation')}</h2>
+          <textarea
+            className="torment-field"
+            rows={4}
+            placeholder={t('sheet.tormentPlaceholder')}
+            defaultValue={character.damnation}
+            onBlur={(e) => patch({ damnation: e.target.value })}
+          />
+        </section>
+      </div>
 
       {template.resources.length > 0 && (
         <ResourceTracker character={character} template={template} />

@@ -950,15 +950,34 @@ button.sheet-stat:hover {
   background: transparent;
 }
 
-/* Curse dice stat on the identity card */
+/* Entanglement & curse dice card */
 .curse-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
+}
+.curse-row + .curse-row {
   margin-top: 0.6rem;
   padding-top: 0.6rem;
   border-top: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+/* Foldable sub-sections (role path & goals) */
+.fold {
+  margin-top: 0.6rem;
+}
+.fold summary {
+  cursor: pointer;
+  font-size: 0.82rem;
+  color: var(--muted);
+  user-select: none;
+}
+.fold summary:hover {
+  color: var(--text);
+}
+.fold[open] summary {
+  color: var(--text);
 }
 .curse-controls {
   display: flex;
