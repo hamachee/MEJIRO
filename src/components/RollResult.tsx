@@ -1,19 +1,20 @@
 import { useTranslation } from 'react-i18next';
-import { useRollStore } from '../store/rollStore';
+import { useRollStore, effectiveTotals } from '../store/rollStore';
 
 export function RollResult() {
   const { t } = useTranslation();
   const result = useRollStore((s) => s.result);
-  const request = useRollStore((s) => s.request);
+  const enhancement = useRollStore((s) => s.enhancement);
   const postStatus = useRollStore((s) => s.postStatus);
   const postError = useRollStore((s) => s.postError);
 
   if (!result) return null;
-  const complication = request?.complication ?? 0;
 
+  // Enhancement is added post-roll, so the verdict tracks it live.
+  const { total, passed } = effectiveTotals(result, enhancement);
   const outcome = result.botched
     ? { text: t('result.botch'), cls: 'botch' }
-    : result.passed
+    : passed
       ? { text: t('result.success'), cls: 'success' }
       : { text: t('result.failure'), cls: 'failure' };
 
@@ -41,17 +42,13 @@ export function RollResult() {
       <div className="result-stats">
         <div>
           <span className="muted">{t('result.successes')}</span>
-          <strong>{result.totalSuccesses}</strong>
+          <strong>{total}</strong>
           <span className="muted"> / {result.difficulty}</span>
         </div>
-        <div>
-          <span className="muted">{t('result.threshold')}</span>
-          <strong>{result.thresholdSuccesses}</strong>
-        </div>
-        {complication > 0 && (
+        {enhancement > 0 && (
           <div>
-            <span className="muted">{t('roller.complication')}</span>
-            <strong className="danger-text">−{complication}</strong>
+            <span className="muted">{t('roller.enhancement')}</span>
+            <strong>+{enhancement}</strong>
           </div>
         )}
       </div>

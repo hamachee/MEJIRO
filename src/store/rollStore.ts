@@ -16,34 +16,37 @@ export type PostStatus = 'idle' | 'posting' | 'posted' | 'noWebhook' | 'error';
 interface RollStoreState {
   attributeId: string | null;
   skillId: string | null;
-  enhancement: number;
   difficulty: number;
   curseDice: number;
-  complication: number;
   result: RollResult | null;
   request: RollRequest | null;
   selectedTrickIds: string[];
-  /** Purchase-phase choice: buy off the complication with extra hits. */
-  resolveComplication: boolean;
-  postStatus: PostStatus;
-  postError: string;
+  /**
+   * Enhancement added during the purchase phase, after the dice are seen.
+   * By the book it needs at least one dice hit; the app deliberately does
+   * not enforce that — the table adjudicates.
+   */
+  enhancement: number;
+  /** Complication severity chosen to buy off post-roll: 0 none, 1-3. */
+  complicationSeverity: number;
 
   /** Select an attribute for the pool; tapping the selected one deselects it. */
   toggleAttribute: (id: string) => void;
   /** Select a skill for the pool; tapping the selected one deselects it. */
   toggleSkill: (id: string) => void;
-  setEnhancement: (n: number) => void;
   setDifficulty: (n: number) => void;
   setCurseDice: (n: number) => void;
-  setComplication: (n: number) => void;
-  toggleResolveComplication: () => void;
+  setEnhancement: (n: number) => void;
+  /** Set severity; picking the current one again clears back to none. */
+  setComplicationSeverity: (n: number) => void;
   poolSize: (character: Character) => number;
   /** Roll and immediately post the result to the sheet's webhook. */
   performRoll: (template: SystemTemplate, character: Character) => void;
-  /** Toggle a trick. Adds only when `canAdd` (component enforces budget). */
-  toggleTrick: (trickId: string, canAdd: boolean) => void;
+  toggleTrick: (trickId: string) => void;
   clearResult: () => void;
   resetFor: (template: SystemTemplate) => void;
+  postStatus: PostStatus;
+  postError: string;
 }
 
 // Curseborne: the curse always takes its due — one curse die by default.
@@ -53,27 +56,29 @@ const MAX_COMPLICATION = 3;
 export const useRollStore = create<RollStoreState>((set, get) => ({
   attributeId: null,
   skillId: null,
-  enhancement: 0,
   difficulty: 1,
   curseDice: DEFAULT_CURSE_DICE,
-  complication: 0,
   result: null,
   request: null,
   selectedTrickIds: [],
-  resolveComplication: false,
+  enhancement: 0,
+  complicationSeverity: 0,
   postStatus: 'idle',
   postError: '',
 
   toggleAttribute: (id) =>
     set({ attributeId: get().attributeId === id ? null : id }),
   toggleSkill: (id) => set({ skillId: get().skillId === id ? null : id }),
-  setEnhancement: (n) => set({ enhancement: Math.max(0, n) }),
   setDifficulty: (n) => set({ difficulty: Math.max(0, n) }),
   setCurseDice: (n) => set({ curseDice: Math.max(0, n) }),
-  setComplication: (n) =>
-    set({ complication: Math.min(MAX_COMPLICATION, Math.max(0, n)) }),
-  toggleResolveComplication: () =>
-    set({ resolveComplication: !get().resolveComplication }),
+  setEnhancement: (n) => set({ enhancement: Math.max(0, n) }),
+  setComplicationSeverity: (n) =>
+    set({
+      complicationSeverity:
+        get().complicationSeverity === n
+          ? 0
+          : Math.min(MAX_COMPLICATION, Math.max(0, n)),
+    }),
 
   poolSize: (character) => {
     const { attributeId, skillId } = get();
@@ -83,32 +88,33 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
   },
 
   performRoll: (template, character) => {
-    const { attributeId, skillId, enhancement, difficulty, curseDice, complication } = get();
+    const { attributeId, skillId, difficulty, curseDice } = get();
     const request: RollRequest = {
       attributeId,
       skillId,
       attributeRating: attributeId ? (character.attributes[attributeId] ?? 0) : 0,
       skillRating: skillId ? (character.skills[skillId] ?? 0) : 0,
-      enhancement,
+      // Enhancement is applied in the purchase phase, after the dice are seen.
+      enhancement: 0,
       difficulty,
       curseDice,
-      complication,
     };
     const result = rollEngine(template, request);
     const fresh = {
       result,
       request,
       selectedTrickIds: [],
-      resolveComplication: false,
+      enhancement: 0,
+      complicationSeverity: 0,
     };
 
     const webhookUrl = character.webhookUrl.trim();
     if (!webhookUrl) {
-      set({ ...fresh, postStatus: 'noWebhook', postError: '' });
+      set({ ...fresh, postStatus: 'noWebhook' as const, postError: '' });
       return;
     }
 
-    set({ ...fresh, postStatus: 'posting', postError: '' });
+    set({ ...fresh, postStatus: 'posting' as const, postError: '' });
     postRollResult(template, request, result, {
       webhookUrl,
       lang: useSettingsStore.getState().settings.discordLang,
@@ -123,13 +129,13 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
       );
   },
 
-  toggleTrick: (trickId, canAdd) => {
+  toggleTrick: (trickId) => {
     const { selectedTrickIds } = get();
-    if (selectedTrickIds.includes(trickId)) {
-      set({ selectedTrickIds: selectedTrickIds.filter((id) => id !== trickId) });
-    } else if (canAdd) {
-      set({ selectedTrickIds: [...selectedTrickIds, trickId] });
-    }
+    set({
+      selectedTrickIds: selectedTrickIds.includes(trickId)
+        ? selectedTrickIds.filter((id) => id !== trickId)
+        : [...selectedTrickIds, trickId],
+    });
   },
 
   clearResult: () =>
@@ -137,7 +143,8 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
       result: null,
       request: null,
       selectedTrickIds: [],
-      resolveComplication: false,
+      enhancement: 0,
+      complicationSeverity: 0,
       postStatus: 'idle',
       postError: '',
     }),
@@ -146,15 +153,27 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
     set({
       attributeId: null,
       skillId: null,
-      enhancement: 0,
       difficulty: template.roll.defaultDifficulty,
       curseDice: DEFAULT_CURSE_DICE,
-      complication: 0,
       result: null,
       request: null,
       selectedTrickIds: [],
-      resolveComplication: false,
+      enhancement: 0,
+      complicationSeverity: 0,
       postStatus: 'idle',
       postError: '',
     }),
 }));
+
+/**
+ * Post-roll totals once purchase-phase enhancement is applied. Derived here
+ * so the result card and the purchase card always agree.
+ */
+export function effectiveTotals(
+  result: RollResult,
+  enhancement: number,
+): { total: number; passed: boolean; budget: number } {
+  const total = result.totalSuccesses + Math.max(0, enhancement);
+  const passed = !result.botched && total >= result.difficulty;
+  return { total, passed, budget: Math.max(0, total - result.difficulty) };
+}

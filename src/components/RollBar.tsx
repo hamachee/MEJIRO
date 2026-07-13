@@ -21,14 +21,10 @@ export function RollBar({ character, template }: Props) {
 
   const attributeId = useRollStore((s) => s.attributeId);
   const skillId = useRollStore((s) => s.skillId);
-  const enhancement = useRollStore((s) => s.enhancement);
   const difficulty = useRollStore((s) => s.difficulty);
   const curseDice = useRollStore((s) => s.curseDice);
-  const complication = useRollStore((s) => s.complication);
-  const setEnhancement = useRollStore((s) => s.setEnhancement);
   const setDifficulty = useRollStore((s) => s.setDifficulty);
   const setCurseDice = useRollStore((s) => s.setCurseDice);
-  const setComplication = useRollStore((s) => s.setComplication);
   const performRoll = useRollStore((s) => s.performRoll);
 
   const attr = template.attributes.find((a) => a.id === attributeId);
@@ -36,7 +32,7 @@ export function RollBar({ character, template }: Props) {
   const attrRating = attributeId ? (character.attributes[attributeId] ?? 0) : 0;
   const skillRating = skillId ? (character.skills[skillId] ?? 0) : 0;
   const pool = attrRating + skillRating;
-  const canRoll = pool > 0 || enhancement > 0;
+  const canRoll = pool > 0;
 
   const poolText = [
     attr ? `${label(attr.label, lang)} ${attrRating}` : null,
@@ -67,31 +63,12 @@ export function RollBar({ character, template }: Props) {
           </label>
         )}
         <label className="field">
-          <span className="field-label">{t('roller.enhancement')}</span>
-          <input
-            type="number"
-            min={0}
-            value={enhancement}
-            onChange={(e) => setEnhancement(Number(e.target.value))}
-          />
-        </label>
-        <label className="field">
           <span className="field-label">{t('roller.difficulty')}</span>
           <input
             type="number"
             min={0}
             value={difficulty}
             onChange={(e) => setDifficulty(Number(e.target.value))}
-          />
-        </label>
-        <label className="field">
-          <span className="field-label">{t('roller.complication')}</span>
-          <input
-            type="number"
-            min={0}
-            max={3}
-            value={complication}
-            onChange={(e) => setComplication(Number(e.target.value))}
           />
         </label>
         <button

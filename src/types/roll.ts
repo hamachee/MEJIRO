@@ -16,12 +16,6 @@ export interface RollRequest {
   difficulty: number;
   /** How many pool dice are curse dice (Curseborne). Clamped to pool size. */
   curseDice: number;
-  /**
-   * Complication rating (0-3) attached to the roll. Not applied to the roll
-   * itself: during the purchase phase the player chooses to buy it off with
-   * extra hits (resolve) or accept it (success with consequence).
-   */
-  complication: number;
 }
 
 /** One die and whether/how much it counted. */

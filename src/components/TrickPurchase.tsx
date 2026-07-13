@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRollStore } from '../store/rollStore';
+import { useRollStore, effectiveTotals } from '../store/rollStore';
 import { useSettingsStore } from '../store/settingsStore';
-import { validatePurchase, canAfford } from '../engine/tricks';
+import { validatePurchase } from '../engine/tricks';
 import { postTricks } from '../engine/discord';
 import type { Character } from '../types/character';
 import type { SystemTemplate } from '../types/template';
 
 type PostState = 'idle' | 'posting' | 'done' | 'error';
+
+const SEVERITIES = [0, 1, 2, 3] as const;
+const SEVERITY_KEYS = ['none', 'minor', 'moderate', 'major'] as const;
 
 interface Props {
   character: Character;
@@ -17,11 +20,12 @@ interface Props {
 export function TrickPurchase({ character, template }: Props) {
   const { t } = useTranslation();
   const result = useRollStore((s) => s.result);
-  const request = useRollStore((s) => s.request);
   const selectedTrickIds = useRollStore((s) => s.selectedTrickIds);
   const toggleTrick = useRollStore((s) => s.toggleTrick);
-  const resolveComplication = useRollStore((s) => s.resolveComplication);
-  const toggleResolveComplication = useRollStore((s) => s.toggleResolveComplication);
+  const enhancement = useRollStore((s) => s.enhancement);
+  const setEnhancement = useRollStore((s) => s.setEnhancement);
+  const severity = useRollStore((s) => s.complicationSeverity);
+  const setSeverity = useRollStore((s) => s.setComplicationSeverity);
   const settings = useSettingsStore((s) => s.settings);
 
   const [postState, setPostState] = useState<PostState>('idle');
@@ -29,17 +33,14 @@ export function TrickPurchase({ character, template }: Props) {
 
   if (!result) return null;
 
-  const budget = result.thresholdSuccesses;
-  const complication = request?.complication ?? 0;
+  const { budget } = effectiveTotals(result, enhancement);
   const tricks = character.tricks;
   const selected = tricks.filter((tr) => selectedTrickIds.includes(tr.id));
-  // Resolving the complication spends extra hits like any other purchase.
-  const purchases = resolveComplication
-    ? [...selected, { cost: complication }]
-    : selected;
+  // Buying off the complication spends extra hits like any other purchase.
+  // Overspending is allowed on purpose (a forgotten difficulty is fixable at
+  // the table); the remaining count just goes red and negative.
+  const purchases = severity > 0 ? [...selected, { cost: severity }] : selected;
   const { totalCost, remaining, valid } = validatePurchase(purchases, budget);
-  const canResolve =
-    resolveComplication || canAfford(purchases, { cost: complication }, budget);
 
   const onPost = async () => {
     const url = character.webhookUrl.trim();
@@ -52,11 +53,12 @@ export function TrickPurchase({ character, template }: Props) {
     try {
       await postTricks(
         template,
-        selected,
-        budget,
-        complication > 0
-          ? { rating: complication, resolved: resolveComplication }
-          : undefined,
+        {
+          tricks: selected,
+          budget,
+          enhancement,
+          complication: severity > 0 ? severity : undefined,
+        },
         {
           webhookUrl: url,
           lang: settings.discordLang,
@@ -74,6 +76,9 @@ export function TrickPurchase({ character, template }: Props) {
     }
   };
 
+  const nothingToPost =
+    selected.length === 0 && severity === 0 && enhancement === 0;
+
   return (
     <section className="card">
       <div className="result-head">
@@ -83,29 +88,33 @@ export function TrickPurchase({ character, template }: Props) {
         </span>
       </div>
 
-      {complication > 0 && (
-        <label className={`trick complication ${canResolve ? '' : 'disabled'}`}>
+      <div className="form-row">
+        <label className="field">
+          <span className="field-label">{t('roller.enhancement')}</span>
           <input
-            type="checkbox"
-            checked={resolveComplication}
-            disabled={!canResolve}
-            onChange={toggleResolveComplication}
+            type="number"
+            min={0}
+            value={enhancement}
+            onChange={(e) => setEnhancement(Number(e.target.value))}
           />
-          <span className="trick-body">
-            <span className="trick-name">
-              {t('tricks.resolveComplication', { n: complication })}
-            </span>
-            <span className="muted trick-desc">
-              {resolveComplication
-                ? t('tricks.complicationResolved')
-                : t('tricks.consequence')}
-            </span>
-          </span>
-          <span className="trick-cost">
-            {t('tricks.cost')} {complication}
-          </span>
         </label>
-      )}
+      </div>
+
+      <div className="field">
+        <span className="field-label">{t('tricks.complication')}</span>
+        <div className="severity-row">
+          {SEVERITIES.map((n) => (
+            <button
+              key={n}
+              className={`severity ${severity === n ? 'active' : ''}`}
+              onClick={() => setSeverity(n)}
+            >
+              {t(`tricks.severity.${SEVERITY_KEYS[n]}`)}
+              {n > 0 && <span className="severity-cost">−{n}</span>}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {tricks.length === 0 ? (
         <p className="muted">{t('tricks.none')}</p>
@@ -113,15 +122,13 @@ export function TrickPurchase({ character, template }: Props) {
         <ul className="trick-list">
           {tricks.map((tr) => {
             const isSelected = selectedTrickIds.includes(tr.id);
-            const affordable = isSelected || canAfford(purchases, tr, budget);
             return (
               <li key={tr.id}>
-                <label className={`trick ${affordable ? '' : 'disabled'}`}>
+                <label className="trick">
                   <input
                     type="checkbox"
                     checked={isSelected}
-                    disabled={!affordable}
-                    onChange={() => toggleTrick(tr.id, affordable)}
+                    onChange={() => toggleTrick(tr.id)}
                   />
                   <span className="trick-body">
                     <span className="trick-name">{tr.name}</span>
@@ -140,10 +147,7 @@ export function TrickPurchase({ character, template }: Props) {
         <button
           className="primary"
           onClick={onPost}
-          disabled={
-            postState === 'posting' ||
-            (selected.length === 0 && complication === 0)
-          }
+          disabled={postState === 'posting' || nothingToPost}
         >
           {t('tricks.postTricks')} ({totalCost})
         </button>

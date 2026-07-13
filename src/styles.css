@@ -482,13 +482,33 @@ button.danger:hover:not(:disabled) {
   border-radius: 10px;
   cursor: pointer;
 }
-.trick.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+/* Complication severity picker (purchase phase) */
+.severity-row {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin: 0.25rem 0 0.6rem;
 }
-.trick.complication {
+.severity {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.88rem;
+}
+.severity.active {
+  background: var(--failure);
   border-color: var(--failure);
-  margin-bottom: 0.4rem;
+  color: #fff;
+}
+.severity-cost {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.severity.active .severity-cost {
+  color: rgba(255, 255, 255, 0.8);
 }
 .trick-body {
   flex: 1;

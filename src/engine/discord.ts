@@ -20,7 +20,9 @@ const STRINGS: Record<string, Record<string, string>> = {
     curseDice: 'Curse dice',
     complication: 'Complication',
     complicationResolved: 'Complication resolved',
-    consequence: 'Complication accepted — success with consequence',
+    minor: 'Minor',
+    moderate: 'Moderate',
+    major: 'Major',
     tricks: 'Tricks purchased',
     spent: 'Spent',
     remaining: 'Remaining',
@@ -40,7 +42,9 @@ const STRINGS: Record<string, Record<string, string>> = {
     curseDice: '저주 주사위',
     complication: '컴플리케이션',
     complicationResolved: '컴플리케이션 해소',
-    consequence: '컴플리케이션 수용 — 대가를 치르는 성공',
+    minor: '경미',
+    moderate: '보통',
+    major: '심각',
     tricks: '구매한 트릭',
     spent: '사용',
     remaining: '잔여',
@@ -131,13 +135,6 @@ export function buildRollEmbed(
       inline: true,
     });
   }
-  if (request.complication > 0) {
-    fields.push({
-      name: s(lang, 'complication'),
-      value: `−${request.complication}`,
-      inline: true,
-    });
-  }
 
   return {
     embeds: [
@@ -152,46 +149,58 @@ export function buildRollEmbed(
   };
 }
 
-/** How the roll's complication was handled during the purchase phase. */
-export interface ComplicationOutcome {
-  rating: number;
-  /** True when extra hits were spent to buy it off. */
-  resolved: boolean;
+/** What the player did with their extra hits after the roll. */
+export interface PurchaseSummary {
+  tricks: CharacterTrick[];
+  /** Extra-hit budget after post-roll enhancement. */
+  budget: number;
+  /** Enhancement added during the purchase phase (already in `budget`). */
+  enhancement: number;
+  /** Complication severity bought off (1-3), if any. */
+  complication?: number;
 }
+
+const SEVERITY_KEYS: Record<number, string> = {
+  1: 'minor',
+  2: 'moderate',
+  3: 'major',
+};
 
 /** Build the tricks-purchased embed payload (stage two). */
 export function buildTricksEmbed(
   template: SystemTemplate,
-  tricks: CharacterTrick[],
-  budget: number,
-  complication: ComplicationOutcome | undefined,
+  purchase: PurchaseSummary,
   ctx: DiscordContext,
 ) {
   const { lang } = ctx;
-  const complicationSpent = complication?.resolved ? complication.rating : 0;
-  const spent = tricks.reduce((sum, t) => sum + t.cost, 0) + complicationSpent;
+  const { tricks, budget, enhancement, complication } = purchase;
+  const spent =
+    tricks.reduce((sum, t) => sum + t.cost, 0) + (complication ?? 0);
   const lines = tricks.map((t) => `• ${t.name} (${t.cost})`);
   if (complication) {
-    lines.unshift(
-      complication.resolved
-        ? `• ${s(lang, 'complicationResolved')} (${complication.rating})`
-        : `• ${s(lang, 'consequence')}`,
-    );
+    const sev = s(lang, SEVERITY_KEYS[complication] ?? 'minor');
+    lines.unshift(`• ${s(lang, 'complicationResolved')}: ${sev} (${complication})`);
   }
+
+  const fields = [
+    { name: s(lang, 'spent'), value: `${spent}`, inline: true },
+    { name: s(lang, 'remaining'), value: `${budget - spent}`, inline: true },
+  ];
+  if (enhancement > 0) {
+    fields.unshift({
+      name: s(lang, 'enhancement'),
+      value: `+${enhancement}`,
+      inline: true,
+    });
+  }
+
   return {
     embeds: [
       {
         title: `${ctx.characterName} — ${s(lang, 'tricks')}`,
         description: lines.join('\n') || '—',
         color: THEME_COLOR,
-        fields: [
-          { name: s(lang, 'spent'), value: `${spent}`, inline: true },
-          {
-            name: s(lang, 'remaining'),
-            value: `${budget - spent}`,
-            inline: true,
-          },
-        ],
+        fields,
         footer: { text: label(template.name, lang) },
       },
     ],
@@ -221,16 +230,11 @@ export function postRollResult(
   return post(ctx.webhookUrl, buildRollEmbed(template, request, result, ctx));
 }
 
-/** Post the purchased tricks and complication outcome (stage two). */
+/** Post the purchase-phase summary (stage two). */
 export function postTricks(
   template: SystemTemplate,
-  tricks: CharacterTrick[],
-  budget: number,
-  complication: ComplicationOutcome | undefined,
+  purchase: PurchaseSummary,
   ctx: DiscordContext,
 ): Promise<void> {
-  return post(
-    ctx.webhookUrl,
-    buildTricksEmbed(template, tricks, budget, complication, ctx),
-  );
+  return post(ctx.webhookUrl, buildTricksEmbed(template, purchase, ctx));
 }

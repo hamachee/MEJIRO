@@ -26,7 +26,6 @@ function baseRequest(overrides: Partial<RollRequest> = {}): RollRequest {
     enhancement: 0,
     difficulty: 1,
     curseDice: 0,
-    complication: 0,
     ...overrides,
   };
 }
