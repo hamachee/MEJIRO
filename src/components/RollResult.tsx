@@ -4,10 +4,12 @@ import { useRollStore } from '../store/rollStore';
 export function RollResult() {
   const { t } = useTranslation();
   const result = useRollStore((s) => s.result);
+  const request = useRollStore((s) => s.request);
   const postStatus = useRollStore((s) => s.postStatus);
   const postError = useRollStore((s) => s.postError);
 
   if (!result) return null;
+  const complication = request?.complication ?? 0;
 
   const outcome = result.botched
     ? { text: t('result.botch'), cls: 'botch' }
@@ -46,6 +48,12 @@ export function RollResult() {
           <span className="muted">{t('result.threshold')}</span>
           <strong>{result.thresholdSuccesses}</strong>
         </div>
+        {complication > 0 && (
+          <div>
+            <span className="muted">{t('roller.complication')}</span>
+            <strong className="danger-text">−{complication}</strong>
+          </div>
+        )}
       </div>
 
       {/* Rolls post to Discord automatically; this reports how that went. */}

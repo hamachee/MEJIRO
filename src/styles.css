@@ -486,6 +486,10 @@ button.danger:hover:not(:disabled) {
   opacity: 0.5;
   cursor: not-allowed;
 }
+.trick.complication {
+  border-color: var(--failure);
+  margin-bottom: 0.4rem;
+}
 .trick-body {
   flex: 1;
   display: flex;

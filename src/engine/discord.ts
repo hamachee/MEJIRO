@@ -18,6 +18,9 @@ const STRINGS: Record<string, Record<string, string>> = {
     threshold: 'Extra hits',
     enhancement: 'Enhancement',
     curseDice: 'Curse dice',
+    complication: 'Complication',
+    complicationResolved: 'Complication resolved',
+    consequence: 'Complication accepted — success with consequence',
     tricks: 'Tricks purchased',
     spent: 'Spent',
     remaining: 'Remaining',
@@ -35,6 +38,9 @@ const STRINGS: Record<string, Record<string, string>> = {
     threshold: '초과 히트',
     enhancement: '강화',
     curseDice: '저주 주사위',
+    complication: '컴플리케이션',
+    complicationResolved: '컴플리케이션 해소',
+    consequence: '컴플리케이션 수용 — 대가를 치르는 성공',
     tricks: '구매한 트릭',
     spent: '사용',
     remaining: '잔여',
@@ -125,6 +131,13 @@ export function buildRollEmbed(
       inline: true,
     });
   }
+  if (request.complication > 0) {
+    fields.push({
+      name: s(lang, 'complication'),
+      value: `−${request.complication}`,
+      inline: true,
+    });
+  }
 
   return {
     embeds: [
@@ -139,16 +152,32 @@ export function buildRollEmbed(
   };
 }
 
+/** How the roll's complication was handled during the purchase phase. */
+export interface ComplicationOutcome {
+  rating: number;
+  /** True when extra hits were spent to buy it off. */
+  resolved: boolean;
+}
+
 /** Build the tricks-purchased embed payload (stage two). */
 export function buildTricksEmbed(
   template: SystemTemplate,
   tricks: CharacterTrick[],
   budget: number,
+  complication: ComplicationOutcome | undefined,
   ctx: DiscordContext,
 ) {
   const { lang } = ctx;
-  const spent = tricks.reduce((sum, t) => sum + t.cost, 0);
+  const complicationSpent = complication?.resolved ? complication.rating : 0;
+  const spent = tricks.reduce((sum, t) => sum + t.cost, 0) + complicationSpent;
   const lines = tricks.map((t) => `• ${t.name} (${t.cost})`);
+  if (complication) {
+    lines.unshift(
+      complication.resolved
+        ? `• ${s(lang, 'complicationResolved')} (${complication.rating})`
+        : `• ${s(lang, 'consequence')}`,
+    );
+  }
   return {
     embeds: [
       {
@@ -192,12 +221,16 @@ export function postRollResult(
   return post(ctx.webhookUrl, buildRollEmbed(template, request, result, ctx));
 }
 
-/** Post the purchased tricks (stage two). */
+/** Post the purchased tricks and complication outcome (stage two). */
 export function postTricks(
   template: SystemTemplate,
   tricks: CharacterTrick[],
   budget: number,
+  complication: ComplicationOutcome | undefined,
   ctx: DiscordContext,
 ): Promise<void> {
-  return post(ctx.webhookUrl, buildTricksEmbed(template, tricks, budget, ctx));
+  return post(
+    ctx.webhookUrl,
+    buildTricksEmbed(template, tricks, budget, complication, ctx),
+  );
 }

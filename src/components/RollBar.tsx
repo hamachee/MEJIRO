@@ -24,9 +24,11 @@ export function RollBar({ character, template }: Props) {
   const enhancement = useRollStore((s) => s.enhancement);
   const difficulty = useRollStore((s) => s.difficulty);
   const curseDice = useRollStore((s) => s.curseDice);
+  const complication = useRollStore((s) => s.complication);
   const setEnhancement = useRollStore((s) => s.setEnhancement);
   const setDifficulty = useRollStore((s) => s.setDifficulty);
   const setCurseDice = useRollStore((s) => s.setCurseDice);
+  const setComplication = useRollStore((s) => s.setComplication);
   const performRoll = useRollStore((s) => s.performRoll);
 
   const attr = template.attributes.find((a) => a.id === attributeId);
@@ -80,6 +82,16 @@ export function RollBar({ character, template }: Props) {
             min={0}
             value={difficulty}
             onChange={(e) => setDifficulty(Number(e.target.value))}
+          />
+        </label>
+        <label className="field">
+          <span className="field-label">{t('roller.complication')}</span>
+          <input
+            type="number"
+            min={0}
+            max={3}
+            value={complication}
+            onChange={(e) => setComplication(Number(e.target.value))}
           />
         </label>
         <button
