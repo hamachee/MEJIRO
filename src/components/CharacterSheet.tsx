@@ -132,45 +132,71 @@ function IdentityCard({
     (e: React.FocusEvent<HTMLInputElement>) =>
       patch({ identity: { ...identity, [field]: e.target.value.trim() } });
 
-  // Role path and aspirations, folded away until needed. Goals shift during
-  // play, so the fields stay editable in both modes.
+  // Role path and aspirations, folded away until needed. Like the rest of
+  // the card, these only accept changes in edit mode; play mode shows the
+  // current values read-only.
   const goalsFold = (
     <details className="fold">
       <summary>{t('sheet.pathGoals')}</summary>
-      <div className="form-row">
-        <label className="field grow">
-          <span className="field-label">{t('sheet.rolePath')}</span>
-          <input defaultValue={identity.rolePath} onBlur={setIdentity('rolePath')} />
-        </label>
-      </div>
-      <div className="form-row">
-        <label className="field grow">
-          <span className="field-label">{t('sheet.shortTerm1')}</span>
-          <input defaultValue={identity.shortTerm1} onBlur={setIdentity('shortTerm1')} />
-        </label>
-        <label className="field grow">
-          <span className="field-label">{t('sheet.shortTerm2')}</span>
-          <input defaultValue={identity.shortTerm2} onBlur={setIdentity('shortTerm2')} />
-        </label>
-      </div>
-      <div className="form-row">
-        <label className="field grow">
-          <span className="field-label">{t('sheet.longTerm')}</span>
-          <input defaultValue={identity.longTerm} onBlur={setIdentity('longTerm')} />
-        </label>
-      </div>
+      {editing ? (
+        <>
+          <div className="form-row">
+            <label className="field grow">
+              <span className="field-label">{t('sheet.rolePath')}</span>
+              <input defaultValue={identity.rolePath} onBlur={setIdentity('rolePath')} />
+            </label>
+          </div>
+          <div className="form-row">
+            <label className="field grow">
+              <span className="field-label">{t('sheet.shortTerm1')}</span>
+              <input defaultValue={identity.shortTerm1} onBlur={setIdentity('shortTerm1')} />
+            </label>
+            <label className="field grow">
+              <span className="field-label">{t('sheet.shortTerm2')}</span>
+              <input defaultValue={identity.shortTerm2} onBlur={setIdentity('shortTerm2')} />
+            </label>
+          </div>
+          <div className="form-row">
+            <label className="field grow">
+              <span className="field-label">{t('sheet.longTerm')}</span>
+              <input defaultValue={identity.longTerm} onBlur={setIdentity('longTerm')} />
+            </label>
+          </div>
+        </>
+      ) : (
+        <div className="fold-readonly">
+          <div>
+            <span className="field-label">{t('sheet.rolePath')}</span> {identity.rolePath || '—'}
+          </div>
+          <div>
+            <span className="field-label">{t('sheet.shortTerm1')}</span>{' '}
+            {identity.shortTerm1 || '—'}
+          </div>
+          <div>
+            <span className="field-label">{t('sheet.shortTerm2')}</span>{' '}
+            {identity.shortTerm2 || '—'}
+          </div>
+          <div>
+            <span className="field-label">{t('sheet.longTerm')}</span> {identity.longTerm || '—'}
+          </div>
+        </div>
+      )}
     </details>
   );
 
   const motifsFold = (
     <details className="fold">
       <summary>{t('sheet.motifs')}</summary>
-      <textarea
-        rows={3}
-        placeholder={t('sheet.tormentPlaceholder')}
-        defaultValue={identity.motifs}
-        onBlur={(e) => patch({ identity: { ...identity, motifs: e.target.value } })}
-      />
+      {editing ? (
+        <textarea
+          rows={3}
+          placeholder={t('sheet.tormentPlaceholder')}
+          defaultValue={identity.motifs}
+          onBlur={(e) => patch({ identity: { ...identity, motifs: e.target.value } })}
+        />
+      ) : (
+        <p className="muted fold-readonly">{identity.motifs || '—'}</p>
+      )}
     </details>
   );
 

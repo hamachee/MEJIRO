@@ -1014,6 +1014,13 @@ button.sheet-stat:hover {
   padding-top: 0.6rem;
   border-top: 1px dashed var(--divider-strong);
 }
+/* These rows have no <h2>, so their labels double as the card's heading -
+   sized and weighted to match, rather than the small muted field-label. */
+.curse-row > .field-label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+}
 
 /* Foldable sub-sections (role path & goals) */
 .fold {
@@ -1030,6 +1037,20 @@ button.sheet-stat:hover {
 }
 .fold[open] summary {
   color: var(--text);
+}
+.fold-readonly {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+  font-size: 0.92rem;
+}
+p.fold-readonly {
+  margin: 0.5rem 0 0;
+  white-space: pre-wrap;
+}
+.fold-readonly .field-label {
+  margin-right: 0.4rem;
 }
 .curse-controls {
   display: flex;
