@@ -3,6 +3,15 @@ import type { Character } from '../types/character';
 import type { SystemTemplate } from '../types/template';
 import type { RollRequest, RollResult } from '../types/roll';
 import { roll as rollEngine } from '../engine/roll';
+import { postRollResult } from '../engine/discord';
+import { useSettingsStore } from './settingsStore';
+
+/**
+ * Discord delivery state for the current roll. Rolls post automatically so
+ * every roll the table should see actually reaches the channel — a roll
+ * without a webhook is flagged, not silently private.
+ */
+export type PostStatus = 'idle' | 'posting' | 'posted' | 'noWebhook' | 'error';
 
 interface RollStoreState {
   attributeId: string | null;
@@ -13,6 +22,8 @@ interface RollStoreState {
   result: RollResult | null;
   request: RollRequest | null;
   selectedTrickIds: string[];
+  postStatus: PostStatus;
+  postError: string;
 
   /** Select an attribute for the pool; tapping the selected one deselects it. */
   toggleAttribute: (id: string) => void;
@@ -22,6 +33,7 @@ interface RollStoreState {
   setDifficulty: (n: number) => void;
   setCurseDice: (n: number) => void;
   poolSize: (character: Character) => number;
+  /** Roll and immediately post the result to the sheet's webhook. */
   performRoll: (template: SystemTemplate, character: Character) => void;
   /** Toggle a trick. Adds only when `canAdd` (component enforces budget). */
   toggleTrick: (trickId: string, canAdd: boolean) => void;
@@ -38,6 +50,8 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
   result: null,
   request: null,
   selectedTrickIds: [],
+  postStatus: 'idle',
+  postError: '',
 
   toggleAttribute: (id) =>
     set({ attributeId: get().attributeId === id ? null : id }),
@@ -65,7 +79,26 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
       curseDice,
     };
     const result = rollEngine(template, request);
-    set({ result, request, selectedTrickIds: [] });
+
+    const webhookUrl = character.webhookUrl.trim();
+    if (!webhookUrl) {
+      set({ result, request, selectedTrickIds: [], postStatus: 'noWebhook', postError: '' });
+      return;
+    }
+
+    set({ result, request, selectedTrickIds: [], postStatus: 'posting', postError: '' });
+    postRollResult(template, request, result, {
+      webhookUrl,
+      lang: useSettingsStore.getState().settings.discordLang,
+      characterName: character.name,
+    })
+      .then(() => set({ postStatus: 'posted' }))
+      .catch((err) =>
+        set({
+          postStatus: 'error',
+          postError: err instanceof Error ? err.message : String(err),
+        }),
+      );
   },
 
   toggleTrick: (trickId, canAdd) => {
@@ -77,7 +110,8 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
     }
   },
 
-  clearResult: () => set({ result: null, request: null, selectedTrickIds: [] }),
+  clearResult: () =>
+    set({ result: null, request: null, selectedTrickIds: [], postStatus: 'idle', postError: '' }),
 
   resetFor: (template) =>
     set({
@@ -89,5 +123,7 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
       result: null,
       request: null,
       selectedTrickIds: [],
+      postStatus: 'idle',
+      postError: '',
     }),
 }));

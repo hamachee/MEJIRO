@@ -5,7 +5,7 @@ import { useRollStore } from '../store/rollStore';
 import { label } from '../lib/localize';
 import { useLang } from '../lib/useLang';
 import type { Character, RatedItem } from '../types/character';
-import type { Stat, SystemTemplate } from '../types/template';
+import type { L10n as L10nLabel, Stat, SystemTemplate } from '../types/template';
 import { ResourceTracker } from './ResourceTracker';
 
 function uid(): string {
@@ -13,6 +13,23 @@ function uid(): string {
 }
 
 const MAX_DOTS = 5;
+
+/**
+ * A localised label with the English original as a small sublabel when the
+ * UI language differs — non-English template labels are unofficial fan
+ * translations, so the source term stays visible.
+ */
+function L({ l10n }: { l10n: L10nLabel }) {
+  const lang = useLang();
+  const localized = label(l10n, lang);
+  const showEn = lang !== 'en' && l10n.en && l10n.en !== localized;
+  return (
+    <>
+      {localized}
+      {showEn && <small className="label-en">{l10n.en}</small>}
+    </>
+  );
+}
 
 /**
  * A dot rating. In edit mode dots are clickable: clicking dot n sets the
@@ -67,11 +84,12 @@ function SheetStat({
   onToggle: () => void;
   onSet: (n: number) => void;
 }) {
-  const lang = useLang();
   if (editing) {
     return (
       <div className="sheet-stat editing">
-        <span className="stat-label">{label(stat.label, lang)}</span>
+        <span className="stat-label">
+          <L l10n={stat.label} />
+        </span>
         <Dots value={value} editable onSet={onSet} />
       </div>
     );
@@ -82,7 +100,9 @@ function SheetStat({
       onClick={onToggle}
       aria-pressed={selected}
     >
-      <span className="stat-label">{label(stat.label, lang)}</span>
+      <span className="stat-label">
+        <L l10n={stat.label} />
+      </span>
       <Dots value={value} />
     </button>
   );
@@ -152,6 +172,17 @@ function IdentityCard({
             onSet={(n) => patch({ identity: { ...identity, entanglement: n } })}
           />
         </div>
+      </div>
+      <div className="form-row">
+        <label className="field grow">
+          <span className="field-label">{t('sheet.webhook')}</span>
+          <input
+            type="url"
+            placeholder="https://discord.com/api/webhooks/…"
+            defaultValue={character.webhookUrl}
+            onBlur={(e) => patch({ webhookUrl: e.target.value.trim() })}
+          />
+        </label>
       </div>
     </section>
   );
@@ -409,7 +440,6 @@ interface Props {
  */
 export function CharacterSheet({ character, template, editing }: Props) {
   const { t } = useTranslation();
-  const lang = useLang();
   const setStat = useCharacterStore((s) => s.setStat);
   const patch = useCharacterStore((s) => s.patch);
 
@@ -417,9 +447,6 @@ export function CharacterSheet({ character, template, editing }: Props) {
   const skillId = useRollStore((s) => s.skillId);
   const toggleAttribute = useRollStore((s) => s.toggleAttribute);
   const toggleSkill = useRollStore((s) => s.toggleSkill);
-
-  const categoryLabel = (id: string) =>
-    label(template.categories.find((c) => c.id === id)?.label ?? { en: id }, lang);
 
   return (
     <div className="stack">
@@ -430,7 +457,9 @@ export function CharacterSheet({ character, template, editing }: Props) {
         <div className="attr-grid">
           {template.categories.map((cat) => (
             <div key={cat.id} className="attr-col">
-              <h3 className="group-title">{categoryLabel(cat.id)}</h3>
+              <h3 className="group-title">
+                <L l10n={cat.label} />
+              </h3>
               {template.attributes
                 .filter((a) => a.category === cat.id)
                 .map((stat) => (
@@ -486,7 +515,9 @@ export function CharacterSheet({ character, template, editing }: Props) {
 
       <ConditionsCard character={character} />
       <TricksCard character={character} />
-      <ResourceTracker character={character} template={template} />
+      {template.resources.length > 0 && (
+        <ResourceTracker character={character} template={template} />
+      )}
     </div>
   );
 }

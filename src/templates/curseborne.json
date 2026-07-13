@@ -48,7 +48,5 @@
     "enhancementMode": "flatSuccess",
     "enhancementRequiresHit": true
   },
-  "resources": [
-    { "id": "momentum", "label": { "en": "Momentum", "ko": "기세" }, "default": 0 }
-  ]
+  "resources": []
 }

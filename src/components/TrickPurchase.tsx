@@ -20,7 +20,6 @@ export function TrickPurchase({ character, template }: Props) {
   const selectedTrickIds = useRollStore((s) => s.selectedTrickIds);
   const toggleTrick = useRollStore((s) => s.toggleTrick);
   const settings = useSettingsStore((s) => s.settings);
-  const activeWebhookUrl = useSettingsStore((s) => s.activeWebhookUrl);
 
   const [postState, setPostState] = useState<PostState>('idle');
   const [error, setError] = useState('');
@@ -33,7 +32,7 @@ export function TrickPurchase({ character, template }: Props) {
   const { totalCost, remaining, valid } = validatePurchase(selected, budget);
 
   const onPost = async () => {
-    const url = activeWebhookUrl();
+    const url = character.webhookUrl.trim();
     if (!url) {
       setPostState('error');
       setError(t('result.noWebhook'));

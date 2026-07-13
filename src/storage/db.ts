@@ -8,10 +8,6 @@ export interface AppSettings {
   uiLang: string;
   /** Language used for Discord output. */
   discordLang: string;
-  /** Named Discord webhook URLs (label -> url). */
-  webhooks: { id: string; label: string; url: string }[];
-  /** Id of the webhook currently selected for posting. */
-  activeWebhookId: string | null;
 }
 
 interface MejiroDB extends DBSchema {
@@ -61,6 +57,4 @@ export const DEFAULT_SETTINGS: AppSettings = {
   id: 'app',
   uiLang: 'en',
   discordLang: 'en',
-  webhooks: [],
-  activeWebhookId: null,
 };

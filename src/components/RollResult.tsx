@@ -1,60 +1,19 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRollStore } from '../store/rollStore';
-import { useCharacterStore } from '../store/characterStore';
-import { useSettingsStore } from '../store/settingsStore';
-import { postRollResult } from '../engine/discord';
-import type { SystemTemplate } from '../types/template';
 
-type PostState = 'idle' | 'posting' | 'done' | 'error';
-
-interface Props {
-  template: SystemTemplate;
-}
-
-export function RollResult({ template }: Props) {
+export function RollResult() {
   const { t } = useTranslation();
   const result = useRollStore((s) => s.result);
-  const request = useRollStore((s) => s.request);
-  const character = useCharacterStore((s) => s.active);
-  const settings = useSettingsStore((s) => s.settings);
-  const activeWebhookUrl = useSettingsStore((s) => s.activeWebhookUrl);
+  const postStatus = useRollStore((s) => s.postStatus);
+  const postError = useRollStore((s) => s.postError);
 
-  const [postState, setPostState] = useState<PostState>('idle');
-  const [error, setError] = useState('');
-
-  if (!result || !request || !character) return null;
+  if (!result) return null;
 
   const outcome = result.botched
     ? { text: t('result.botch'), cls: 'botch' }
     : result.passed
       ? { text: t('result.success'), cls: 'success' }
       : { text: t('result.failure'), cls: 'failure' };
-
-  const onPost = async () => {
-    const url = activeWebhookUrl();
-    if (!url) {
-      setPostState('error');
-      setError(t('result.noWebhook'));
-      return;
-    }
-    setPostState('posting');
-    try {
-      await postRollResult(template, request, result, {
-        webhookUrl: url,
-        lang: settings.discordLang,
-        characterName: character.name,
-      });
-      setPostState('done');
-    } catch (err) {
-      setPostState('error');
-      setError(
-        t('result.postError', {
-          message: err instanceof Error ? err.message : String(err),
-        }),
-      );
-    }
-  };
 
   return (
     <section className="card result">
@@ -89,18 +48,22 @@ export function RollResult({ template }: Props) {
         </div>
       </div>
 
-      <div className="form-row">
-        <button
-          className="primary"
-          onClick={onPost}
-          disabled={postState === 'posting'}
-        >
-          {t('result.postToDiscord')}
-        </button>
-        {postState === 'done' && (
+      {/* Rolls post to Discord automatically; this reports how that went. */}
+      <div className="post-status">
+        {postStatus === 'posting' && (
+          <span className="muted">{t('result.posting')}</span>
+        )}
+        {postStatus === 'posted' && (
           <span className="ok">{t('result.posted')}</span>
         )}
-        {postState === 'error' && <span className="danger-text">{error}</span>}
+        {postStatus === 'noWebhook' && (
+          <span className="danger-text">⚠ {t('result.noWebhook')}</span>
+        )}
+        {postStatus === 'error' && (
+          <span className="danger-text">
+            ⚠ {t('result.postError', { message: postError })}
+          </span>
+        )}
       </div>
     </section>
   );

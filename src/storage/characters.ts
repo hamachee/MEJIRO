@@ -46,6 +46,7 @@ export function newCharacter(
     templateId: template.id,
     name: name.trim() || 'Unnamed',
     identity: { lineage: '', family: '', entanglement: 0 },
+    webhookUrl: '',
     attributes: Object.fromEntries(template.attributes.map((a) => [a.id, 1])),
     skills: Object.fromEntries(template.skills.map((s) => [s.id, 0])),
     edges: [],
@@ -74,6 +75,7 @@ export function normalizeCharacter(raw: Partial<Character> & Pick<Character, 'id
     updatedAt: now,
     ...raw,
     identity: { lineage: '', family: '', entanglement: 0, ...raw.identity },
+    webhookUrl: raw.webhookUrl ?? '',
     edges: raw.edges ?? [],
     paths: raw.paths ?? [],
     conditions: raw.conditions ?? [],
@@ -111,12 +113,16 @@ export async function deleteCharacter(id: string): Promise<void> {
   await db.delete('characters', id);
 }
 
-/** Serialise a character to a portable JSON envelope. */
+/**
+ * Serialise a character to a portable JSON envelope. The webhook URL is
+ * stripped: it grants posting access to a Discord channel, so it must not
+ * leak when a sheet is shared.
+ */
 export function exportCharacter(character: Character): string {
   const envelope: CharacterExport = {
     format: 'mejiro-character',
     version: 1,
-    character,
+    character: { ...character, webhookUrl: '' },
   };
   return JSON.stringify(envelope, null, 2);
 }

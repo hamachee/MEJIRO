@@ -65,6 +65,13 @@ export interface Character {
   templateId: string;
   name: string;
   identity: Identity;
+  /**
+   * Discord webhook this sheet posts to. Per-character so each game/channel
+   * pairs with its own sheet. Stripped from JSON exports — a webhook URL
+   * grants posting access to the channel and must not travel with shared
+   * sheets.
+   */
+  webhookUrl: string;
   attributes: Record<string, number>;
   skills: Record<string, number>;
   edges: RatedItem[];

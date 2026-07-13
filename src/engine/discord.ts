@@ -77,9 +77,17 @@ export function buildRollEmbed(
   const attr =
     template.attributes.find((a) => a.id === request.attributeId);
   const skill = template.skills.find((sk) => sk.id === request.skillId);
+  // Non-English stat names are unofficial translations; keep the English
+  // original alongside so everyone at the table recognises the roll.
+  const statName = (l10n: Parameters<typeof label>[0]) => {
+    const localized = label(l10n, lang);
+    return l10n.en && l10n.en !== localized
+      ? `${localized} (${l10n.en})`
+      : localized;
+  };
   const poolParts = [
-    attr ? `${label(attr.label, lang)} ${request.attributeRating}` : null,
-    skill ? `${label(skill.label, lang)} ${request.skillRating}` : null,
+    attr ? `${statName(attr.label)} ${request.attributeRating}` : null,
+    skill ? `${statName(skill.label)} ${request.skillRating}` : null,
     request.enhancement > 0
       ? `${s(lang, 'enhancement')} +${request.enhancement}`
       : null,

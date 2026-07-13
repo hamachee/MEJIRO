@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useCharacterStore } from '../store/characterStore';
 import { useRollStore } from '../store/rollStore';
 import { getTemplate } from '../templates';
+import { useWide } from '../lib/useWide';
 import { CharacterSheet } from './CharacterSheet';
 import { RollBar } from './RollBar';
 import { RollResult } from './RollResult';
@@ -18,6 +19,7 @@ export function CharacterView() {
   const result = useRollStore((s) => s.result);
   const clearResult = useRollStore((s) => s.clearResult);
   const [editing, setEditing] = useState(false);
+  const wide = useWide();
 
   useEffect(() => {
     if (id) open(id);
@@ -38,6 +40,14 @@ export function CharacterView() {
     );
   }
 
+  const resultPanel = result && (
+    <>
+      <RollResult />
+      <TrickPurchase character={active} template={template} />
+      <button onClick={clearResult}>{t('common.close')}</button>
+    </>
+  );
+
   return (
     <div className="character-view">
       <div className="toolbar">
@@ -52,11 +62,16 @@ export function CharacterView() {
         </button>
       </div>
 
-      <CharacterSheet character={active} template={template} editing={editing} />
+      {/* Desktop: the result sits in a sticky side column next to the sheet.
+          Mobile: it opens as a modal over the sheet. */}
+      <div className={`play-layout ${wide && result ? 'with-result' : ''}`}>
+        <CharacterSheet character={active} template={template} editing={editing} />
+        {wide && result && <aside className="result-col stack">{resultPanel}</aside>}
+      </div>
 
       {!editing && <RollBar character={active} template={template} />}
 
-      {result && (
+      {!wide && result && (
         <div className="modal-scrim" onClick={clearResult}>
           <div
             className="modal stack"
@@ -64,9 +79,7 @@ export function CharacterView() {
             aria-modal="true"
             onClick={(e) => e.stopPropagation()}
           >
-            <RollResult template={template} />
-            <TrickPurchase character={active} template={template} />
-            <button onClick={clearResult}>{t('common.close')}</button>
+            {resultPanel}
           </div>
         </div>
       )}

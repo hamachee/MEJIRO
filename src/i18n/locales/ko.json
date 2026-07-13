@@ -40,7 +40,8 @@
     "paths": "패스",
     "conditions": "상태",
     "add": "추가",
-    "namePlaceholder": "이름"
+    "namePlaceholder": "이름",
+    "webhook": "디스코드 웹훅 URL"
   },
   "roller": {
     "title": "주사위 풀",
@@ -63,9 +64,10 @@
     "threshold": "초과 히트",
     "dice": "주사위",
     "postToDiscord": "디스코드에 전송",
+    "posting": "디스코드에 전송 중…",
     "posted": "디스코드에 전송됨",
     "postError": "디스코드 전송 실패: {{message}}",
-    "noWebhook": "먼저 설정에서 디스코드 웹훅을 지정하세요."
+    "noWebhook": "전송 안 됨 — 이 시트에 웹훅이 없습니다. 시트 편집에서 추가하세요."
   },
   "tricks": {
     "title": "트릭",
@@ -99,6 +101,7 @@
     "activeWebhook": "활성 웹훅",
     "noWebhooks": "아직 웹훅이 없습니다.",
     "save": "저장",
+    "webhookMoved": "디스코드 웹훅은 이제 캐릭터 시트별로 설정합니다 (시트 편집 → 디스코드 웹훅 URL).",
     "fanDisclaimer": "MEJIRO는 비공식·무료·비상업 팬 도구이며, 어떤 게임 출판사와도 제휴하거나 승인을 받지 않았습니다. 게임 시스템 이름은 각 권리자의 소유입니다."
   },
   "common": {

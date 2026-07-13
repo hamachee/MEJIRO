@@ -823,6 +823,37 @@ button.sheet-stat:hover {
   border-color: #c04a4a;
 }
 
+/* English sublabel for unofficial translations */
+.label-en {
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin-left: 0.35rem;
+  font-weight: 400;
+}
+.sheet-stat.selected .label-en {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Desktop: sheet + result side column */
+.play-layout.with-result {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 1rem;
+  align-items: start;
+}
+.result-col {
+  position: sticky;
+  top: 4.5rem;
+  max-height: calc(100vh - 12rem);
+  overflow-y: auto;
+}
+
+/* Discord post status on the result card */
+.post-status {
+  margin-top: 0.5rem;
+  font-size: 0.88rem;
+}
+
 /* Result modal */
 .modal-scrim {
   position: fixed;
