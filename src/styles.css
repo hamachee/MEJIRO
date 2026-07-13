@@ -1,3 +1,5 @@
+/* Default palette = the Curseborne rule scheme, as a pre-JS fallback.
+   src/lib/theme.ts overwrites every variable per the chosen scheme mode. */
 :root {
   --bg: #14141f;
   --bg-2: #1c1c2b;
@@ -11,6 +13,23 @@
   --success: #4caf7d;
   --failure: #b05454;
   --danger: #c0563f;
+  --header-bg: rgba(20, 20, 31, 0.9);
+  --bar-bg: rgba(28, 28, 43, 0.95);
+  --scrim: rgba(10, 10, 18, 0.65);
+  --divider: rgba(255, 255, 255, 0.05);
+  --divider-strong: rgba(255, 255, 255, 0.08);
+  --on-accent: #ffffff;
+  --success-text: #7ee0ac;
+  --failure-text: #f0a0a0;
+  --danger-text: #f0b8ac;
+  --failure-bright: #ff9a9a;
+  --failure-terminal: #ff6b6b;
+  --curse: #b44ae0;
+  --curse-strong: #7d2ea8;
+  --curse-hit-border: #cf6cf2;
+  --curse-text: #dfa2f5;
+  --wicked-text: #dfa2f5;
+  --cruel-text: #f08cc0;
   --radius: 12px;
   color-scheme: dark;
 }
@@ -48,7 +67,7 @@ body {
   gap: 1rem;
   padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--border);
-  background: rgba(20, 20, 31, 0.9);
+  background: var(--header-bg);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -71,6 +90,7 @@ body {
   height: 38px;
   border-radius: 10px;
   background: var(--accent-2);
+  color: var(--on-accent);
   font-size: 1.2rem;
   font-weight: 700;
 }
@@ -102,7 +122,7 @@ body {
   background: var(--card);
 }
 .app-nav a.active {
-  color: var(--text);
+  color: var(--on-accent);
   background: var(--accent-2);
 }
 
@@ -241,17 +261,18 @@ button:disabled {
 button.primary {
   background: var(--accent-2);
   border-color: var(--accent);
+  color: var(--on-accent);
 }
 button.primary:hover:not(:disabled) {
   background: var(--accent);
 }
 button.danger {
   border-color: var(--danger);
-  color: #f0b8ac;
+  color: var(--danger-text);
 }
 button.danger:hover:not(:disabled) {
   background: var(--danger);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 .muted {
@@ -268,7 +289,7 @@ button.danger:hover:not(:disabled) {
   align-self: center;
 }
 .danger-text {
-  color: #f0a08c;
+  color: var(--danger-text);
   align-self: center;
   font-size: 0.85rem;
 }
@@ -326,7 +347,7 @@ button.danger:hover:not(:disabled) {
   align-items: center;
   justify-content: space-between;
   padding: 0.25rem 0;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+  border-bottom: 1px dashed var(--divider);
 }
 .stat-label {
   font-size: 0.95rem;
@@ -369,6 +390,7 @@ button.danger:hover:not(:disabled) {
 .toggle.active {
   background: var(--accent-2);
   border-color: var(--accent);
+  color: var(--on-accent);
 }
 .toggle-rating {
   font-variant-numeric: tabular-nums;
@@ -376,7 +398,7 @@ button.danger:hover:not(:disabled) {
   color: var(--muted);
 }
 .toggle.active .toggle-rating {
-  color: #fff;
+  color: var(--on-accent);
 }
 
 /* Pool summary */
@@ -418,27 +440,27 @@ button.danger:hover:not(:disabled) {
 }
 .badge.success {
   background: rgba(76, 175, 125, 0.18);
-  color: #7ee0ac;
+  color: var(--success-text);
   border-color: var(--success);
 }
 .badge.failure {
   background: rgba(176, 84, 84, 0.18);
-  color: #f0a0a0;
+  color: var(--failure-text);
   border-color: var(--failure);
 }
 .badge.botch {
   background: rgba(138, 26, 26, 0.28);
-  color: #ff9a9a;
-  border-color: #8a1a1a;
+  color: var(--failure-bright);
+  border-color: var(--failure-terminal);
 }
 .badge.wicked {
   background: rgba(180, 74, 224, 0.2);
-  color: #dfa2f5;
-  border-color: #b44ae0;
+  color: var(--wicked-text);
+  border-color: var(--curse);
 }
 .badge.cruel {
   background: rgba(120, 30, 90, 0.3);
-  color: #f08cc0;
+  color: var(--cruel-text);
   border-color: #a03470;
 }
 
@@ -463,7 +485,7 @@ button.danger:hover:not(:disabled) {
 .die.hit {
   background: var(--accent-2);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 .die.exploded {
   box-shadow: 0 0 0 2px rgba(255, 200, 90, 0.5);
@@ -521,7 +543,7 @@ button.danger:hover:not(:disabled) {
 .severity.active {
   background: var(--failure);
   border-color: var(--failure);
-  color: #fff;
+  color: var(--on-accent);
 }
 .severity-cost {
   font-size: 0.78rem;
@@ -575,7 +597,7 @@ button.danger:hover:not(:disabled) {
 /* Resources */
 .resource {
   padding: 0.5rem 0;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+  border-bottom: 1px dashed var(--divider);
 }
 .resource-head {
   display: flex;
@@ -648,6 +670,35 @@ button.danger:hover:not(:disabled) {
 
 .lang-switcher {
   padding: 0.35rem 0.5rem;
+}
+.theme-toggle {
+  padding: 0.35rem 0.5rem;
+  line-height: 1;
+}
+
+/* Custom scheme editor (settings) */
+.swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+}
+.swatch {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+.swatch input[type='color'] {
+  width: 34px;
+  height: 26px;
+  padding: 0.1rem;
+  flex-shrink: 0;
+  cursor: pointer;
 }
 
 /* Character view toolbar */
@@ -760,9 +811,10 @@ button.sheet-stat:hover {
 .sheet-stat.selected {
   background: var(--accent-2);
   border-color: var(--accent);
+  color: var(--on-accent);
 }
 .sheet-stat.editing {
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+  border-bottom: 1px dashed var(--divider);
   border-radius: 0;
 }
 .hint {
@@ -785,7 +837,7 @@ button.sheet-stat:hover {
   max-width: 1100px;
   margin: 0 auto;
   padding: 0.6rem 1rem;
-  background: rgba(28, 28, 43, 0.95);
+  background: var(--bar-bg);
   border-top: 1px solid var(--border);
   backdrop-filter: blur(8px);
 }
@@ -883,11 +935,11 @@ button.sheet-stat:hover {
 }
 .injury-level.lit .injury-level-label {
   opacity: 1;
-  color: #ff9a9a;
+  color: var(--failure-bright);
   font-weight: 700;
 }
 .injury-level.terminal.lit .injury-level-label {
-  color: #ff6b6b;
+  color: var(--failure-terminal);
   text-shadow: 0 0 6px rgba(255, 60, 60, 0.5);
 }
 .injury-level.terminal .injury-level-label {
@@ -896,8 +948,8 @@ button.sheet-stat:hover {
 /* The Taken-Out box reads as the gravest mark. */
 .injury-level.terminal .injury-box.marked,
 .injury-level.terminal .injury-box.marked:hover:not(:disabled) {
-  background: #8a1a1a;
-  border-color: #ff6b6b;
+  background: var(--failure-terminal);
+  border-color: var(--failure-bright);
 }
 
 /* Named lists (edges, paths, tricks) */
@@ -914,7 +966,7 @@ button.sheet-stat:hover {
   align-items: center;
   gap: 0.6rem;
   padding: 0.3rem 0;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+  border-bottom: 1px dashed var(--divider);
 }
 .named-name {
   flex: 1;
@@ -946,7 +998,7 @@ button.sheet-stat:hover {
   font-size: 0.8rem;
 }
 .condition button:hover {
-  color: #ff9a9a;
+  color: var(--failure-bright);
   background: transparent;
 }
 
@@ -960,7 +1012,7 @@ button.sheet-stat:hover {
 .curse-row + .curse-row {
   margin-top: 0.6rem;
   padding-top: 0.6rem;
-  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+  border-top: 1px dashed var(--divider-strong);
 }
 
 /* Foldable sub-sections (role path & goals) */
@@ -993,20 +1045,20 @@ button.sheet-stat:hover {
   border-radius: 8px;
 }
 .curse-dots .dot {
-  border-color: #b44ae0;
+  border-color: var(--curse);
 }
 .curse-dots .dot.filled {
-  background: #b44ae0;
+  background: var(--curse);
 }
 .curse-dots button.dot:hover {
-  background: #7d2ea8;
+  background: var(--curse-strong);
 }
 .curse-dots button.dot.filled:hover {
-  background: #b44ae0;
+  background: var(--curse);
 }
 .curse-count {
   align-self: center;
-  color: #dfa2f5;
+  color: var(--curse-text);
   font-variant-numeric: tabular-nums;
   font-weight: 600;
   padding: 0.4rem 0.2rem;
@@ -1014,13 +1066,13 @@ button.sheet-stat:hover {
 
 /* Curse dice — vivid violet, clearly not the failure red */
 .die.curse {
-  border-color: #b44ae0;
-  box-shadow: inset 0 0 0 1px #b44ae0;
+  border-color: var(--curse);
+  box-shadow: inset 0 0 0 1px var(--curse);
 }
 .die.curse.hit {
-  background: #7d2ea8;
-  border-color: #cf6cf2;
-  color: #fff;
+  background: var(--curse-strong);
+  border-color: var(--curse-hit-border);
+  color: var(--on-accent);
 }
 
 /* English sublabel for unofficial translations */
@@ -1077,7 +1129,7 @@ button.sheet-stat:hover {
 .page-tab.active {
   background: var(--accent-2);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 /* Card grids (gear, spells) */
@@ -1153,7 +1205,7 @@ button.sheet-stat:hover {
   position: fixed;
   inset: 0;
   z-index: 40;
-  background: rgba(10, 10, 18, 0.65);
+  background: var(--scrim);
   backdrop-filter: blur(3px);
   display: grid;
   place-items: center;

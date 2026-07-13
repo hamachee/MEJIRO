@@ -126,8 +126,33 @@
     "log": "변경 기록",
     "empty": "아직 변경 사항이 없습니다."
   },
+  "theme": {
+    "label": "색상 테마",
+    "dark": "다크",
+    "light": "라이트",
+    "rule": "룰 기준",
+    "custom": "사용자 지정",
+    "ruleHint": "\"룰 기준\"은 플레이 중인 게임 시스템의 색상 테마를 사용합니다.",
+    "base": "기본 톤",
+    "reset": "색상 초기화",
+    "colors": {
+      "bg": "배경",
+      "bg2": "배경 2",
+      "card": "카드",
+      "card2": "카드 2",
+      "border": "테두리",
+      "text": "글자",
+      "muted": "보조 글자",
+      "accent": "강조",
+      "accent2": "강조 2",
+      "success": "성공",
+      "failure": "실패",
+      "danger": "위험"
+    }
+  },
   "settings": {
     "title": "설정",
+    "appearance": "화면",
     "uiLanguage": "인터페이스 언어",
     "discordLanguage": "디스코드 출력 언어",
     "webhooks": "디스코드 웹훅",

@@ -126,8 +126,33 @@
     "log": "Change log",
     "empty": "No changes yet."
   },
+  "theme": {
+    "label": "Color scheme",
+    "dark": "Dark",
+    "light": "Light",
+    "rule": "By rule",
+    "custom": "Custom",
+    "ruleHint": "\"By rule\" uses the color scheme of the game system you are playing.",
+    "base": "Base tone",
+    "reset": "Reset colors",
+    "colors": {
+      "bg": "Background",
+      "bg2": "Background 2",
+      "card": "Card",
+      "card2": "Card 2",
+      "border": "Border",
+      "text": "Text",
+      "muted": "Muted text",
+      "accent": "Accent",
+      "accent2": "Accent 2",
+      "success": "Success",
+      "failure": "Failure",
+      "danger": "Danger"
+    }
+  },
   "settings": {
     "title": "Settings",
+    "appearance": "Appearance",
     "uiLanguage": "Interface language",
     "discordLanguage": "Discord output language",
     "webhooks": "Discord webhooks",
