@@ -43,8 +43,9 @@ npm run build    # type-check + production build (emits PWA assets)
 npm run preview  # preview the production build
 ```
 
-By default the build is served from the `/mejiro/` sub-path (GitHub Pages).
-For a root deployment (Netlify/Vercel) build with `BASE_PATH=/`:
+By default the build is served from the `/MEJIRO/` sub-path (GitHub Pages —
+the path is case-sensitive and must match the repo name; CI derives it
+automatically). For a root deployment (Netlify/Vercel) build with `BASE_PATH=/`:
 
 ```bash
 BASE_PATH=/ npm run build
