@@ -18,8 +18,13 @@ export interface ResourceState {
 export interface Identity {
   lineage: string;
   family: string;
+  concept: string;
   /** Entanglement rating (dots). */
   entanglement: number;
+  rolePath: string;
+  shortTerm1: string;
+  shortTerm2: string;
+  longTerm: string;
 }
 
 /** The Entanglement rating cap in the core rules. */
@@ -104,8 +109,10 @@ export interface Character {
   /** Page 2: equipment and spells, card-style with free-text descriptions. */
   gear: CardItem[];
   spells: CardItem[];
-  /** Free-form Torment & Damnation notes. */
+  /** Free-form Torment notes. */
   torment: string;
+  /** Free-form Damnation notes. */
+  damnation: string;
   tricks: CharacterTrick[];
   injuries: InjuryTrack;
   /**
