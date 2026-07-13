@@ -1,0 +1,88 @@
+{
+  "app": {
+    "title": "MEJIRO",
+    "tagline": "TRPG 시트 & 굴림기"
+  },
+  "nav": {
+    "characters": "캐릭터",
+    "settings": "설정"
+  },
+  "characters": {
+    "title": "캐릭터",
+    "empty": "아직 캐릭터가 없습니다. 새로 만들어 시작하세요.",
+    "new": "새 캐릭터",
+    "namePlaceholder": "캐릭터 이름",
+    "system": "시스템",
+    "create": "생성",
+    "import": "가져오기",
+    "export": "내보내기",
+    "delete": "삭제",
+    "open": "열기",
+    "confirmDelete": "이 캐릭터를 삭제할까요? 되돌릴 수 없습니다.",
+    "importError": "파일을 가져올 수 없습니다: {{message}}"
+  },
+  "sheet": {
+    "attributes": "능력치",
+    "skills": "기술",
+    "resources": "자원",
+    "back": "뒤로",
+    "saved": "저장됨",
+    "rename": "이름"
+  },
+  "roller": {
+    "title": "주사위 풀",
+    "attribute": "능력치",
+    "skill": "기술",
+    "enhancement": "강화",
+    "difficulty": "난이도",
+    "pool": "풀",
+    "roll": "굴리기",
+    "selectPrompt": "능력치와 기술을 선택해 풀을 구성하세요.",
+    "none": "없음"
+  },
+  "result": {
+    "title": "결과",
+    "success": "성공",
+    "failure": "실패",
+    "botch": "대실패",
+    "successes": "성공 수",
+    "threshold": "초과 성공",
+    "dice": "주사위",
+    "postToDiscord": "디스코드에 전송",
+    "posted": "디스코드에 전송됨",
+    "postError": "디스코드 전송 실패: {{message}}",
+    "noWebhook": "먼저 설정에서 디스코드 웹훅을 지정하세요."
+  },
+  "tricks": {
+    "title": "트릭",
+    "budget": "예산",
+    "remaining": "잔여",
+    "cost": "비용",
+    "postTricks": "트릭 전송",
+    "none": "이 시스템에는 사용 가능한 트릭이 없습니다.",
+    "overBudget": "예산 초과"
+  },
+  "resource": {
+    "undo": "실행 취소",
+    "log": "변경 기록",
+    "empty": "아직 변경 사항이 없습니다."
+  },
+  "settings": {
+    "title": "설정",
+    "uiLanguage": "인터페이스 언어",
+    "discordLanguage": "디스코드 출력 언어",
+    "webhooks": "디스코드 웹훅",
+    "webhookLabel": "이름표",
+    "webhookUrl": "웹훅 URL",
+    "addWebhook": "웹훅 추가",
+    "removeWebhook": "제거",
+    "activeWebhook": "활성 웹훅",
+    "noWebhooks": "아직 웹훅이 없습니다.",
+    "save": "저장",
+    "fanDisclaimer": "MEJIRO는 비공식·무료·비상업 팬 도구이며, 어떤 게임 출판사와도 제휴하거나 승인을 받지 않았습니다. 게임 시스템 이름은 각 권리자의 소유입니다."
+  },
+  "common": {
+    "cancel": "취소",
+    "close": "닫기"
+  }
+}
