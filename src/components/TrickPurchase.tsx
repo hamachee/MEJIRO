@@ -4,8 +4,6 @@ import { useRollStore } from '../store/rollStore';
 import { useSettingsStore } from '../store/settingsStore';
 import { validatePurchase, canAfford } from '../engine/tricks';
 import { postTricks } from '../engine/discord';
-import { label } from '../lib/localize';
-import { useLang } from '../lib/useLang';
 import type { Character } from '../types/character';
 import type { SystemTemplate } from '../types/template';
 
@@ -18,7 +16,6 @@ interface Props {
 
 export function TrickPurchase({ character, template }: Props) {
   const { t } = useTranslation();
-  const lang = useLang();
   const result = useRollStore((s) => s.result);
   const selectedTrickIds = useRollStore((s) => s.selectedTrickIds);
   const toggleTrick = useRollStore((s) => s.toggleTrick);
@@ -31,7 +28,8 @@ export function TrickPurchase({ character, template }: Props) {
   if (!result) return null;
 
   const budget = result.thresholdSuccesses;
-  const selected = template.tricks.filter((tr) => selectedTrickIds.includes(tr.id));
+  const tricks = character.tricks;
+  const selected = tricks.filter((tr) => selectedTrickIds.includes(tr.id));
   const { totalCost, remaining, valid } = validatePurchase(selected, budget);
 
   const onPost = async () => {
@@ -68,11 +66,11 @@ export function TrickPurchase({ character, template }: Props) {
         </span>
       </div>
 
-      {template.tricks.length === 0 ? (
+      {tricks.length === 0 ? (
         <p className="muted">{t('tricks.none')}</p>
       ) : (
         <ul className="trick-list">
-          {template.tricks.map((tr) => {
+          {tricks.map((tr) => {
             const isSelected = selectedTrickIds.includes(tr.id);
             const affordable = isSelected || canAfford(selected, tr, budget);
             return (
@@ -85,12 +83,7 @@ export function TrickPurchase({ character, template }: Props) {
                     onChange={() => toggleTrick(tr.id, affordable)}
                   />
                   <span className="trick-body">
-                    <span className="trick-name">{label(tr.label, lang)}</span>
-                    {tr.description && (
-                      <span className="muted trick-desc">
-                        {label(tr.description, lang)}
-                      </span>
-                    )}
+                    <span className="trick-name">{tr.name}</span>
                   </span>
                   <span className="trick-cost">
                     {t('tricks.cost')} {tr.cost}

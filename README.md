@@ -7,19 +7,23 @@ character sheet editor, a dice-pool builder, and a roller that posts formatted
 results to Discord via webhooks. Free, open source, no account, no server —
 your data never leaves your browser unless you export it.
 
-> First release ships one complete vertical slice for **Storypath Ultra**
-> (attribute + skill d10 pools, enhancements, threshold successes, and the
-> two-stage trick/stunt purchase phase), in **English and Korean**.
+> First release ships one complete vertical slice for **Curseborne**
+> (attribute + skill d10 pools, 8–9 = 1 hit / 10 = 2 hits, enhancements,
+> curse dice, and the two-stage trick purchase phase), in **English and
+> Korean**. The sheet doubles as the roller: tap an attribute and a skill
+> to build your pool.
 
 ## Features
 
 - **Character sheets** per system template, stored locally in IndexedDB
-- **Dice-pool builder** — pick an attribute + skill, add enhancement, set
-  difficulty, and see the live pool total
-- **Roller** — rolls the pool, counts successes per the system's rules, shows
-  each die and pass/fail against difficulty
-- **Trick / stunt purchase phase** — spend leftover *threshold successes* on
-  system-defined tricks with a live budget check
+- **Sheet-as-roller** — tap an attribute + skill on the sheet, add curse
+  dice / enhancement / difficulty in the roll bar, and roll
+- **Roller** — counts hits per the system's rules (8–9 one hit, 10 two),
+  shows each die (curse dice marked) and pass/fail against difficulty
+- **Trick purchase phase** — spend leftover *extra hits* on your own trick
+  list (name + cost, entered by you) with a live budget check
+- **Sheet extras** — identity block, clickable injury track, edges & paths,
+  conditions — all user-filled
 - **Discord output** — post localized roll results and purchased tricks to a
   webhook (two stages)
 - **Resource tracker** — quick +/- controls with a change log and undo
@@ -60,12 +64,15 @@ Source: GitHub Actions) once and pushes deploy automatically.
 ## System templates
 
 A system is described by a single JSON file under `src/templates/`
-(`storypath-ultra.json` is the reference). A template defines attributes,
-skills, categories, dice mechanics (sides, success threshold, optional
-doubles/explode/botch), roll/enhancement rules, a trick catalogue, and tracked
-resources — each label multilingual. The dice engine is data-driven, so many
-new systems can be added as JSON without code changes. Register a new template
-in `src/templates/index.ts`.
+(`curseborne.json` is the reference). A template defines attributes, skills,
+categories, dice mechanics (sides, hit threshold, optional doubles/explode/
+botch/curse dice), and roll/enhancement rules — each label multilingual. The
+dice engine is data-driven, so many new systems can be added as JSON without
+code changes. Register a new template in `src/templates/index.ts`.
+
+Templates carry only functional game data (stat names, dice rules). Content
+with creative expression — trick lists, edges, paths, conditions — is entered
+by each user on their own characters, never bundled with the app.
 
 ## Discord webhooks
 
@@ -91,7 +98,7 @@ tabletop RPG systems the templates describe. See below.
 MEJIRO is an **unofficial, free, non-commercial fan tool**. It is not
 affiliated with, endorsed, or sponsored by any game publisher.
 
-- **Storypath Ultra** and related marks are the property of
+- **Curseborne**, **Storypath**, and related marks are the property of
   [Onyx Path Publishing](https://theonyxpath.com/). The bundled template
   describes the system's mechanics (attribute and skill names, dice
   procedures) solely so the app can interoperate with the game; it contains

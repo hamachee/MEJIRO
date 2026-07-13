@@ -1,4 +1,5 @@
-import type { SystemTemplate, Trick } from '../types/template';
+import type { SystemTemplate } from '../types/template';
+import type { CharacterTrick } from '../types/character';
 import type { RollRequest, RollResult } from '../types/roll';
 import { label } from '../lib/localize';
 
@@ -8,14 +9,15 @@ const STRINGS: Record<string, Record<string, string>> = {
     roll: 'Roll',
     pool: 'Pool',
     dice: 'Dice',
-    successes: 'Successes',
+    successes: 'Hits',
     difficulty: 'Difficulty',
     result: 'Result',
     success: '✅ Success',
     failure: '❌ Failure',
     botch: '💀 Botch',
-    threshold: 'Threshold successes',
+    threshold: 'Extra hits',
     enhancement: 'Enhancement',
+    curseDice: 'Curse dice',
     tricks: 'Tricks purchased',
     spent: 'Spent',
     remaining: 'Remaining',
@@ -24,14 +26,15 @@ const STRINGS: Record<string, Record<string, string>> = {
     roll: '굴림',
     pool: '풀',
     dice: '주사위',
-    successes: '성공',
+    successes: '히트',
     difficulty: '난이도',
     result: '결과',
     success: '✅ 성공',
     failure: '❌ 실패',
     botch: '💀 대실패',
-    threshold: '초과 성공',
+    threshold: '초과 히트',
     enhancement: '강화',
+    curseDice: '저주 주사위',
     tricks: '구매한 트릭',
     spent: '사용',
     remaining: '잔여',
@@ -50,10 +53,16 @@ export interface DiscordContext {
   characterName: string;
 }
 
-/** Format the dice as a compact string, marking successes in bold. */
+/**
+ * Format the dice as a compact string, marking hits in bold and curse dice
+ * with a skull so the table can adjudicate their effects.
+ */
 function formatDice(result: RollResult): string {
   return result.dice
-    .map((d) => (d.successes > 0 ? `**${d.value}**` : `${d.value}`))
+    .map((d) => {
+      const n = d.successes > 0 ? `**${d.value}**` : `${d.value}`;
+      return d.isCurse ? `💀${n}` : n;
+    })
     .join(', ');
 }
 
@@ -101,6 +110,13 @@ export function buildRollEmbed(
       inline: true,
     },
   ];
+  if (result.curseDice > 0) {
+    fields.push({
+      name: s(lang, 'curseDice'),
+      value: `${result.curseDice}`,
+      inline: true,
+    });
+  }
 
   return {
     embeds: [
@@ -118,13 +134,13 @@ export function buildRollEmbed(
 /** Build the tricks-purchased embed payload (stage two). */
 export function buildTricksEmbed(
   template: SystemTemplate,
-  tricks: Trick[],
+  tricks: CharacterTrick[],
   budget: number,
   ctx: DiscordContext,
 ) {
   const { lang } = ctx;
   const spent = tricks.reduce((sum, t) => sum + t.cost, 0);
-  const lines = tricks.map((t) => `• ${label(t.label, lang)} (${t.cost})`);
+  const lines = tricks.map((t) => `• ${t.name} (${t.cost})`);
   return {
     embeds: [
       {
@@ -171,7 +187,7 @@ export function postRollResult(
 /** Post the purchased tricks (stage two). */
 export function postTricks(
   template: SystemTemplate,
-  tricks: Trick[],
+  tricks: CharacterTrick[],
   budget: number,
   ctx: DiscordContext,
 ): Promise<void> {

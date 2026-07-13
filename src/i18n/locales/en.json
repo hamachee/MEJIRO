@@ -27,7 +27,20 @@
     "resources": "Resources",
     "back": "Back",
     "saved": "Saved",
-    "rename": "Name"
+    "rename": "Name",
+    "edit": "Edit sheet",
+    "done": "Done",
+    "lineage": "Lineage",
+    "family": "Family",
+    "entanglement": "Entanglement",
+    "injuries": "Injuries",
+    "takenOut": "Taken Out",
+    "box": "box",
+    "edges": "Edges",
+    "paths": "Paths",
+    "conditions": "Conditions",
+    "add": "Add",
+    "namePlaceholder": "Name"
   },
   "roller": {
     "title": "Dice Pool",
@@ -35,9 +48,10 @@
     "skill": "Skill",
     "enhancement": "Enhancement",
     "difficulty": "Difficulty",
+    "curseDice": "Curse dice",
     "pool": "Pool",
     "roll": "Roll",
-    "selectPrompt": "Select an attribute and a skill to build your pool.",
+    "selectPrompt": "Tap an attribute and a skill to build your pool.",
     "none": "None"
   },
   "result": {
@@ -45,8 +59,8 @@
     "success": "Success",
     "failure": "Failure",
     "botch": "Botch",
-    "successes": "Successes",
-    "threshold": "Threshold successes",
+    "successes": "Hits",
+    "threshold": "Extra hits",
     "dice": "Dice",
     "postToDiscord": "Post to Discord",
     "posted": "Posted to Discord",
@@ -59,8 +73,14 @@
     "remaining": "Remaining",
     "cost": "Cost",
     "postTricks": "Post tricks",
-    "none": "No tricks available for this system.",
-    "overBudget": "Over budget"
+    "none": "No tricks on this character yet. Add them on the sheet.",
+    "overBudget": "Over budget",
+    "manageHint": "Your own list — add the tricks you use with their hit costs. No rulebook text, just names.",
+    "namePlaceholder": "Trick name",
+    "add": "Add trick",
+    "defaultOne": "One-hit trick",
+    "defaultTwo": "Two-hit trick",
+    "defaultThree": "Three-hit trick"
   },
   "resource": {
     "undo": "Undo",

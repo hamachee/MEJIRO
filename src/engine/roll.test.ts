@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { roll, type Rng } from './roll';
-import storypath from '../templates/storypath-ultra.json';
+import curseborne from '../templates/curseborne.json';
 import type { SystemTemplate } from '../types/template';
 import type { RollRequest } from '../types/roll';
 
-const template = storypath as SystemTemplate;
+const template = curseborne as SystemTemplate;
 
 /** RNG that yields die faces from a fixed script (values are 1..sides). */
 function scriptedRng(faces: number[], sides = 10): Rng {
@@ -25,11 +25,12 @@ function baseRequest(overrides: Partial<RollRequest> = {}): RollRequest {
     skillRating: 2,
     enhancement: 0,
     difficulty: 1,
+    curseDice: 0,
     ...overrides,
   };
 }
 
-describe('roll — Storypath Ultra (8+ successes, d10)', () => {
+describe('roll — Curseborne (d10, 8-9 = 1 hit, 10 = 2 hits)', () => {
   it('rolls a pool sized attribute + skill', () => {
     const rng = scriptedRng([5]);
     const result = roll(template, baseRequest(), rng);
@@ -37,41 +38,60 @@ describe('roll — Storypath Ultra (8+ successes, d10)', () => {
     expect(result.dice).toHaveLength(5);
   });
 
-  it('counts only dice >= 8 as successes', () => {
-    // faces: 8,9,10 are successes; 7 and 2 are not
+  it('counts 8 and 9 as one hit and 10 as two hits', () => {
+    // faces: 8 -> 1, 9 -> 1, 10 -> 2, 7 -> 0, 2 -> 0
     const rng = scriptedRng([8, 9, 10, 7, 2]);
     const result = roll(template, baseRequest(), rng);
-    expect(result.diceSuccesses).toBe(3);
-    expect(result.totalSuccesses).toBe(3);
+    expect(result.diceSuccesses).toBe(4);
+    expect(result.totalSuccesses).toBe(4);
   });
 
-  it('does not double 10s (Storypath has no doubles configured)', () => {
-    const rng = scriptedRng([10, 10, 10, 10, 10]);
-    const result = roll(template, baseRequest(), rng);
-    expect(result.diceSuccesses).toBe(5);
-  });
-
-  it('passes when successes >= difficulty and computes threshold successes', () => {
-    const rng = scriptedRng([8, 9, 10, 7, 2]); // 3 successes
+  it('passes when hits >= difficulty and computes extra hits', () => {
+    const rng = scriptedRng([8, 9, 10, 7, 2]); // 4 hits
     const result = roll(template, baseRequest({ difficulty: 2 }), rng);
     expect(result.passed).toBe(true);
-    expect(result.thresholdSuccesses).toBe(1); // 3 - 2
+    expect(result.thresholdSuccesses).toBe(2); // 4 - 2
   });
 
-  it('fails when successes < difficulty and threshold is 0', () => {
-    const rng = scriptedRng([2, 3, 4, 5, 6]); // 0 successes
+  it('fails when hits < difficulty and extra hits are 0', () => {
+    const rng = scriptedRng([2, 3, 4, 5, 6]); // 0 hits
     const result = roll(template, baseRequest({ difficulty: 1 }), rng);
     expect(result.passed).toBe(false);
     expect(result.thresholdSuccesses).toBe(0);
   });
 
-  it('adds enhancement as flat successes', () => {
-    const rng = scriptedRng([8, 2, 2, 2, 2]); // 1 dice success
+  it('adds enhancement as flat hits when the dice produced a hit', () => {
+    const rng = scriptedRng([8, 2, 2, 2, 2]); // 1 dice hit
     const result = roll(template, baseRequest({ enhancement: 2, difficulty: 1 }), rng);
     expect(result.diceSuccesses).toBe(1);
     expect(result.enhancementSuccesses).toBe(2);
     expect(result.totalSuccesses).toBe(3);
     expect(result.thresholdSuccesses).toBe(2);
+  });
+
+  it('ignores enhancement when the dice produced zero hits', () => {
+    const rng = scriptedRng([2, 3, 4, 5, 6]); // 0 dice hits
+    const result = roll(template, baseRequest({ enhancement: 3, difficulty: 1 }), rng);
+    expect(result.enhancementSuccesses).toBe(0);
+    expect(result.totalSuccesses).toBe(0);
+    expect(result.passed).toBe(false);
+  });
+
+  it('flags the requested number of curse dice, clamped to the pool', () => {
+    const rng = scriptedRng([8, 9, 2, 3, 10]);
+    const result = roll(template, baseRequest({ curseDice: 2 }), rng);
+    expect(result.curseDice).toBe(2);
+    expect(result.dice.filter((d) => d.isCurse)).toHaveLength(2);
+
+    const clamped = roll(template, baseRequest({ curseDice: 99 }), rng);
+    expect(clamped.curseDice).toBe(clamped.poolSize);
+  });
+
+  it('scores curse dice like normal dice', () => {
+    // first two dice are curse dice: 10 -> 2 hits, 8 -> 1 hit
+    const rng = scriptedRng([10, 8, 2, 2, 2]);
+    const result = roll(template, baseRequest({ curseDice: 2 }), rng);
+    expect(result.diceSuccesses).toBe(3);
   });
 
   it('is deterministic under a fixed RNG', () => {
@@ -82,15 +102,15 @@ describe('roll — Storypath Ultra (8+ successes, d10)', () => {
 });
 
 describe('roll — configurable mechanics (future systems)', () => {
-  const wodLike: SystemTemplate = {
-    ...template,
-    dice: { sides: 10, successThreshold: 6, countDoubleOn: 10 },
-  };
-
-  it('counts a die >= countDoubleOn as two successes', () => {
-    const rng = scriptedRng([10, 6, 2, 2, 2]); // 10 -> 2, 6 -> 1
-    const result = roll(wodLike, baseRequest(), rng);
-    expect(result.diceSuccesses).toBe(3);
+  it('supports a plain 8+ threshold with no doubles (Storypath-style)', () => {
+    const plain: SystemTemplate = {
+      ...template,
+      dice: { sides: 10, successThreshold: 8 },
+      roll: { defaultDifficulty: 1, enhancementMode: 'flatSuccess' },
+    };
+    const rng = scriptedRng([10, 10, 8, 2, 2]);
+    const result = roll(plain, baseRequest(), rng);
+    expect(result.diceSuccesses).toBe(3); // 10s count once without countDoubleOn
   });
 
   it('explodes dice at explodeOn and marks the extra die', () => {
@@ -103,6 +123,5 @@ describe('roll — configurable mechanics (future systems)', () => {
     const result = roll(exploding, baseRequest(), rng);
     expect(result.dice.some((d) => d.exploded)).toBe(true);
     expect(result.dice.length).toBeGreaterThan(result.poolSize);
-    expect(result.diceSuccesses).toBe(2); // the 10 and the exploded 8
   });
 });

@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCharacterStore } from '../store/characterStore';
 import { useRollStore } from '../store/rollStore';
 import { getTemplate } from '../templates';
-import { SheetEditor } from './SheetEditor';
-import { DicePoolBuilder } from './DicePoolBuilder';
+import { CharacterSheet } from './CharacterSheet';
+import { RollBar } from './RollBar';
 import { RollResult } from './RollResult';
 import { TrickPurchase } from './TrickPurchase';
 
@@ -16,6 +16,8 @@ export function CharacterView() {
   const open = useCharacterStore((s) => s.open);
   const resetFor = useRollStore((s) => s.resetFor);
   const result = useRollStore((s) => s.result);
+  const clearResult = useRollStore((s) => s.clearResult);
+  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
     if (id) open(id);
@@ -42,21 +44,32 @@ export function CharacterView() {
         <Link to="/" className="back-link">
           ← {t('sheet.back')}
         </Link>
+        <button
+          className={editing ? 'primary' : ''}
+          onClick={() => setEditing(!editing)}
+        >
+          {editing ? `✓ ${t('sheet.done')}` : `✏️ ${t('sheet.edit')}`}
+        </button>
       </div>
-      <div className="two-col">
-        <div className="col">
-          <SheetEditor character={active} template={template} />
+
+      <CharacterSheet character={active} template={template} editing={editing} />
+
+      {!editing && <RollBar character={active} template={template} />}
+
+      {result && (
+        <div className="modal-scrim" onClick={clearResult}>
+          <div
+            className="modal stack"
+            role="dialog"
+            aria-modal="true"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <RollResult template={template} />
+            <TrickPurchase character={active} template={template} />
+            <button onClick={clearResult}>{t('common.close')}</button>
+          </div>
         </div>
-        <div className="col">
-          <DicePoolBuilder character={active} template={template} />
-          {result && (
-            <>
-              <RollResult template={template} />
-              <TrickPurchase character={active} template={template} />
-            </>
-          )}
-        </div>
-      </div>
+      )}
     </div>
   );
 }

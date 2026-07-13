@@ -14,15 +14,22 @@ interface CharacterStoreState {
   roster: Character[];
   active: Character | null;
   loadRoster: () => Promise<void>;
-  create: (template: SystemTemplate, name: string) => Promise<Character>;
+  create: (
+    template: SystemTemplate,
+    name: string,
+    tricks?: Character['tricks'],
+  ) => Promise<Character>;
   open: (id: string) => Promise<Character | undefined>;
   clearActive: () => void;
   rename: (name: string) => void;
+  /** Merge arbitrary sheet fields (identity, edges, injuries, tricks…) into the active character. */
+  patch: (fields: Partial<Character>) => void;
   adjustStat: (
     kind: 'attributes' | 'skills',
     id: string,
     delta: number,
   ) => void;
+  setStat: (kind: 'attributes' | 'skills', id: string, value: number) => void;
   applyResourceDelta: (resourceId: string, delta: number, max?: number) => void;
   undoResource: (resourceId: string) => void;
   remove: (id: string) => Promise<void>;
@@ -58,8 +65,8 @@ export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
     set({ roster: await listCharacters() });
   },
 
-  create: async (template, name) => {
-    const character = await saveCharacter(newCharacter(template, name));
+  create: async (template, name, tricks) => {
+    const character = await saveCharacter(newCharacter(template, name, tricks));
     set({ roster: [character, ...get().roster], active: character });
     return character;
   },
@@ -78,6 +85,12 @@ export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
     commit(set, get, { ...active, name: name.trim() || active.name });
   },
 
+  patch: (fields) => {
+    const active = get().active;
+    if (!active) return;
+    commit(set, get, { ...active, ...fields });
+  },
+
   adjustStat: (kind, id, delta) => {
     const active = get().active;
     if (!active) return;
@@ -87,6 +100,17 @@ export const useCharacterStore = create<CharacterStoreState>((set, get) => ({
     commit(set, get, {
       ...active,
       [kind]: { ...active[kind], [id]: value },
+    });
+  },
+
+  setStat: (kind, id, value) => {
+    const active = get().active;
+    if (!active) return;
+    const next = Math.max(0, value);
+    if ((active[kind][id] ?? 0) === next) return;
+    commit(set, get, {
+      ...active,
+      [kind]: { ...active[kind], [id]: next },
     });
   },
 

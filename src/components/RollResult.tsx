@@ -69,8 +69,8 @@ export function RollResult({ template }: Props) {
             key={i}
             className={`die ${d.successes > 0 ? 'hit' : ''} ${
               d.exploded ? 'exploded' : ''
-            }`}
-            title={d.exploded ? '↯' : undefined}
+            } ${d.isCurse ? 'curse' : ''}`}
+            title={d.isCurse ? t('roller.curseDice') : undefined}
           >
             {d.value}
           </span>

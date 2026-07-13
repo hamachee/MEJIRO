@@ -27,7 +27,20 @@
     "resources": "자원",
     "back": "뒤로",
     "saved": "저장됨",
-    "rename": "이름"
+    "rename": "이름",
+    "edit": "시트 편집",
+    "done": "완료",
+    "lineage": "혈통",
+    "family": "가문",
+    "entanglement": "얽힘",
+    "injuries": "부상",
+    "takenOut": "전투 불능",
+    "box": "칸",
+    "edges": "엣지",
+    "paths": "패스",
+    "conditions": "상태",
+    "add": "추가",
+    "namePlaceholder": "이름"
   },
   "roller": {
     "title": "주사위 풀",
@@ -35,9 +48,10 @@
     "skill": "기술",
     "enhancement": "강화",
     "difficulty": "난이도",
+    "curseDice": "저주 주사위",
     "pool": "풀",
     "roll": "굴리기",
-    "selectPrompt": "능력치와 기술을 선택해 풀을 구성하세요.",
+    "selectPrompt": "능력치와 기술을 눌러 풀을 구성하세요.",
     "none": "없음"
   },
   "result": {
@@ -45,8 +59,8 @@
     "success": "성공",
     "failure": "실패",
     "botch": "대실패",
-    "successes": "성공 수",
-    "threshold": "초과 성공",
+    "successes": "히트",
+    "threshold": "초과 히트",
     "dice": "주사위",
     "postToDiscord": "디스코드에 전송",
     "posted": "디스코드에 전송됨",
@@ -59,8 +73,14 @@
     "remaining": "잔여",
     "cost": "비용",
     "postTricks": "트릭 전송",
-    "none": "이 시스템에는 사용 가능한 트릭이 없습니다.",
-    "overBudget": "예산 초과"
+    "none": "아직 이 캐릭터에 트릭이 없습니다. 시트에서 추가하세요.",
+    "overBudget": "예산 초과",
+    "manageHint": "나만의 목록입니다 — 사용하는 트릭의 이름과 히트 비용을 직접 추가하세요. 룰북 내용이 아닌 이름만 적으면 됩니다.",
+    "namePlaceholder": "트릭 이름",
+    "add": "트릭 추가",
+    "defaultOne": "1히트 트릭",
+    "defaultTwo": "2히트 트릭",
+    "defaultThree": "3히트 트릭"
   },
   "resource": {
     "undo": "실행 취소",

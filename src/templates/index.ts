@@ -1,9 +1,9 @@
 import type { SystemTemplate } from '../types/template';
-import storypathUltra from './storypath-ultra.json';
+import curseborne from './curseborne.json';
 
 /** All bundled system templates, keyed by id. */
 export const TEMPLATES: Record<string, SystemTemplate> = {
-  [storypathUltra.id]: storypathUltra as SystemTemplate,
+  [curseborne.id]: curseborne as SystemTemplate,
 };
 
 /** Templates as a list, for pickers. */
@@ -14,4 +14,4 @@ export function getTemplate(id: string): SystemTemplate | undefined {
 }
 
 /** The default template used when creating a new character. */
-export const DEFAULT_TEMPLATE_ID = storypathUltra.id;
+export const DEFAULT_TEMPLATE_ID = curseborne.id;

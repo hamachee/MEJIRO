@@ -9,14 +9,18 @@ interface RollStoreState {
   skillId: string | null;
   enhancement: number;
   difficulty: number;
+  curseDice: number;
   result: RollResult | null;
   request: RollRequest | null;
   selectedTrickIds: string[];
 
-  setAttribute: (id: string) => void;
-  setSkill: (id: string) => void;
+  /** Select an attribute for the pool; tapping the selected one deselects it. */
+  toggleAttribute: (id: string) => void;
+  /** Select a skill for the pool; tapping the selected one deselects it. */
+  toggleSkill: (id: string) => void;
   setEnhancement: (n: number) => void;
   setDifficulty: (n: number) => void;
+  setCurseDice: (n: number) => void;
   poolSize: (character: Character) => number;
   performRoll: (template: SystemTemplate, character: Character) => void;
   /** Toggle a trick. Adds only when `canAdd` (component enforces budget). */
@@ -30,14 +34,17 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
   skillId: null,
   enhancement: 0,
   difficulty: 1,
+  curseDice: 0,
   result: null,
   request: null,
   selectedTrickIds: [],
 
-  setAttribute: (id) => set({ attributeId: id }),
-  setSkill: (id) => set({ skillId: id }),
+  toggleAttribute: (id) =>
+    set({ attributeId: get().attributeId === id ? null : id }),
+  toggleSkill: (id) => set({ skillId: get().skillId === id ? null : id }),
   setEnhancement: (n) => set({ enhancement: Math.max(0, n) }),
   setDifficulty: (n) => set({ difficulty: Math.max(0, n) }),
+  setCurseDice: (n) => set({ curseDice: Math.max(0, n) }),
 
   poolSize: (character) => {
     const { attributeId, skillId } = get();
@@ -47,7 +54,7 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
   },
 
   performRoll: (template, character) => {
-    const { attributeId, skillId, enhancement, difficulty } = get();
+    const { attributeId, skillId, enhancement, difficulty, curseDice } = get();
     const request: RollRequest = {
       attributeId,
       skillId,
@@ -55,6 +62,7 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
       skillRating: skillId ? (character.skills[skillId] ?? 0) : 0,
       enhancement,
       difficulty,
+      curseDice,
     };
     const result = rollEngine(template, request);
     set({ result, request, selectedTrickIds: [] });
@@ -77,6 +85,7 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
       skillId: null,
       enhancement: 0,
       difficulty: template.roll.defaultDifficulty,
+      curseDice: 0,
       result: null,
       request: null,
       selectedTrickIds: [],

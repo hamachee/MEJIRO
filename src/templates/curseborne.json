@@ -1,0 +1,54 @@
+{
+  "id": "curseborne",
+  "name": { "en": "Curseborne", "ko": "커스본" },
+  "version": "0.1.0",
+  "languages": ["en", "ko"],
+  "categories": [
+    { "id": "mental", "label": { "en": "Mental", "ko": "정신" } },
+    { "id": "physical", "label": { "en": "Physical", "ko": "신체" } },
+    { "id": "social", "label": { "en": "Social", "ko": "사회" } }
+  ],
+  "attributes": [
+    { "id": "intellect", "label": { "en": "Intellect", "ko": "지성" }, "category": "mental" },
+    { "id": "cunning", "label": { "en": "Cunning", "ko": "교활" }, "category": "mental" },
+    { "id": "resolve", "label": { "en": "Resolve", "ko": "결단" }, "category": "mental" },
+    { "id": "might", "label": { "en": "Might", "ko": "완력" }, "category": "physical" },
+    { "id": "dexterity", "label": { "en": "Dexterity", "ko": "민첩" }, "category": "physical" },
+    { "id": "stamina", "label": { "en": "Stamina", "ko": "체력" }, "category": "physical" },
+    { "id": "presence", "label": { "en": "Presence", "ko": "존재감" }, "category": "social" },
+    { "id": "manipulation", "label": { "en": "Manipulation", "ko": "조종" }, "category": "social" },
+    { "id": "composure", "label": { "en": "Composure", "ko": "침착" }, "category": "social" }
+  ],
+  "skills": [
+    { "id": "artistry", "label": { "en": "Artistry", "ko": "예술" } },
+    { "id": "athletics", "label": { "en": "Athletics", "ko": "운동" } },
+    { "id": "closeCombat", "label": { "en": "Close Combat", "ko": "근접 전투" } },
+    { "id": "culture", "label": { "en": "Culture", "ko": "문화" } },
+    { "id": "empathy", "label": { "en": "Empathy", "ko": "공감" } },
+    { "id": "enigmas", "label": { "en": "Enigmas", "ko": "수수께끼" } },
+    { "id": "esoterica", "label": { "en": "Esoterica", "ko": "비학" } },
+    { "id": "larceny", "label": { "en": "Larceny", "ko": "절도" } },
+    { "id": "leadership", "label": { "en": "Leadership", "ko": "지휘" } },
+    { "id": "medicine", "label": { "en": "Medicine", "ko": "의학" } },
+    { "id": "persuasion", "label": { "en": "Persuasion", "ko": "설득" } },
+    { "id": "pilot", "label": { "en": "Pilot", "ko": "조종술" } },
+    { "id": "rangedCombat", "label": { "en": "Ranged Combat", "ko": "원거리 전투" } },
+    { "id": "science", "label": { "en": "Science", "ko": "과학" } },
+    { "id": "survival", "label": { "en": "Survival", "ko": "생존" } },
+    { "id": "technology", "label": { "en": "Technology", "ko": "기술" } }
+  ],
+  "dice": {
+    "sides": 10,
+    "successThreshold": 8,
+    "countDoubleOn": 10,
+    "curseDice": true
+  },
+  "roll": {
+    "defaultDifficulty": 1,
+    "enhancementMode": "flatSuccess",
+    "enhancementRequiresHit": true
+  },
+  "resources": [
+    { "id": "momentum", "label": { "en": "Momentum", "ko": "기세" }, "default": 0 }
+  ]
+}

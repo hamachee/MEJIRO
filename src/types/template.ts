@@ -1,9 +1,13 @@
 /**
  * System template types. A template is a JSON description of a TTRPG system:
- * its attributes, skills, dice mechanics, success rules and (optionally) a
- * catalogue of purchasable tricks/stunts. The template engine is data-driven,
- * so new systems are added as JSON — no new code — as long as their dice logic
- * fits the configurable options in {@link DiceConfig} / {@link RollConfig}.
+ * its attributes, skills, dice mechanics and success rules. The template
+ * engine is data-driven, so new systems are added as JSON — no new code — as
+ * long as their dice logic fits the configurable options in
+ * {@link DiceConfig} / {@link RollConfig}.
+ *
+ * Templates carry only functional game data (stat names, dice rules). Content
+ * with creative expression — trick lists, powers, rulebook text — is entered
+ * by each user on their own characters instead of being bundled.
  */
 
 /** A label available in multiple languages. `en` is required as the fallback. */
@@ -23,48 +27,50 @@ export interface Category {
 export interface Stat {
   id: string;
   label: L10n;
-  /** id of the {@link Category} this stat belongs to. */
-  category: string;
+  /** id of the {@link Category} this stat belongs to. Omitted = uncategorised. */
+  category?: string;
 }
 
 /** Dice mechanics. Extra flags let other pool systems (WoD, etc.) reuse the engine. */
 export interface DiceConfig {
   /** Number of sides per die (10 for d10 pools). */
   sides: number;
-  /** A die at or above this value counts as a success (8 for Storypath). */
+  /** A die at or above this value counts as a hit (8 for Storypath/Curseborne). */
   successThreshold: number;
-  /** If set, a die at or above this value counts as two successes (e.g. WoD 10s). */
+  /** If set, a die at or above this value counts as two hits (Curseborne 10s). */
   countDoubleOn?: number;
   /** If set, a die at or above this value is rerolled and added (exploding dice). */
   explodeOn?: number;
   /**
    * If set, dice at or below this value are "botch" dice that subtract from the
-   * success count when zero successes are rolled (classic WoD botch).
+   * hit count when zero hits are rolled (classic WoD botch).
    */
   botchOn?: number;
+  /**
+   * Whether the system replaces pool dice with visually distinct "curse dice"
+   * (Curseborne). Curse dice score hits normally; their effects are
+   * adjudicated at the table, so the app only tracks and displays them.
+   */
+  curseDice?: boolean;
 }
 
 /** How a pool is assembled and scored. */
 export interface RollConfig {
-  /** Default difficulty (successes required) when the user has not chosen one. */
+  /** Default difficulty (hits required) when the user has not chosen one. */
   defaultDifficulty: number;
   /**
    * How an "enhancement" value contributes. `flatSuccess` adds directly to the
-   * success total (Storypath). `poolDice` would add dice to the pool instead.
+   * hit total (Storypath/Curseborne). `poolDice` would add dice to the pool.
    */
   enhancementMode: 'flatSuccess' | 'poolDice';
+  /**
+   * Curseborne rule: enhancements only apply when the dice themselves
+   * produced at least one hit.
+   */
+  enhancementRequiresHit?: boolean;
 }
 
-/** A purchasable trick / stunt spent from threshold successes after a roll. */
-export interface Trick {
-  id: string;
-  label: L10n;
-  /** Threshold successes required to buy this trick. */
-  cost: number;
-  description?: L10n;
-}
-
-/** A trackable resource (HP, willpower, etc.) with quick +/- controls. */
+/** A trackable resource (momentum, etc.) with quick +/- controls. */
 export interface ResourceDef {
   id: string;
   label: L10n;
@@ -85,6 +91,5 @@ export interface SystemTemplate {
   skills: Stat[];
   dice: DiceConfig;
   roll: RollConfig;
-  tricks: Trick[];
   resources: ResourceDef[];
 }

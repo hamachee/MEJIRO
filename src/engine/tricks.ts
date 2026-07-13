@@ -1,13 +1,17 @@
-import type { Trick } from '../types/template';
 import type { PurchaseValidation } from '../types/roll';
 
+/** Anything with a hit cost — character tricks, or future purchasables. */
+export interface Costed {
+  cost: number;
+}
+
 /**
- * Validate a set of selected tricks against an available budget of threshold
- * successes. Powers the post-roll purchase phase UI: the total cost must not
+ * Validate a set of selected tricks against an available budget of extra
+ * hits. Powers the post-roll purchase phase UI: the total cost must not
  * exceed the budget.
  */
 export function validatePurchase(
-  selected: Trick[],
+  selected: Costed[],
   budget: number,
 ): PurchaseValidation {
   const totalCost = selected.reduce((sum, t) => sum + Math.max(0, t.cost), 0);
@@ -21,8 +25,8 @@ export function validatePurchase(
 
 /** Whether adding `trick` to the current selection would stay within budget. */
 export function canAfford(
-  selected: Trick[],
-  trick: Trick,
+  selected: Costed[],
+  trick: Costed,
   budget: number,
 ): boolean {
   return validatePurchase([...selected, trick], budget).valid;
