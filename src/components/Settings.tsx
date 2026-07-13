@@ -115,6 +115,8 @@ export function Settings() {
           </button>
         </div>
       </section>
+
+      <p className="muted disclaimer">{t('settings.fanDisclaimer')}</p>
     </div>
   );
 }

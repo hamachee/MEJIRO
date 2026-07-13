@@ -78,7 +78,8 @@
     "removeWebhook": "제거",
     "activeWebhook": "활성 웹훅",
     "noWebhooks": "아직 웹훅이 없습니다.",
-    "save": "저장"
+    "save": "저장",
+    "fanDisclaimer": "MEJIRO는 비공식·무료·비상업 팬 도구이며, 어떤 게임 출판사와도 제휴하거나 승인을 받지 않았습니다. 게임 시스템 이름은 각 권리자의 소유입니다."
   },
   "common": {
     "cancel": "취소",

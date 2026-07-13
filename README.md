@@ -77,3 +77,34 @@ language.
 
 GM mode, additional systems (WoD, CoC), roll history, PDF import/export,
 shareable data-URL sheets, and a compact picture-in-picture mini-roller.
+
+## License
+
+The MEJIRO source code is released under the [MIT License](LICENSE).
+
+The MIT license covers the code only — it does not grant any rights to the
+tabletop RPG systems the templates describe. See below.
+
+## Fan content & trademarks
+
+MEJIRO is an **unofficial, free, non-commercial fan tool**. It is not
+affiliated with, endorsed, or sponsored by any game publisher.
+
+- **Storypath Ultra** and related marks are the property of
+  [Onyx Path Publishing](https://theonyxpath.com/). The bundled template
+  describes the system's mechanics (attribute and skill names, dice
+  procedures) solely so the app can interoperate with the game; it contains
+  no text from any rulebook. Game mechanics themselves are not subject to
+  copyright; the system name is used nominatively to identify which game a
+  template models.
+- Future system templates will follow each publisher's fan-content policy —
+  the [Dark Pack agreement](https://www.paradoxinteractive.com/games/world-of-darkness/community/dark-pack-agreement)
+  for World of Darkness and the
+  [Chaosium Fan Material Policy](https://www.chaosium.com/fan-material-policy/)
+  for Call of Cthulhu — including any required logos and notices.
+- If you are a rights holder and have a concern about content in this
+  repository, please open an issue and it will be addressed promptly.
+
+To keep this footing, community-contributed templates must not include
+rulebook text, art, or other copyrighted expression — only the functional
+data needed to play (stat names, dice rules, costs).
