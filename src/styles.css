@@ -873,6 +873,49 @@ button.sheet-stat:hover {
   background: transparent;
 }
 
+/* Curse dice stat on the identity card */
+.curse-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+}
+.curse-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.curse-controls > button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+}
+.curse-dots .dot {
+  border-color: #b44ae0;
+}
+.curse-dots .dot.filled {
+  background: #b44ae0;
+}
+.curse-dots button.dot:hover {
+  background: #7d2ea8;
+}
+.curse-dots button.dot.filled:hover {
+  background: #b44ae0;
+}
+.curse-count {
+  align-self: center;
+  color: #dfa2f5;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  padding: 0.4rem 0.2rem;
+}
+
 /* Curse dice — vivid violet, clearly not the failure red */
 .die.curse {
   border-color: #b44ae0;

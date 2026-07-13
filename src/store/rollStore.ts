@@ -17,7 +17,6 @@ interface RollStoreState {
   attributeId: string | null;
   skillId: string | null;
   difficulty: number;
-  curseDice: number;
   result: RollResult | null;
   request: RollRequest | null;
   selectedTrickIds: string[];
@@ -35,7 +34,6 @@ interface RollStoreState {
   /** Select a skill for the pool; tapping the selected one deselects it. */
   toggleSkill: (id: string) => void;
   setDifficulty: (n: number) => void;
-  setCurseDice: (n: number) => void;
   setEnhancement: (n: number) => void;
   /** Set severity; picking the current one again clears back to none. */
   setComplicationSeverity: (n: number) => void;
@@ -49,15 +47,12 @@ interface RollStoreState {
   postError: string;
 }
 
-// Curseborne: the curse always takes its due — one curse die by default.
-const DEFAULT_CURSE_DICE = 1;
 const MAX_COMPLICATION = 3;
 
 export const useRollStore = create<RollStoreState>((set, get) => ({
   attributeId: null,
   skillId: null,
   difficulty: 1,
-  curseDice: DEFAULT_CURSE_DICE,
   result: null,
   request: null,
   selectedTrickIds: [],
@@ -70,7 +65,6 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
     set({ attributeId: get().attributeId === id ? null : id }),
   toggleSkill: (id) => set({ skillId: get().skillId === id ? null : id }),
   setDifficulty: (n) => set({ difficulty: Math.max(0, n) }),
-  setCurseDice: (n) => set({ curseDice: Math.max(0, n) }),
   setEnhancement: (n) => set({ enhancement: Math.max(0, n) }),
   setComplicationSeverity: (n) =>
     set({
@@ -88,7 +82,7 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
   },
 
   performRoll: (template, character) => {
-    const { attributeId, skillId, difficulty, curseDice } = get();
+    const { attributeId, skillId, difficulty } = get();
     const request: RollRequest = {
       attributeId,
       skillId,
@@ -97,7 +91,8 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
       // Enhancement is applied in the purchase phase, after the dice are seen.
       enhancement: 0,
       difficulty,
-      curseDice,
+      // Curse dice live on the sheet — a persistent stat, not a roll option.
+      curseDice: character.curseDice,
     };
     const result = rollEngine(template, request);
     const fresh = {
@@ -154,7 +149,6 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
       attributeId: null,
       skillId: null,
       difficulty: template.roll.defaultDifficulty,
-      curseDice: DEFAULT_CURSE_DICE,
       result: null,
       request: null,
       selectedTrickIds: [],

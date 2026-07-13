@@ -23,9 +23,7 @@ export function RollBar({ character, template }: Props) {
   const attributeId = useRollStore((s) => s.attributeId);
   const skillId = useRollStore((s) => s.skillId);
   const difficulty = useRollStore((s) => s.difficulty);
-  const curseDice = useRollStore((s) => s.curseDice);
   const setDifficulty = useRollStore((s) => s.setDifficulty);
-  const setCurseDice = useRollStore((s) => s.setCurseDice);
   const performRoll = useRollStore((s) => s.performRoll);
 
   const attr = template.attributes.find((a) => a.id === attributeId);
@@ -52,12 +50,13 @@ export function RollBar({ character, template }: Props) {
       </div>
       <div className="roll-bar-controls">
         {template.dice.curseDice && (
-          <Stepper
-            label={t('roller.curseDice')}
-            value={Math.min(curseDice, pool)}
-            onChange={setCurseDice}
-            max={pool}
-          />
+          <span
+            className="curse-count"
+            title={t('roller.curseDice')}
+            aria-label={t('roller.curseDice')}
+          >
+            💀 {Math.min(character.curseDice, pool)}
+          </span>
         )}
         <Stepper
           label={t('roller.difficulty')}

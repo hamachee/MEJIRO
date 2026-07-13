@@ -54,6 +54,7 @@ export function newCharacter(
     conditions: [],
     tricks,
     injuries: { boxes: DEFAULT_INJURY_BOXES, marked: 0, takenOut: false },
+    curseDice: 1,
     resources: initialResources(template),
     createdAt: now,
     updatedAt: now,
@@ -86,6 +87,7 @@ export function normalizeCharacter(raw: Partial<Character> & Pick<Character, 'id
       takenOut: false,
       ...raw.injuries,
     },
+    curseDice: raw.curseDice ?? 1,
   };
 }
 

@@ -22,6 +22,9 @@ export interface Identity {
   entanglement: number;
 }
 
+/** How many curse dice a character can hold (Entanglement ••••). */
+export const MAX_CURSE_DICE = 9;
+
 /** A user-entered named entry with a dot rating (edges, paths). */
 export interface RatedItem {
   id: string;
@@ -81,6 +84,11 @@ export interface Character {
   conditions: ConditionItem[];
   tricks: CharacterTrick[];
   injuries: InjuryTrack;
+  /**
+   * Curse dice held right now. A persistent stat (like VtM hunger), edited
+   * on the sheet as play changes it; each roll replaces this many pool dice.
+   */
+  curseDice: number;
   resources: Record<string, ResourceState>;
   createdAt: number;
   updatedAt: number;
