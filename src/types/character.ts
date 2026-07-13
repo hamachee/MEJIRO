@@ -25,6 +25,8 @@ export interface Identity {
   shortTerm1: string;
   shortTerm2: string;
   longTerm: string;
+  /** Free-form motifs, multi-line. */
+  motifs: string;
 }
 
 /** The Entanglement rating cap in the core rules. */
@@ -53,11 +55,23 @@ export interface ConditionItem {
   name: string;
 }
 
-/** A user-entered card-style entry (gear, spells): name plus free text. */
-export interface CardItem {
+/** A piece of equipment. Tags stack like conditions do. */
+export interface GearItem {
   id: string;
   name: string;
+  type?: string;
+  tags: string[];
   description?: string;
+}
+
+/** A spell. Cost is plain text (rules costs aren't always numbers). */
+export interface SpellItem {
+  id: string;
+  name: string;
+  cost?: string;
+  attunements: string[];
+  /** Free-form advancements, multi-line. */
+  advancements?: string;
 }
 
 /**
@@ -106,9 +120,9 @@ export interface Character {
   contacts: RatedItem[];
   bonds: RatedItem[];
   conditions: ConditionItem[];
-  /** Page 2: equipment and spells, card-style with free-text descriptions. */
-  gear: CardItem[];
-  spells: CardItem[];
+  /** Page 2: equipment and spells, card-style. */
+  gear: GearItem[];
+  spells: SpellItem[];
   /** Free-form Torment notes. */
   torment: string;
   /** Free-form Damnation notes. */

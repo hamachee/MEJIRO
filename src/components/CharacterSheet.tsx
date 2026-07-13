@@ -162,6 +162,18 @@ function IdentityCard({
     </details>
   );
 
+  const motifsFold = (
+    <details className="fold">
+      <summary>{t('sheet.motifs')}</summary>
+      <textarea
+        rows={3}
+        placeholder={t('sheet.tormentPlaceholder')}
+        defaultValue={identity.motifs}
+        onBlur={(e) => patch({ identity: { ...identity, motifs: e.target.value } })}
+      />
+    </details>
+  );
+
   if (!editing) {
     return (
       <section className="card identity">
@@ -174,6 +186,7 @@ function IdentityCard({
             .join(' · ') || '—'}
         </div>
         {goalsFold}
+        {motifsFold}
       </section>
     );
   }
@@ -206,6 +219,7 @@ function IdentityCard({
         </label>
       </div>
       {goalsFold}
+      {motifsFold}
       <div className="form-row">
         <label className="field grow">
           <span className="field-label">{t('sheet.webhook')}</span>
@@ -581,8 +595,10 @@ export function CharacterSheet({ character, template, editing }: Props) {
 
   return (
     <div className="stack">
-      <IdentityCard character={character} editing={editing} />
-      <CurseCard character={character} editing={editing} />
+      <div className="two-col identity-split">
+        <IdentityCard character={character} editing={editing} />
+        <CurseCard character={character} editing={editing} />
+      </div>
 
       <section className="card">
         <h2>{t('sheet.attributes')}</h2>

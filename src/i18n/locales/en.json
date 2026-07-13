@@ -52,6 +52,7 @@
     "shortTerm1": "Short-term goal 1",
     "shortTerm2": "Short-term goal 2",
     "longTerm": "Long-term goal",
+    "motifs": "Motifs",
     "page1": "Sheet",
     "page2": "Gear & Spells",
     "add": "Add",
@@ -108,6 +109,16 @@
     "defaultOne": "One-hit trick",
     "defaultTwo": "Two-hit trick",
     "defaultThree": "Three-hit trick"
+  },
+  "gear": {
+    "typePlaceholder": "Type",
+    "tagsPlaceholder": "Tags (comma separated)"
+  },
+  "spells": {
+    "cost": "Cost",
+    "costPlaceholder": "Cost",
+    "attunementsPlaceholder": "Attunements (comma separated)",
+    "advancementsPlaceholder": "Advancements (free text, multiple lines)"
   },
   "resource": {
     "undo": "Undo",
