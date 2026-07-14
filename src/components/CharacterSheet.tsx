@@ -38,6 +38,22 @@ function L({ l10n }: { l10n: L10nLabel }) {
 }
 
 /**
+ * Same treatment as {@link L}, but for UI-chrome field labels that name
+ * Curseborne concepts (Lineage, Family) rather than template data — the
+ * localised text plus a small English gloss when the UI isn't English.
+ */
+function FieldLabel({ i18nKey, en }: { i18nKey: string; en: string }) {
+  const { t } = useTranslation();
+  const lang = useLang();
+  return (
+    <>
+      {t(i18nKey)}
+      {lang !== 'en' && <small className="label-en">{en}</small>}
+    </>
+  );
+}
+
+/**
  * A dot rating. In edit mode dots are clickable: clicking dot n sets the
  * value to n, clicking the current value lowers it by one (so 0 is reachable).
  */
@@ -230,11 +246,15 @@ function IdentityCard({
       </div>
       <div className="form-row">
         <label className="field grow">
-          <span className="field-label">{t('sheet.lineage')}</span>
+          <span className="field-label">
+            <FieldLabel i18nKey="sheet.lineage" en="Lineage" />
+          </span>
           <input defaultValue={identity.lineage} onBlur={setIdentity('lineage')} />
         </label>
         <label className="field grow">
-          <span className="field-label">{t('sheet.family')}</span>
+          <span className="field-label">
+            <FieldLabel i18nKey="sheet.family" en="Family" />
+          </span>
           <input defaultValue={identity.family} onBlur={setIdentity('family')} />
         </label>
       </div>
