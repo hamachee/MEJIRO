@@ -1,4 +1,5 @@
 import { getDB } from './db';
+import { uid } from '../lib/uid';
 import type {
   Character,
   CharacterExport,
@@ -6,13 +7,6 @@ import type {
   ResourceState,
 } from '../types/character';
 import type { SystemTemplate } from '../types/template';
-
-function uid(): string {
-  return (
-    crypto.randomUUID?.() ??
-    `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`
-  );
-}
 
 /** Build the initial resource states for a template. */
 function initialResources(template: SystemTemplate): Record<string, ResourceState> {
