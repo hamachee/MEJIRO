@@ -7,50 +7,34 @@ import { label } from '../lib/localize';
 /** Localised strings for Discord embeds, independent of the UI language. */
 const STRINGS: Record<string, Record<string, string>> = {
   en: {
-    roll: 'Roll',
-    pool: 'Pool',
-    dice: 'Dice',
-    successes: 'Hits',
     difficulty: 'Difficulty',
-    result: 'Result',
-    success: '✅ Success',
-    failure: '❌ Failure',
-    wicked: '😈 Wicked Success',
-    cruel: '🩸 Cruel Failure',
-    botch: '💀 Botch',
-    threshold: 'Extra hits',
+    success: 'Success',
+    failure: 'Failure',
+    wicked: 'Wicked Success',
+    cruel: 'Cruel Failure',
+    botch: 'Botch',
     enhancement: 'Enhancement',
-    curseDice: 'Curse dice',
     complication: 'Complication',
     complicationResolved: 'Complication resolved',
     minor: 'Minor',
     moderate: 'Moderate',
     major: 'Major',
-    tricks: 'Tricks purchased',
     spent: 'Spent',
     remaining: 'Remaining',
   },
   ko: {
-    roll: '굴림',
-    pool: '풀',
-    dice: '주사위',
-    successes: '히트',
     difficulty: '난이도',
-    result: '결과',
-    success: '✅ 성공',
-    failure: '❌ 실패',
-    wicked: '😈 사악한 성공',
-    cruel: '🩸 잔혹한 실패',
-    botch: '💀 대실패',
-    threshold: '초과 히트',
+    success: '성공',
+    failure: '실패',
+    wicked: '사악한 성공',
+    cruel: '잔혹한 실패',
+    botch: '대실패',
     enhancement: '강화',
-    curseDice: '저주 주사위',
     complication: '컴플리케이션',
     complicationResolved: '컴플리케이션 해소',
     minor: '경미',
     moderate: '보통',
     major: '심각',
-    tricks: '구매한 트릭',
     spent: '사용',
     remaining: '잔여',
   },
@@ -69,16 +53,18 @@ export interface DiscordContext {
 }
 
 /**
- * Format the dice as a compact string, marking hits in bold and curse dice
- * with a skull so the table can adjudicate their effects.
+ * Format the dice as a compact string, curse dice first and regular dice
+ * after, separated by "|" so the table can spot curse dice without an
+ * emoji marker. Hits are bolded within each group.
  */
 function formatDice(result: RollResult): string {
-  return result.dice
-    .map((d) => {
-      const n = d.successes > 0 ? `**${d.value}**` : `${d.value}`;
-      return d.isCurse ? `💀${n}` : n;
-    })
-    .join(', ');
+  const format = (dice: RollResult['dice']) =>
+    dice.map((d) => (d.successes > 0 ? `**${d.value}**` : `${d.value}`)).join(', ');
+  const curse = result.dice.filter((d) => d.isCurse);
+  const regular = result.dice.filter((d) => !d.isCurse);
+  return curse.length > 0
+    ? `${format(curse)} | ${format(regular)}`
+    : format(regular);
 }
 
 /** Build the roll-result embed payload. */
@@ -116,41 +102,15 @@ export function buildRollEmbed(
       ? s(lang, curseHit ? 'wicked' : 'success')
       : s(lang, curseHit ? 'cruel' : 'failure');
 
-  const fields = [
-    { name: s(lang, 'pool'), value: poolParts.join(' + ') || '—', inline: false },
-    { name: s(lang, 'dice'), value: formatDice(result) || '—', inline: false },
-    {
-      name: s(lang, 'successes'),
-      value: `${result.totalSuccesses}`,
-      inline: true,
-    },
-    {
-      name: s(lang, 'difficulty'),
-      value: `${result.difficulty}`,
-      inline: true,
-    },
-    {
-      name: s(lang, 'threshold'),
-      value: `${result.thresholdSuccesses}`,
-      inline: true,
-    },
-  ];
-  if (result.curseDice > 0) {
-    fields.push({
-      name: s(lang, 'curseDice'),
-      value: `${result.curseDice}`,
-      inline: true,
-    });
-  }
+  const poolLine = `${poolParts.join(' + ') || '—'} = ${formatDice(result) || '—'}`;
+  const hitsLine = `${result.totalSuccesses} hit${result.totalSuccesses === 1 ? '' : 's'} vs ${s(lang, 'difficulty')} ${result.difficulty} = *${outcome}*`;
 
   return {
     embeds: [
       {
-        title: `${ctx.characterName} — ${s(lang, 'roll')}`,
-        description: `**${outcome}**`,
+        title: `${ctx.characterName} | ${label(template.name, lang)}`,
+        description: `${poolLine}\n${hitsLine}`,
         color: result.botched ? 0x8a1a1a : result.passed ? THEME_COLOR : 0x555555,
-        fields,
-        footer: { text: label(template.name, lang) },
       },
     ],
   };
@@ -189,26 +149,18 @@ export function buildTricksEmbed(
     lines.unshift(`• ${s(lang, 'complicationResolved')}: ${sev} (${complication})`);
   }
 
-  const fields = [
-    { name: s(lang, 'spent'), value: `${spent}`, inline: true },
-    { name: s(lang, 'remaining'), value: `${budget - spent}`, inline: true },
-  ];
-  if (enhancement > 0) {
-    fields.unshift({
-      name: s(lang, 'enhancement'),
-      value: `+${enhancement}`,
-      inline: true,
-    });
-  }
+  const summaryParts = [
+    enhancement > 0 ? `${s(lang, 'enhancement')} +${enhancement}` : null,
+    `${s(lang, 'spent')} ${spent}`,
+    `${s(lang, 'remaining')} ${budget - spent}`,
+  ].filter(Boolean);
 
   return {
     embeds: [
       {
-        title: `${ctx.characterName} — ${s(lang, 'tricks')}`,
-        description: lines.join('\n') || '—',
+        title: `${ctx.characterName} | ${label(template.name, lang)}`,
+        description: `${lines.join('\n') || '—'}\n\n${summaryParts.join(' · ')}`,
         color: THEME_COLOR,
-        fields,
-        footer: { text: label(template.name, lang) },
       },
     ],
   };
