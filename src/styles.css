@@ -254,7 +254,7 @@ button {
   padding: 0.5rem 0.8rem;
   transition: background 0.12s ease, transform 0.05s ease;
 }
-button:hover:not(:disabled) {
+button:hover:not(:disabled):not(.selected) {
   background: var(--border);
 }
 button:active:not(:disabled) {
@@ -677,10 +677,6 @@ button.danger:hover:not(:disabled) {
 .lang-switcher {
   padding: 0.35rem 0.5rem;
 }
-.theme-toggle {
-  padding: 0.35rem 0.5rem;
-  line-height: 1;
-}
 
 /* Custom scheme editor (settings) */
 .swatch-grid {
@@ -821,7 +817,7 @@ button.dot.filled:hover {
   margin-top: 0.05rem;
   line-height: 1.15;
 }
-button.sheet-stat:hover {
+button.sheet-stat:hover:not(.selected) {
   background: var(--card-2);
   border-color: var(--border);
 }

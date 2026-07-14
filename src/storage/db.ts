@@ -66,6 +66,6 @@ export const DEFAULT_SETTINGS: AppSettings = {
   id: 'app',
   uiLang: 'en',
   discordLang: 'en',
-  themeMode: 'rule',
+  themeMode: 'system',
   customTheme: DEFAULT_CUSTOM_THEME,
 };
