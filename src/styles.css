@@ -905,6 +905,31 @@ button.sheet-stat:hover {
   background: var(--failure);
 }
 
+/* Shared box row, used inside injury groups, the armor row and the flat fallback track. */
+.injury-boxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+/* Armor row: label + -/boxes/+, its own line above the injury groups. */
+.stat-track-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+/* Taken Out: its own line below the injury groups. */
+.injury-standalone {
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
 /* Grouped injury track — severity levels split by dividers, labels light up */
 .injury-track.grouped {
   align-items: stretch;
@@ -919,10 +944,6 @@ button.sheet-stat:hover {
 }
 .injury-level + .injury-level {
   border-left: 1px solid var(--border);
-}
-.injury-level .injury-boxes {
-  display: flex;
-  gap: 0.35rem;
 }
 .injury-level-label {
   font-size: 0.68rem;

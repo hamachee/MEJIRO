@@ -68,6 +68,7 @@ export function newCharacter(
     damnation: '',
     tricks,
     injuries: { boxes: injuryTotal(template), marked: 0, takenOut: false },
+    armor: { rating: 0, marked: 0 },
     curseDice: 1,
     resources: initialResources(template),
     createdAt: now,
@@ -110,6 +111,7 @@ export function normalizeCharacter(raw: Partial<Character> & Pick<Character, 'id
       takenOut: false,
       ...raw.injuries,
     },
+    armor: { rating: 0, marked: 0, ...raw.armor },
     curseDice: raw.curseDice ?? 1,
   };
 }

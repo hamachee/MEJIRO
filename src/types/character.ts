@@ -97,6 +97,17 @@ export interface InjuryTrack {
 }
 
 /**
+ * Armor: an independent box track, separate from the injury track. Rating
+ * (box count) is a dynamic stat the player adjusts with +/-; 0 means no
+ * boxes are shown. Marking follows the same fill convention as everything
+ * else, but is tracked on its own — it doesn't interact with injuries.
+ */
+export interface ArmorTrack {
+  rating: number;
+  marked: number;
+}
+
+/**
  * A character sheet. `attributes` and `skills` map stat id -> dots/rating.
  * `resources` maps resource id -> its live state. All storage is local
  * (IndexedDB); nothing leaves the browser unless exported.
@@ -129,6 +140,7 @@ export interface Character {
   damnation: string;
   tricks: CharacterTrick[];
   injuries: InjuryTrack;
+  armor: ArmorTrack;
   /**
    * Curse dice held right now. A persistent stat (like VtM hunger), edited
    * on the sheet as play changes it; each roll replaces this many pool dice.
