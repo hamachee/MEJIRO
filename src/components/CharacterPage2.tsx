@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCharacterStore } from '../store/characterStore';
+import { FieldLabel } from './FieldLabel';
 import type { Character, GearItem, SpellItem } from '../types/character';
 
 function uid(): string {
@@ -157,7 +158,9 @@ function GearSection({
 
   return (
     <section className="card">
-      <h2>{t('sheet.gear')}</h2>
+      <h2>
+        <FieldLabel i18nKey="sheet.gear" en="Gear" />
+      </h2>
       {items.length === 0 && <p className="muted">—</p>}
       <div className="card-grid">
         {items.map((item) => (
@@ -345,7 +348,9 @@ function SpellSection({
 
   return (
     <section className="card">
-      <h2>{t('sheet.spells')}</h2>
+      <h2>
+        <FieldLabel i18nKey="sheet.spells" en="Spells" />
+      </h2>
       {items.length === 0 && <p className="muted">—</p>}
       <div className="card-grid">
         {items.map((item) => (
