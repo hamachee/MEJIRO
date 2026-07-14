@@ -147,7 +147,7 @@ export function buildTricksEmbed(purchase: PurchaseSummary, ctx: DiscordContext)
   const lines = tricks.map((t) => `• ${t.name} (${t.cost})`);
   if (complication) {
     const sev = s(lang, SEVERITY_KEYS[complication] ?? 'minor');
-    lines.unshift(`• ${s(lang, 'complicationResolved')} (${sev} · -${complication})`);
+    lines.unshift(`• ${s(lang, 'complicationResolved')} (${sev}, -${complication})`);
   }
 
   const previousHits = budget - enhancement;
@@ -162,7 +162,7 @@ export function buildTricksEmbed(purchase: PurchaseSummary, ctx: DiscordContext)
     embeds: [
       {
         title: ctx.characterName || undefined,
-        description: `${lines.join('\n') || '—'}\n\n---\n${summaryParts.join(' · ')}`,
+        description: `${lines.join('\n') || '—'}\n${summaryParts.join(' · ')}`,
         color: THEME_COLOR,
       },
     ],
