@@ -107,7 +107,7 @@ export function buildRollEmbed(
       ? s(lang, curseHit ? 'wicked' : 'success')
       : s(lang, curseHit ? 'cruel' : 'failure');
 
-  const poolLine = `${poolParts.join(' + ') || '—'} = ${formatDice(result) || '—'}`;
+  const poolLine = `${poolParts.join(' + ') || '—'}\n${formatDice(result) || '—'}`;
   const hitsLine = `${hitsLabel(lang, result.totalSuccesses)} vs ${s(lang, 'difficulty')} ${result.difficulty} = *${outcome}*`;
 
   return {
