@@ -826,6 +826,12 @@ button.sheet-stat:hover:not(.selected) {
   border-color: var(--accent);
   color: var(--on-accent);
 }
+.sheet-stat.selected .dot {
+  border-color: var(--on-accent);
+}
+.sheet-stat.selected .dot.filled {
+  background: var(--on-accent);
+}
 .sheet-stat.editing {
   border-bottom: 1px dashed var(--divider);
   border-radius: 0;
