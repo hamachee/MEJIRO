@@ -18,5 +18,10 @@ export function useTheme(): void {
 
   useEffect(() => {
     applyTheme(resolveTheme(mode, custom, templateId));
+    if (mode !== 'system') return;
+    const media = matchMedia('(prefers-color-scheme: dark)');
+    const onChange = () => applyTheme(resolveTheme(mode, custom, templateId));
+    media.addEventListener('change', onChange);
+    return () => media.removeEventListener('change', onChange);
   }, [mode, custom, templateId]);
 }

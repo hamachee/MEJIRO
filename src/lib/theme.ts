@@ -1,5 +1,6 @@
 /**
- * Color scheme system. Four modes:
+ * Color scheme system. Five modes:
+ *  - system: follows the OS/browser's prefers-color-scheme
  *  - dark / light: neutral built-in schemes
  *  - rule: the scheme of the game system (template) being played —
  *    e.g. the violet Curseborne palette
@@ -10,9 +11,15 @@
  * keeps the Curseborne values as the pre-JS fallback.
  */
 
-export type ThemeMode = 'dark' | 'light' | 'rule' | 'custom';
+export type ThemeMode = 'system' | 'dark' | 'light' | 'rule' | 'custom';
 
-export const THEME_MODES: ThemeMode[] = ['dark', 'light', 'rule', 'custom'];
+export const THEME_MODES: ThemeMode[] = [
+  'system',
+  'dark',
+  'light',
+  'rule',
+  'custom',
+];
 
 /** The core palette a custom theme lets the user edit (hex values). */
 export interface ThemePalette {
@@ -205,6 +212,14 @@ function hexToRgba(hex: string, alpha: number): string {
   return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
 }
 
+/** Whether the OS/browser is currently set to prefer a dark color scheme. */
+function systemPrefersDark(): boolean {
+  return (
+    typeof matchMedia === 'function' &&
+    matchMedia('(prefers-color-scheme: dark)').matches
+  );
+}
+
 /**
  * Resolve the theme to render.
  * In rule mode the game system decides: the active character's template picks
@@ -216,6 +231,8 @@ export function resolveTheme(
   ruleTemplateId?: string,
 ): Theme {
   switch (mode) {
+    case 'system':
+      return systemPrefersDark() ? DARK_THEME : LIGHT_THEME;
     case 'light':
       return LIGHT_THEME;
     case 'rule':

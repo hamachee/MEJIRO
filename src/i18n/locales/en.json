@@ -131,6 +131,7 @@
   },
   "theme": {
     "label": "Color scheme",
+    "system": "System settings",
     "dark": "Dark",
     "light": "Light",
     "rule": "By rule",
