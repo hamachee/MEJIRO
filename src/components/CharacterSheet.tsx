@@ -336,7 +336,7 @@ function InjuryCard({
 }) {
   const { t } = useTranslation();
   const patch = useCharacterStore((s) => s.patch);
-  const { injuries } = character;
+  const { injuries, armor } = character;
 
   const levels = template.injuryTrack?.levels;
   // Taken Out is tracked independently (injuries.takenOut) rather than as
@@ -378,6 +378,67 @@ function InjuryCard({
     />
   );
 
+  // Armor: its own independent box track. Rating (box count) is a dynamic
+  // stat set with +/-, defaulting to 0 (no boxes shown); marking follows the
+  // same fill convention as the injury track but never touches it.
+  const armorMarked = Math.min(armor.marked, armor.rating);
+  const setArmorRating = (n: number) => {
+    const rating = Math.max(0, n);
+    patch({ armor: { rating, marked: Math.min(armorMarked, rating) } });
+  };
+  const armorBox = (absIndex: number) => {
+    const isMarked = absIndex < armorMarked;
+    const position = absIndex + 1;
+    return (
+      <button
+        key={absIndex}
+        className={`injury-box ${isMarked ? 'marked' : ''}`}
+        aria-label={`${position}`}
+        onClick={() =>
+          patch({
+            armor: {
+              ...armor,
+              marked: armorMarked === position ? position - 1 : position,
+            },
+          })
+        }
+      />
+    );
+  };
+  const armorRow = (
+    <div className="stat-track-row">
+      <span className="field-label">{t('sheet.armor')}</span>
+      <div className="curse-controls">
+        <button
+          aria-label={`− ${t('sheet.armor')}`}
+          disabled={armor.rating <= 0}
+          onClick={() => setArmorRating(armor.rating - 1)}
+        >
+          −
+        </button>
+        <div className="injury-boxes">
+          {Array.from({ length: armor.rating }, (_, i) => armorBox(i))}
+        </div>
+        <button aria-label={`+ ${t('sheet.armor')}`} onClick={() => setArmorRating(armor.rating + 1)}>
+          +
+        </button>
+      </div>
+    </div>
+  );
+
+  const takenOutRow = terminalLevel && (
+    <div className="injury-standalone">
+      <div className={`injury-level terminal ${injuries.takenOut ? 'lit' : ''}`}>
+        <div className="injury-boxes">
+          {Array.from({ length: terminalLevel.boxes }, (_, i) => takenOutBox(i))}
+        </div>
+        <span className="injury-level-label">
+          <L l10n={terminalLevel.label} />
+        </span>
+      </div>
+    </div>
+  );
+
   if (levels?.length) {
     let offset = 0;
     const groups = trackLevels.map((level) => {
@@ -397,25 +458,12 @@ function InjuryCard({
         </div>
       );
     });
-    if (terminalLevel) {
-      groups.push(
-        <div
-          key="terminal"
-          className={`injury-level terminal ${injuries.takenOut ? 'lit' : ''}`}
-        >
-          <div className="injury-boxes">
-            {Array.from({ length: terminalLevel.boxes }, (_, i) => takenOutBox(i))}
-          </div>
-          <span className="injury-level-label">
-            <L l10n={terminalLevel.label} />
-          </span>
-        </div>,
-      );
-    }
     return (
       <section className="card">
         <h2>{t('sheet.injuries')}</h2>
+        {armorRow}
         <div className="injury-track grouped">{groups}</div>
+        {takenOutRow}
       </section>
     );
   }
@@ -424,6 +472,7 @@ function InjuryCard({
   return (
     <section className="card">
       <h2>{t('sheet.injuries')}</h2>
+      {armorRow}
       <div className="injury-track">
         {Array.from({ length: total }, (_, i) => box(i))}
       </div>
@@ -652,6 +701,24 @@ export function CharacterSheet({ character, template, editing }: Props) {
       </div>
 
       <section className="card">
+        <h2>{t('sheet.skills')}</h2>
+        <div className="skill-grid">
+          {template.skills.map((stat) => (
+            <SheetStat
+              key={stat.id}
+              stat={stat}
+              value={character.skills[stat.id] ?? 0}
+              editing={editing}
+              selected={skillId === stat.id}
+              onToggle={() => toggleSkill(stat.id)}
+              onSet={(n) => setStat('skills', stat.id, n)}
+            />
+          ))}
+        </div>
+        {!editing && <p className="muted hint">{t('roller.selectPrompt')}</p>}
+      </section>
+
+      <section className="card">
         <h2>{t('sheet.attributes')}</h2>
         <div className="attr-grid">
           {template.categories.map((cat) => (
@@ -675,24 +742,6 @@ export function CharacterSheet({ character, template, editing }: Props) {
             </div>
           ))}
         </div>
-      </section>
-
-      <section className="card">
-        <h2>{t('sheet.skills')}</h2>
-        <div className="skill-grid">
-          {template.skills.map((stat) => (
-            <SheetStat
-              key={stat.id}
-              stat={stat}
-              value={character.skills[stat.id] ?? 0}
-              editing={editing}
-              selected={skillId === stat.id}
-              onToggle={() => toggleSkill(stat.id)}
-              onSet={(n) => setStat('skills', stat.id, n)}
-            />
-          ))}
-        </div>
-        {!editing && <p className="muted hint">{t('roller.selectPrompt')}</p>}
       </section>
 
       <div className="two-col">
