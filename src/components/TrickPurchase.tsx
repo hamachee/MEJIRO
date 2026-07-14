@@ -5,7 +5,6 @@ import { useSettingsStore } from '../store/settingsStore';
 import { validatePurchase } from '../engine/tricks';
 import { postTricks } from '../engine/discord';
 import type { Character } from '../types/character';
-import type { SystemTemplate } from '../types/template';
 import { Stepper } from './Stepper';
 import { TrickInfo } from './TrickInfo';
 import { FieldLabel } from './FieldLabel';
@@ -17,10 +16,9 @@ const SEVERITY_KEYS = ['none', 'minor', 'moderate', 'major'] as const;
 
 interface Props {
   character: Character;
-  template: SystemTemplate;
 }
 
-export function TrickPurchase({ character, template }: Props) {
+export function TrickPurchase({ character }: Props) {
   const { t } = useTranslation();
   const result = useRollStore((s) => s.result);
   const selectedTrickIds = useRollStore((s) => s.selectedTrickIds);
@@ -55,7 +53,6 @@ export function TrickPurchase({ character, template }: Props) {
     setPostState('posting');
     try {
       await postTricks(
-        template,
         {
           tricks: selected,
           budget,
@@ -65,7 +62,7 @@ export function TrickPurchase({ character, template }: Props) {
         {
           webhookUrl: url,
           lang: settings.discordLang,
-          characterName: character.name,
+          characterName: character.showNameInWebhook ? character.name : '',
         },
       );
       setPostState('done');

@@ -44,6 +44,11 @@ function s(lang: string, key: string): string {
   return STRINGS[lang]?.[key] ?? STRINGS.en[key] ?? key;
 }
 
+/** Localised "N hit(s)" — Korean uses a fixed unit word, no plural form. */
+function hitsLabel(lang: string, n: number): string {
+  return lang === 'ko' ? `${n} 히트` : `${n} hit${n === 1 ? '' : 's'}`;
+}
+
 const THEME_COLOR = 0x5b4b8a;
 
 export interface DiscordContext {
@@ -103,12 +108,12 @@ export function buildRollEmbed(
       : s(lang, curseHit ? 'cruel' : 'failure');
 
   const poolLine = `${poolParts.join(' + ') || '—'} = ${formatDice(result) || '—'}`;
-  const hitsLine = `${result.totalSuccesses} hit${result.totalSuccesses === 1 ? '' : 's'} vs ${s(lang, 'difficulty')} ${result.difficulty} = *${outcome}*`;
+  const hitsLine = `${hitsLabel(lang, result.totalSuccesses)} vs ${s(lang, 'difficulty')} ${result.difficulty} = *${outcome}*`;
 
   return {
     embeds: [
       {
-        title: `${ctx.characterName} | ${label(template.name, lang)}`,
+        title: ctx.characterName || undefined,
         description: `${poolLine}\n${hitsLine}`,
         color: result.botched ? 0x8a1a1a : result.passed ? THEME_COLOR : 0x555555,
       },
@@ -134,11 +139,7 @@ const SEVERITY_KEYS: Record<number, string> = {
 };
 
 /** Build the tricks-purchased embed payload (stage two). */
-export function buildTricksEmbed(
-  template: SystemTemplate,
-  purchase: PurchaseSummary,
-  ctx: DiscordContext,
-) {
+export function buildTricksEmbed(purchase: PurchaseSummary, ctx: DiscordContext) {
   const { lang } = ctx;
   const { tricks, budget, enhancement, complication } = purchase;
   const spent =
@@ -146,10 +147,12 @@ export function buildTricksEmbed(
   const lines = tricks.map((t) => `• ${t.name} (${t.cost})`);
   if (complication) {
     const sev = s(lang, SEVERITY_KEYS[complication] ?? 'minor');
-    lines.unshift(`• ${s(lang, 'complicationResolved')}: ${sev} (${complication})`);
+    lines.unshift(`• ${s(lang, 'complicationResolved')} (${sev} · -${complication})`);
   }
 
+  const previousHits = budget - enhancement;
   const summaryParts = [
+    hitsLabel(lang, previousHits),
     enhancement > 0 ? `${s(lang, 'enhancement')} +${enhancement}` : null,
     `${s(lang, 'spent')} ${spent}`,
     `${s(lang, 'remaining')} ${budget - spent}`,
@@ -158,8 +161,8 @@ export function buildTricksEmbed(
   return {
     embeds: [
       {
-        title: `${ctx.characterName} | ${label(template.name, lang)}`,
-        description: `${lines.join('\n') || '—'}\n\n${summaryParts.join(' · ')}`,
+        title: ctx.characterName || undefined,
+        description: `${lines.join('\n') || '—'}\n\n---\n${summaryParts.join(' · ')}`,
         color: THEME_COLOR,
       },
     ],
@@ -191,9 +194,8 @@ export function postRollResult(
 
 /** Post the purchase-phase summary (stage two). */
 export function postTricks(
-  template: SystemTemplate,
   purchase: PurchaseSummary,
   ctx: DiscordContext,
 ): Promise<void> {
-  return post(ctx.webhookUrl, buildTricksEmbed(template, purchase, ctx));
+  return post(ctx.webhookUrl, buildTricksEmbed(purchase, ctx));
 }

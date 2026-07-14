@@ -60,7 +60,8 @@
     "add": "Add",
     "save": "Save",
     "namePlaceholder": "Name",
-    "webhook": "Discord webhook URL"
+    "webhook": "Discord webhook URL",
+    "showNameInWebhook": "Show character name in webhook messages"
   },
   "roller": {
     "title": "Dice Pool",

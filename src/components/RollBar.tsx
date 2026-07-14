@@ -49,15 +49,6 @@ export function RollBar({ character, template }: Props) {
         </span>
       </div>
       <div className="roll-bar-controls">
-        {template.dice.curseDice && (
-          <span
-            className="curse-count"
-            title={t('roller.curseDice')}
-            aria-label={t('roller.curseDice')}
-          >
-            💀 {Math.min(character.curseDice, pool)}
-          </span>
-        )}
         <Stepper
           label={t('roller.difficulty')}
           value={difficulty}

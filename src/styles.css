@@ -206,6 +206,12 @@ body {
   font-size: 0.78rem;
   color: var(--muted);
 }
+.field-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
 
 input,
 select,
@@ -1108,13 +1114,6 @@ p.fold-readonly {
 }
 .curse-dots button.dot.filled:hover {
   background: var(--curse);
-}
-.curse-count {
-  align-self: center;
-  color: var(--curse-text);
-  font-variant-numeric: tabular-nums;
-  font-weight: 600;
-  padding: 0.4rem 0.2rem;
 }
 
 /* Curse dice — vivid violet, clearly not the failure red */
