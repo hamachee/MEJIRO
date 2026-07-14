@@ -2,11 +2,9 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCharacterStore } from '../store/characterStore';
 import { FieldLabel } from './FieldLabel';
+import { uid } from '../lib/uid';
+import { useDragReorder } from '../lib/useDragReorder';
 import type { Character, GearItem, SpellItem } from '../types/character';
-
-function uid(): string {
-  return crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
-}
 
 /** Parse a comma-separated input into trimmed, non-empty tags. */
 function parseTags(raw: string): string[] {
@@ -31,13 +29,24 @@ function TagChips({ tags }: { tags: string[] }) {
 
 interface GearCardProps {
   item: GearItem;
+  index: number;
   editing: boolean;
   onSave: (item: GearItem) => void;
   onRemove: () => void;
+  dragHandleProps: ReturnType<typeof useDragReorder<GearItem>>['handleProps'];
+  dragItemProps: ReturnType<typeof useDragReorder<GearItem>>['itemProps'];
 }
 
 /** A single gear card: read-only display, or an inline edit form when opened. */
-function GearCard({ item, editing, onSave, onRemove }: GearCardProps) {
+function GearCard({
+  item,
+  index,
+  editing,
+  onSave,
+  onRemove,
+  dragHandleProps,
+  dragItemProps,
+}: GearCardProps) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(item.name);
@@ -57,9 +66,11 @@ function GearCard({ item, editing, onSave, onRemove }: GearCardProps) {
     setOpen(false);
   };
 
+  const drag = dragItemProps(index);
+
   if (editing && open) {
     return (
-      <div className="item-card editing">
+      <div className={`item-card editing ${drag.className}`} data-drag-index={index}>
         <div className="form-row">
           <input
             className="grow"
@@ -100,9 +111,12 @@ function GearCard({ item, editing, onSave, onRemove }: GearCardProps) {
   }
 
   return (
-    <div className="item-card">
+    <div className={`item-card ${drag.className}`} data-drag-index={index}>
       <div className="item-card-head">
-        <strong className="item-card-name">{item.name}</strong>
+        <div className="item-card-title">
+          {editing && <span className="drag-handle" {...dragHandleProps(index)} />}
+          <strong className="item-card-name">{item.name}</strong>
+        </div>
         {editing && (
           <div className="item-card-actions">
             <button
@@ -139,6 +153,7 @@ function GearSection({
   const [tags, setTags] = useState('');
   const [desc, setDesc] = useState('');
   const items = character.gear;
+  const { handleProps, itemProps } = useDragReorder(items, (next) => patch({ gear: next }));
 
   const add = () => {
     if (!name.trim()) return;
@@ -163,15 +178,18 @@ function GearSection({
       </h2>
       {items.length === 0 && <p className="muted">—</p>}
       <div className="card-grid">
-        {items.map((item) => (
+        {items.map((item, i) => (
           <GearCard
             key={item.id}
             item={item}
+            index={i}
             editing={editing}
             onSave={(updated) =>
               patch({ gear: items.map((x) => (x.id === item.id ? updated : x)) })
             }
             onRemove={() => patch({ gear: items.filter((x) => x.id !== item.id) })}
+            dragHandleProps={handleProps}
+            dragItemProps={itemProps}
           />
         ))}
       </div>
@@ -216,13 +234,24 @@ function GearSection({
 
 interface SpellCardProps {
   item: SpellItem;
+  index: number;
   editing: boolean;
   onSave: (item: SpellItem) => void;
   onRemove: () => void;
+  dragHandleProps: ReturnType<typeof useDragReorder<SpellItem>>['handleProps'];
+  dragItemProps: ReturnType<typeof useDragReorder<SpellItem>>['itemProps'];
 }
 
 /** A single spell card: read-only display, or an inline edit form when opened. */
-function SpellCard({ item, editing, onSave, onRemove }: SpellCardProps) {
+function SpellCard({
+  item,
+  index,
+  editing,
+  onSave,
+  onRemove,
+  dragHandleProps,
+  dragItemProps,
+}: SpellCardProps) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(item.name);
@@ -242,9 +271,11 @@ function SpellCard({ item, editing, onSave, onRemove }: SpellCardProps) {
     setOpen(false);
   };
 
+  const drag = dragItemProps(index);
+
   if (editing && open) {
     return (
-      <div className="item-card editing">
+      <div className={`item-card editing ${drag.className}`} data-drag-index={index}>
         <div className="form-row">
           <input
             className="grow"
@@ -286,9 +317,12 @@ function SpellCard({ item, editing, onSave, onRemove }: SpellCardProps) {
   }
 
   return (
-    <div className="item-card">
+    <div className={`item-card ${drag.className}`} data-drag-index={index}>
       <div className="item-card-head">
-        <strong className="item-card-name">{item.name}</strong>
+        <div className="item-card-title">
+          {editing && <span className="drag-handle" {...dragHandleProps(index)} />}
+          <strong className="item-card-name">{item.name}</strong>
+        </div>
         {editing && (
           <div className="item-card-actions">
             <button
@@ -329,6 +363,7 @@ function SpellSection({
   const [attunements, setAttunements] = useState('');
   const [advancements, setAdvancements] = useState('');
   const items = character.spells;
+  const { handleProps, itemProps } = useDragReorder(items, (next) => patch({ spells: next }));
 
   const add = () => {
     if (!name.trim()) return;
@@ -353,15 +388,18 @@ function SpellSection({
       </h2>
       {items.length === 0 && <p className="muted">—</p>}
       <div className="card-grid">
-        {items.map((item) => (
+        {items.map((item, i) => (
           <SpellCard
             key={item.id}
             item={item}
+            index={i}
             editing={editing}
             onSave={(updated) =>
               patch({ spells: items.map((x) => (x.id === item.id ? updated : x)) })
             }
             onRemove={() => patch({ spells: items.filter((x) => x.id !== item.id) })}
+            dragHandleProps={handleProps}
+            dragItemProps={itemProps}
           />
         ))}
       </div>

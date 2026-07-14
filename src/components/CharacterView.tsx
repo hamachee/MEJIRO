@@ -7,6 +7,7 @@ import { getTemplate } from '../templates';
 import { useWide } from '../lib/useWide';
 import { CharacterSheet } from './CharacterSheet';
 import { CharacterPage2 } from './CharacterPage2';
+import { CharacterPage3 } from './CharacterPage3';
 import { RollBar } from './RollBar';
 import { RollResult } from './RollResult';
 import { TrickPurchase } from './TrickPurchase';
@@ -20,7 +21,7 @@ export function CharacterView() {
   const result = useRollStore((s) => s.result);
   const clearResult = useRollStore((s) => s.clearResult);
   const [editing, setEditing] = useState(false);
-  const [page, setPage] = useState<1 | 2>(1);
+  const [page, setPage] = useState<1 | 2 | 3>(1);
   const wide = useWide();
 
   useEffect(() => {
@@ -78,16 +79,22 @@ export function CharacterView() {
         >
           {t('sheet.page2')}
         </button>
+        <button
+          className={`page-tab ${page === 3 ? 'active' : ''}`}
+          onClick={() => setPage(3)}
+        >
+          {t('sheet.page3')}
+        </button>
       </nav>
 
       {/* Desktop: the result sits in a sticky side column next to the sheet.
           Mobile: it opens as a modal over the sheet. */}
       <div className={`play-layout ${wide && result ? 'with-result' : ''}`}>
-        {page === 1 ? (
+        {page === 1 && (
           <CharacterSheet character={active} template={template} editing={editing} />
-        ) : (
-          <CharacterPage2 character={active} editing={editing} />
         )}
+        {page === 2 && <CharacterPage2 character={active} editing={editing} />}
+        {page === 3 && <CharacterPage3 character={active} editing={editing} />}
         {wide && result && <aside className="result-col stack">{resultPanel}</aside>}
       </div>
 
