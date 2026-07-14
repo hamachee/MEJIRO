@@ -108,7 +108,7 @@ export function buildRollEmbed(
   return {
     embeds: [
       {
-        title: `${ctx.characterName} | ${label(template.name, lang)}`,
+        title: ctx.characterName,
         description: `${poolLine}\n${hitsLine}`,
         color: result.botched ? 0x8a1a1a : result.passed ? THEME_COLOR : 0x555555,
       },
@@ -134,11 +134,7 @@ const SEVERITY_KEYS: Record<number, string> = {
 };
 
 /** Build the tricks-purchased embed payload (stage two). */
-export function buildTricksEmbed(
-  template: SystemTemplate,
-  purchase: PurchaseSummary,
-  ctx: DiscordContext,
-) {
+export function buildTricksEmbed(purchase: PurchaseSummary, ctx: DiscordContext) {
   const { lang } = ctx;
   const { tricks, budget, enhancement, complication } = purchase;
   const spent =
@@ -158,7 +154,7 @@ export function buildTricksEmbed(
   return {
     embeds: [
       {
-        title: `${ctx.characterName} | ${label(template.name, lang)}`,
+        title: ctx.characterName,
         description: `${lines.join('\n') || '—'}\n\n${summaryParts.join(' · ')}`,
         color: THEME_COLOR,
       },
@@ -191,9 +187,8 @@ export function postRollResult(
 
 /** Post the purchase-phase summary (stage two). */
 export function postTricks(
-  template: SystemTemplate,
   purchase: PurchaseSummary,
   ctx: DiscordContext,
 ): Promise<void> {
-  return post(ctx.webhookUrl, buildTricksEmbed(template, purchase, ctx));
+  return post(ctx.webhookUrl, buildTricksEmbed(purchase, ctx));
 }

@@ -46,7 +46,7 @@ export function CharacterView() {
   const resultPanel = result && (
     <>
       <RollResult />
-      <TrickPurchase character={active} template={template} />
+      <TrickPurchase character={active} />
       <button onClick={clearResult}>{t('common.close')}</button>
     </>
   );
