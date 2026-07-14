@@ -62,7 +62,7 @@ export function TrickPurchase({ character }: Props) {
         {
           webhookUrl: url,
           lang: settings.discordLang,
-          characterName: character.name,
+          characterName: character.showNameInWebhook ? character.name : '',
         },
       );
       setPostState('done');

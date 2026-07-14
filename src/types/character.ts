@@ -124,6 +124,13 @@ export interface Character {
    * sheets.
    */
   webhookUrl: string;
+  /**
+   * Whether roll/tricks messages include the character name in the embed
+   * title. Off by default makes sense when the webhook itself is already
+   * named/avatared for this character (a GM can hand out a separate
+   * webhook per character), so the name would just be redundant.
+   */
+  showNameInWebhook: boolean;
   attributes: Record<string, number>;
   skills: Record<string, number>;
   edges: RatedItem[];

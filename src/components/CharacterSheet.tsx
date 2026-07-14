@@ -258,6 +258,16 @@ function IdentityCard({
           />
         </label>
       </div>
+      <div className="form-row">
+        <label className="field-check">
+          <input
+            type="checkbox"
+            checked={character.showNameInWebhook}
+            onChange={(e) => patch({ showNameInWebhook: e.target.checked })}
+          />
+          <span>{t('sheet.showNameInWebhook')}</span>
+        </label>
+      </div>
     </section>
   );
 }

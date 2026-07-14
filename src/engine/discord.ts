@@ -113,7 +113,7 @@ export function buildRollEmbed(
   return {
     embeds: [
       {
-        title: ctx.characterName,
+        title: ctx.characterName || undefined,
         description: `${poolLine}\n${hitsLine}`,
         color: result.botched ? 0x8a1a1a : result.passed ? THEME_COLOR : 0x555555,
       },
@@ -161,7 +161,7 @@ export function buildTricksEmbed(purchase: PurchaseSummary, ctx: DiscordContext)
   return {
     embeds: [
       {
-        title: ctx.characterName,
+        title: ctx.characterName || undefined,
         description: `${lines.join('\n') || '—'}\n\n---\n${summaryParts.join(' · ')}`,
         color: THEME_COLOR,
       },

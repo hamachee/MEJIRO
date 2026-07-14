@@ -60,7 +60,8 @@
     "add": "추가",
     "namePlaceholder": "이름",
     "save": "저장",
-    "webhook": "디스코드 웹훅 URL"
+    "webhook": "디스코드 웹훅 URL",
+    "showNameInWebhook": "웹훅 메시지에 캐릭터 이름 표시"
   },
   "roller": {
     "title": "주사위 풀",
