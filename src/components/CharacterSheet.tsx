@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCharacterStore } from '../store/characterStore';
 import { useRollStore } from '../store/rollStore';
@@ -13,6 +13,7 @@ import {
 import type { L10n as L10nLabel, Stat, SystemTemplate } from '../types/template';
 import { ResourceTracker } from './ResourceTracker';
 import { TrickInfo } from './TrickInfo';
+import { FieldLabel } from './FieldLabel';
 
 function uid(): string {
   return crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
@@ -33,22 +34,6 @@ function L({ l10n }: { l10n: L10nLabel }) {
     <>
       {localized}
       {showEn && <small className="label-en">{l10n.en}</small>}
-    </>
-  );
-}
-
-/**
- * Same treatment as {@link L}, but for UI-chrome field labels that name
- * Curseborne concepts (Lineage, Family) rather than template data — the
- * localised text plus a small English gloss when the UI isn't English.
- */
-function FieldLabel({ i18nKey, en }: { i18nKey: string; en: string }) {
-  const { t } = useTranslation();
-  const lang = useLang();
-  return (
-    <>
-      {t(i18nKey)}
-      {lang !== 'en' && <small className="label-en">{en}</small>}
     </>
   );
 }
@@ -302,7 +287,9 @@ function CurseCard({
   return (
     <section className="card">
       <div className="curse-row">
-        <span className="field-label">{t('sheet.entanglement')}</span>
+        <span className="field-label">
+          <FieldLabel i18nKey="sheet.entanglement" en="Entanglement" />
+        </span>
         <Dots
           value={identity.entanglement}
           max={MAX_ENTANGLEMENT}
@@ -317,7 +304,9 @@ function CurseCard({
         />
       </div>
       <div className="curse-row">
-        <span className="field-label">{t('roller.curseDice')}</span>
+        <span className="field-label">
+          <FieldLabel i18nKey="roller.curseDice" en="Curse dice" />
+        </span>
         <div className="curse-controls">
           <button
             aria-label={`− ${t('roller.curseDice')}`}
@@ -427,7 +416,9 @@ function InjuryCard({
   };
   const armorRow = (
     <div className="stat-track-row">
-      <span className="field-label">{t('sheet.armor')}</span>
+      <span className="field-label">
+        <FieldLabel i18nKey="sheet.armor" en="Armor" />
+      </span>
       <div className="curse-controls">
         <button
           aria-label={`− ${t('sheet.armor')}`}
@@ -480,7 +471,9 @@ function InjuryCard({
     });
     return (
       <section className="card">
-        <h2>{t('sheet.injuries')}</h2>
+        <h2>
+        <FieldLabel i18nKey="sheet.injuries" en="Injuries" />
+      </h2>
         {armorRow}
         <div className="injury-track grouped">{groups}</div>
         {takenOutRow}
@@ -491,7 +484,9 @@ function InjuryCard({
   // Fallback: flat track for templates without a structured injury track.
   return (
     <section className="card">
-      <h2>{t('sheet.injuries')}</h2>
+      <h2>
+        <FieldLabel i18nKey="sheet.injuries" en="Injuries" />
+      </h2>
       {armorRow}
       <div className="injury-track">
         {Array.from({ length: total }, (_, i) => box(i))}
@@ -507,7 +502,7 @@ function RatedListCard({
   editing,
   onChange,
 }: {
-  title: string;
+  title: ReactNode;
   items: RatedItem[];
   editing: boolean;
   onChange: (items: RatedItem[]) => void;
@@ -578,7 +573,9 @@ function ConditionsCard({ character }: { character: Character }) {
 
   return (
     <section className="card">
-      <h2>{t('sheet.conditions')}</h2>
+      <h2>
+        <FieldLabel i18nKey="sheet.conditions" en="Conditions" />
+      </h2>
       <div className="condition-chips">
         {conditions.length === 0 && <span className="muted">—</span>}
         {conditions.map((c) => (
@@ -640,7 +637,9 @@ function TricksCard({ character }: { character: Character }) {
 
   return (
     <section className="card">
-      <h2>{t('tricks.title')}</h2>
+      <h2>
+        <FieldLabel i18nKey="tricks.title" en="Tricks" />
+      </h2>
       <p className="muted hint">{t('tricks.manageHint')}</p>
       <ul className="named-list">
         {tricks.map((tr) => (
@@ -721,7 +720,9 @@ export function CharacterSheet({ character, template, editing }: Props) {
       </div>
 
       <section className="card">
-        <h2>{t('sheet.skills')}</h2>
+        <h2>
+          <FieldLabel i18nKey="sheet.skills" en="Skills" />
+        </h2>
         <div className="skill-grid">
           {template.skills.map((stat) => (
             <SheetStat
@@ -739,7 +740,9 @@ export function CharacterSheet({ character, template, editing }: Props) {
       </section>
 
       <section className="card">
-        <h2>{t('sheet.attributes')}</h2>
+        <h2>
+          <FieldLabel i18nKey="sheet.attributes" en="Attributes" />
+        </h2>
         <div className="attr-grid">
           {template.categories.map((cat) => (
             <div key={cat.id} className="attr-col">
@@ -771,13 +774,13 @@ export function CharacterSheet({ character, template, editing }: Props) {
 
       <div className="two-col">
         <RatedListCard
-          title={t('sheet.edges')}
+          title={<FieldLabel i18nKey="sheet.edges" en="Edges" />}
           items={character.edges}
           editing={editing}
           onChange={(edges) => patch({ edges })}
         />
         <RatedListCard
-          title={t('sheet.paths')}
+          title={<FieldLabel i18nKey="sheet.paths" en="Paths" />}
           items={character.paths}
           editing={editing}
           onChange={(paths) => patch({ paths })}
@@ -786,13 +789,13 @@ export function CharacterSheet({ character, template, editing }: Props) {
 
       <div className="two-col">
         <RatedListCard
-          title={t('sheet.contacts')}
+          title={<FieldLabel i18nKey="sheet.contacts" en="Contacts" />}
           items={character.contacts}
           editing={editing}
           onChange={(contacts) => patch({ contacts })}
         />
         <RatedListCard
-          title={t('sheet.bonds')}
+          title={<FieldLabel i18nKey="sheet.bonds" en="Bonds" />}
           items={character.bonds}
           editing={editing}
           onChange={(bonds) => patch({ bonds })}
@@ -803,7 +806,9 @@ export function CharacterSheet({ character, template, editing }: Props) {
 
       <div className="two-col">
         <section className="card">
-          <h2>{t('sheet.torment')}</h2>
+          <h2>
+            <FieldLabel i18nKey="sheet.torment" en="Torment" />
+          </h2>
           <textarea
             className="torment-field"
             rows={4}
@@ -813,7 +818,9 @@ export function CharacterSheet({ character, template, editing }: Props) {
           />
         </section>
         <section className="card">
-          <h2>{t('sheet.damnation')}</h2>
+          <h2>
+            <FieldLabel i18nKey="sheet.damnation" en="Damnation" />
+          </h2>
           <textarea
             className="torment-field"
             rows={4}

@@ -8,6 +8,7 @@ import type { Character } from '../types/character';
 import type { SystemTemplate } from '../types/template';
 import { Stepper } from './Stepper';
 import { TrickInfo } from './TrickInfo';
+import { FieldLabel } from './FieldLabel';
 
 type PostState = 'idle' | 'posting' | 'done' | 'error';
 
@@ -84,7 +85,9 @@ export function TrickPurchase({ character, template }: Props) {
   return (
     <section className="card">
       <div className="result-head">
-        <h2>{t('tricks.title')}</h2>
+        <h2>
+          <FieldLabel i18nKey="tricks.title" en="Tricks" />
+        </h2>
         <span className={`badge ${valid ? '' : 'failure'}`}>
           {t('tricks.remaining')}: {remaining} / {budget}
         </span>
