@@ -44,6 +44,11 @@ function s(lang: string, key: string): string {
   return STRINGS[lang]?.[key] ?? STRINGS.en[key] ?? key;
 }
 
+/** Localised "N hit(s)" — Korean uses a fixed unit word, no plural form. */
+function hitsLabel(lang: string, n: number): string {
+  return lang === 'ko' ? `${n} 히트` : `${n} hit${n === 1 ? '' : 's'}`;
+}
+
 const THEME_COLOR = 0x5b4b8a;
 
 export interface DiscordContext {
@@ -103,7 +108,7 @@ export function buildRollEmbed(
       : s(lang, curseHit ? 'cruel' : 'failure');
 
   const poolLine = `${poolParts.join(' + ') || '—'} = ${formatDice(result) || '—'}`;
-  const hitsLine = `${result.totalSuccesses} hit${result.totalSuccesses === 1 ? '' : 's'} vs ${s(lang, 'difficulty')} ${result.difficulty} = *${outcome}*`;
+  const hitsLine = `${hitsLabel(lang, result.totalSuccesses)} vs ${s(lang, 'difficulty')} ${result.difficulty} = *${outcome}*`;
 
   return {
     embeds: [
@@ -142,10 +147,12 @@ export function buildTricksEmbed(purchase: PurchaseSummary, ctx: DiscordContext)
   const lines = tricks.map((t) => `• ${t.name} (${t.cost})`);
   if (complication) {
     const sev = s(lang, SEVERITY_KEYS[complication] ?? 'minor');
-    lines.unshift(`• ${s(lang, 'complicationResolved')}: ${sev} (${complication})`);
+    lines.unshift(`• ${s(lang, 'complicationResolved')} (${sev} · -${complication})`);
   }
 
+  const previousHits = budget - enhancement;
   const summaryParts = [
+    hitsLabel(lang, previousHits),
     enhancement > 0 ? `${s(lang, 'enhancement')} +${enhancement}` : null,
     `${s(lang, 'spent')} ${spent}`,
     `${s(lang, 'remaining')} ${budget - spent}`,
@@ -155,7 +162,7 @@ export function buildTricksEmbed(purchase: PurchaseSummary, ctx: DiscordContext)
     embeds: [
       {
         title: ctx.characterName,
-        description: `${lines.join('\n') || '—'}\n\n${summaryParts.join(' · ')}`,
+        description: `${lines.join('\n') || '—'}\n\n---\n${summaryParts.join(' · ')}`,
         color: THEME_COLOR,
       },
     ],
