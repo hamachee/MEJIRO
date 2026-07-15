@@ -992,9 +992,22 @@ button.sheet-stat:hover:not(.selected) {
   border-color: var(--failure-bright);
 }
 
-/* Compact injury tracker (Gear tab): a single thin row, no title/armor/taken-out. */
+/* Compact injury tracker (Gear tab): armor, track and taken-out on one
+   thin, wrapping line — no card title. */
 .card.compact-tracker {
   padding: 0.5rem 0.8rem;
+}
+.tracker-line {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.stat-track-row.thin {
+  margin: 0;
+  padding: 0;
+  border-bottom: none;
+  gap: 0.5rem;
 }
 .injury-track.compact {
   flex-wrap: nowrap;
@@ -1080,9 +1093,17 @@ button.sheet-stat:hover:not(.selected) {
   padding-top: 0.6rem;
   border-top: 1px dashed var(--divider-strong);
 }
+/* Compact variant (Spells tab): Entanglement + Curse Dice on one line. */
+.curse-line {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
 /* These rows have no <h2>; label size matches the skill-row labels
    (.skill-grid .stat-label) rather than the small muted field-label. */
-.curse-row > .field-label {
+.curse-row > .field-label,
+.curse-line > .field-label {
   font-size: 0.86rem;
   font-weight: 400;
   color: var(--text);

@@ -281,14 +281,75 @@ function IdentityCard({
 export function CurseCard({
   character,
   editing,
+  variant = 'full',
 }: {
   character: Character;
   editing: boolean;
+  variant?: 'full' | 'compact';
 }) {
   const { t } = useTranslation();
   const patch = useCharacterStore((s) => s.patch);
   const { identity } = character;
   const curseCap = curseDiceCap(identity.entanglement);
+
+  const entanglementDots = (
+    <Dots
+      value={identity.entanglement}
+      max={MAX_ENTANGLEMENT}
+      editable={editing}
+      onSet={(n) =>
+        patch({
+          identity: { ...identity, entanglement: n },
+          // Lowering entanglement shrinks curse capacity too.
+          curseDice: Math.min(character.curseDice, curseDiceCap(n)),
+        })
+      }
+    />
+  );
+
+  const curseDiceControls = (
+    <div className="curse-controls">
+      <button
+        aria-label={`− ${t('roller.curseDice')}`}
+        disabled={character.curseDice <= 0}
+        onClick={() => patch({ curseDice: character.curseDice - 1 })}
+      >
+        −
+      </button>
+      <span className="dots curse-dots">
+        <Dots
+          value={character.curseDice}
+          max={curseCap}
+          editable
+          onSet={(n) => patch({ curseDice: n })}
+        />
+      </span>
+      <button
+        aria-label={`+ ${t('roller.curseDice')}`}
+        disabled={character.curseDice >= curseCap}
+        onClick={() => patch({ curseDice: character.curseDice + 1 })}
+      >
+        +
+      </button>
+    </div>
+  );
+
+  if (variant === 'compact') {
+    return (
+      <section className="card compact-tracker">
+        <div className="curse-line">
+          <span className="field-label">
+            <FieldLabel i18nKey="sheet.entanglement" en="Entanglement" />
+          </span>
+          {entanglementDots}
+          <span className="field-label">
+            <FieldLabel i18nKey="roller.curseDice" en="Curse dice" />
+          </span>
+          {curseDiceControls}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="card">
@@ -296,47 +357,13 @@ export function CurseCard({
         <span className="field-label">
           <FieldLabel i18nKey="sheet.entanglement" en="Entanglement" />
         </span>
-        <Dots
-          value={identity.entanglement}
-          max={MAX_ENTANGLEMENT}
-          editable={editing}
-          onSet={(n) =>
-            patch({
-              identity: { ...identity, entanglement: n },
-              // Lowering entanglement shrinks curse capacity too.
-              curseDice: Math.min(character.curseDice, curseDiceCap(n)),
-            })
-          }
-        />
+        {entanglementDots}
       </div>
       <div className="curse-row">
         <span className="field-label">
           <FieldLabel i18nKey="roller.curseDice" en="Curse dice" />
         </span>
-        <div className="curse-controls">
-          <button
-            aria-label={`− ${t('roller.curseDice')}`}
-            disabled={character.curseDice <= 0}
-            onClick={() => patch({ curseDice: character.curseDice - 1 })}
-          >
-            −
-          </button>
-          <span className="dots curse-dots">
-            <Dots
-              value={character.curseDice}
-              max={curseCap}
-              editable
-              onSet={(n) => patch({ curseDice: n })}
-            />
-          </span>
-          <button
-            aria-label={`+ ${t('roller.curseDice')}`}
-            disabled={character.curseDice >= curseCap}
-            onClick={() => patch({ curseDice: character.curseDice + 1 })}
-          >
-            +
-          </button>
-        </div>
+        {curseDiceControls}
       </div>
     </section>
   );
@@ -422,8 +449,10 @@ export function InjuryCard({
       />
     );
   };
+  const compact = variant === 'compact';
+
   const armorRow = (
-    <div className="stat-track-row">
+    <div className={compact ? 'stat-track-row thin' : 'stat-track-row'}>
       <span className="field-label">
         <FieldLabel i18nKey="sheet.armor" en="Armor" />
       </span>
@@ -446,8 +475,8 @@ export function InjuryCard({
   );
 
   const takenOutRow = terminalLevel && (
-    <div className="injury-standalone">
-      <div className={`injury-level terminal ${injuries.takenOut ? 'lit' : ''}`}>
+    <div className={compact ? undefined : 'injury-standalone'}>
+      <div className={`injury-level terminal ${injuries.takenOut ? 'lit' : ''} ${compact ? 'thin' : ''}`}>
         <div className="injury-boxes">
           {Array.from({ length: terminalLevel.boxes }, (_, i) => takenOutBox(i))}
         </div>
@@ -480,10 +509,14 @@ export function InjuryCard({
         </div>
       );
     });
-    if (variant === 'compact') {
+    if (compact) {
       return (
         <section className="card compact-tracker">
-          <div className="injury-track grouped compact">{groups}</div>
+          <div className="tracker-line">
+            {armorRow}
+            <div className="injury-track grouped compact">{groups}</div>
+            {takenOutRow}
+          </div>
         </section>
       );
     }
@@ -500,11 +533,14 @@ export function InjuryCard({
   }
 
   // Fallback: flat track for templates without a structured injury track.
-  if (variant === 'compact') {
+  if (compact) {
     return (
       <section className="card compact-tracker">
-        <div className="injury-track compact">
-          {Array.from({ length: total }, (_, i) => box(i))}
+        <div className="tracker-line">
+          {armorRow}
+          <div className="injury-track compact">
+            {Array.from({ length: total }, (_, i) => box(i))}
+          </div>
         </div>
       </section>
     );

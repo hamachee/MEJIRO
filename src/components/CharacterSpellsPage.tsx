@@ -265,7 +265,7 @@ interface SpellsPageProps {
 export function CharacterSpellsPage({ character, editing }: SpellsPageProps) {
   return (
     <div className="stack">
-      <CurseCard character={character} editing={editing} />
+      <CurseCard character={character} editing={editing} variant="compact" />
       <SpellSection character={character} editing={editing} />
     </div>
   );
