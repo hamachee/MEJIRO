@@ -25,6 +25,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm run lint
       - run: npm test
       # Pages URLs are case-sensitive; derive the base path from the repo name.
       - run: BASE_PATH="/${GITHUB_REPOSITORY#*/}/" npm run build
