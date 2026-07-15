@@ -21,9 +21,10 @@ interface Props {
 
 /**
  * Sticky bar at the bottom of the sheet, shown only in edit mode (in the
- * same slot the roll bar occupies in play mode). +/- steps total EXP; every
- * point earned stays visible as a filled dot, clustered five to a group —
- * there's no "unfilled" state since EXP has no fixed cap.
+ * same slot the roll bar occupies in play mode). Total EXP is a number
+ * field — click +/- or type/arrow-key a value directly. Every point earned
+ * stays visible as a filled dot, clustered five to a group — there's no
+ * "unfilled" state since EXP has no fixed cap.
  */
 export function ExpTracker({ character }: Props) {
   const { t } = useTranslation();
@@ -45,7 +46,18 @@ export function ExpTracker({ character }: Props) {
         >
           −
         </button>
-        <span className="exp-value">{exp}</span>
+        <input
+          type="number"
+          className="exp-value"
+          inputMode="numeric"
+          min={0}
+          aria-label={t('sheet.exp')}
+          value={exp}
+          onChange={(e) => {
+            const n = Number(e.target.value);
+            if (!Number.isNaN(n)) setExp(n);
+          }}
+        />
         <button aria-label={`+ ${t('sheet.exp')}`} onClick={() => setExp(exp + 1)}>
           +
         </button>

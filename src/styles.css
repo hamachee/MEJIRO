@@ -980,9 +980,10 @@ button.sheet-stat:hover:not(.selected) {
   color: var(--text);
 }
 .exp-value {
+  width: 3.4rem;
+  padding: 0.25rem 0.3rem;
   font-size: 1.3rem;
   font-variant-numeric: tabular-nums;
-  min-width: 1.6rem;
   text-align: center;
 }
 .exp-dots {
