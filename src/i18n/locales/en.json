@@ -97,7 +97,7 @@
     "postTricks": "Post tricks",
     "none": "No tricks on this character yet. Add them on the sheet.",
     "overBudget": "Over budget",
-    "manageHint": "Your own list — add the tricks you use with their hit costs. No rulebook text, just names.",
+    "manageHint": "Your own list — add the tricks you use with their hit costs.",
     "complication": "Complication",
     "severity": {
       "none": "None",

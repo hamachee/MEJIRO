@@ -83,9 +83,7 @@ language.
 
 ## Roadmap
 
-GM mode, additional systems (WoD, CoC), roll history, PDF import/export,
-shareable data-URL sheets, a compact picture-in-picture mini-roller, and
-color themes (dark / light / per-system / custom).
+GM mode, additional systems (WoD)
 
 ## License
 
@@ -108,9 +106,7 @@ affiliated with, endorsed, or sponsored by any game publisher.
   template models.
 - Future system templates will follow each publisher's fan-content policy —
   the [Dark Pack agreement](https://www.paradoxinteractive.com/games/world-of-darkness/community/dark-pack-agreement)
-  for World of Darkness and the
-  [Chaosium Fan Material Policy](https://www.chaosium.com/fan-material-policy/)
-  for Call of Cthulhu — including any required logos and notices.
+  for World of Darkness, including any required logos and notices.
 - If you are a rights holder and have a concern about content in this
   repository, please open an issue and it will be addressed promptly.
 
