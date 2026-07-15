@@ -1194,7 +1194,12 @@ p.fold-readonly {
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* Desktop: sheet + result side column */
+/* Desktop: sheet + result side column. When the result column is showing,
+   let the page grow to fit both at their normal widths instead of
+   squeezing the sheet into the same 1100px cap used everywhere else. */
+.app-main:has(.play-layout.with-result) {
+  max-width: calc(1100px + 380px + 1rem);
+}
 .play-layout.with-result {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 380px;
