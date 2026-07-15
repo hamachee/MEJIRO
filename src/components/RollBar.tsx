@@ -33,6 +33,12 @@ export function RollBar({ character, template }: Props) {
   const pool = attrRating + skillRating;
   const canRoll = pool > 0;
 
+  // Sorted by the label actually shown, not template order, so the
+  // dropdown reads A-Z in whichever language is active.
+  const sortedSkills = [...template.skills].sort((a, b) =>
+    label(a.label, lang).localeCompare(label(b.label, lang), lang),
+  );
+
   return (
     <div className="roll-bar">
       <div className="roll-bar-pool">
@@ -45,7 +51,7 @@ export function RollBar({ character, template }: Props) {
             onChange={(e) => setSkill(e.target.value || null)}
           >
             <option value="">{t('sheet.skills')}</option>
-            {template.skills.map((sk) => (
+            {sortedSkills.map((sk) => (
               <option key={sk.id} value={sk.id}>
                 {label(sk.label, lang)}
               </option>
