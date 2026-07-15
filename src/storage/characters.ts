@@ -61,6 +61,8 @@ export function newCharacter(
     spells: [],
     torment: '',
     damnation: '',
+    inheritance1: '',
+    inheritance2: '',
     tricks,
     injuries: { boxes: injuryTotal(template), marked: 0, takenOut: false },
     armor: { rating: 0, marked: 0 },
@@ -105,6 +107,8 @@ export function normalizeCharacter(raw: Partial<Character> & Pick<Character, 'id
     })),
     torment: raw.torment ?? '',
     damnation: raw.damnation ?? '',
+    inheritance1: raw.inheritance1 ?? '',
+    inheritance2: raw.inheritance2 ?? '',
     tricks: raw.tricks ?? [],
     injuries: {
       boxes: DEFAULT_INJURY_BOXES,

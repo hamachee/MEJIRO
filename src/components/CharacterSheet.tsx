@@ -732,7 +732,6 @@ export function CharacterSheet({ character, template, editing }: Props) {
             />
           ))}
         </div>
-        {!editing && <p className="muted hint">{t('roller.selectPrompt')}</p>}
       </details>
 
       <details className="card fold-card" open>
@@ -824,6 +823,28 @@ export function CharacterSheet({ character, template, editing }: Props) {
           />
         </section>
       </div>
+
+      <section className="card">
+        <h2>
+          <FieldLabel i18nKey="sheet.inheritance" en="Inheritance" />
+        </h2>
+        <div className="form-row">
+          <textarea
+            className="torment-field grow"
+            rows={4}
+            placeholder={t('sheet.tormentPlaceholder')}
+            defaultValue={character.inheritance1}
+            onBlur={(e) => patch({ inheritance1: e.target.value })}
+          />
+          <textarea
+            className="torment-field grow"
+            rows={4}
+            placeholder={t('sheet.tormentPlaceholder')}
+            defaultValue={character.inheritance2}
+            onBlur={(e) => patch({ inheritance2: e.target.value })}
+          />
+        </div>
+      </section>
 
       {template.resources.length > 0 && (
         <ResourceTracker character={character} template={template} />

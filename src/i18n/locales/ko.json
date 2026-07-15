@@ -46,6 +46,7 @@
     "spells": "주문",
     "torment": "번민",
     "damnation": "천형",
+    "inheritance": "유산",
     "tormentPlaceholder": "자유롭게 적으세요…",
     "concept": "컨셉",
     "pathGoals": "롤 패스 & 목표",
@@ -70,7 +71,6 @@
     "curseDice": "저주 주사위",
     "pool": "풀",
     "roll": "굴리기",
-    "selectPrompt": "능력치와 기술을 눌러 풀을 구성하세요.",
     "none": "없음"
   },
   "result": {

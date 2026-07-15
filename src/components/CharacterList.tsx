@@ -2,16 +2,12 @@ import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCharacterStore } from '../store/characterStore';
-import { exportCharacter, defaultTricks } from '../storage/characters';
+import { defaultTricks } from '../storage/characters';
 import { TEMPLATE_LIST, getTemplate, DEFAULT_TEMPLATE_ID } from '../templates';
 import { label } from '../lib/localize';
 import { useLang } from '../lib/useLang';
+import { exportCharacterFile } from '../lib/exportCharacterFile';
 import type { Character } from '../types/character';
-
-/** Make a string safe to use as one dot-separated part of a filename. */
-function filenamePart(s: string): string {
-  return s.trim().replace(/[\\/:*?"<>|]+/g, '_') || 'unknown';
-}
 
 export function CharacterList() {
   const { t } = useTranslation();
@@ -43,20 +39,7 @@ export function CharacterList() {
     navigate(`/character/${character.id}`);
   };
 
-  const onExport = (character: Character) => {
-    const blob = new Blob([exportCharacter(character)], {
-      type: 'application/json',
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    const tpl = getTemplate(character.templateId);
-    const system = filenamePart(tpl ? label(tpl.name, lang) : character.templateId);
-    const charName = filenamePart(character.name);
-    a.download = `MEJIRO.${system}.${charName}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
+  const onExport = (character: Character) => exportCharacterFile(character, lang);
 
   const onImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

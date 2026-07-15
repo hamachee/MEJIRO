@@ -46,6 +46,7 @@
     "spells": "Spells",
     "torment": "Torment",
     "damnation": "Damnation",
+    "inheritance": "Inheritance",
     "tormentPlaceholder": "Free notes…",
     "concept": "Concept",
     "pathGoals": "Role path & goals",
@@ -70,7 +71,6 @@
     "curseDice": "Curse dice",
     "pool": "Pool",
     "roll": "Roll",
-    "selectPrompt": "Tap an attribute and a skill to build your pool.",
     "none": "None"
   },
   "result": {

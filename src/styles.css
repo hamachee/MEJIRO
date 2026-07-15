@@ -46,7 +46,6 @@ body,
 
 body {
   margin: 0;
-  background: linear-gradient(180deg, var(--bg), var(--bg-2));
   color: var(--text);
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans KR',
     sans-serif;
@@ -54,9 +53,13 @@ body {
 }
 
 .app {
+  /* min-height (not height) so this box grows to the real content height —
+     background gets sized to that full height too, instead of repeating
+     the gradient every viewport-height on pages taller than one screen. */
   min-height: 100%;
   display: flex;
   flex-direction: column;
+  background: linear-gradient(180deg, var(--bg), var(--bg-2));
 }
 
 /* Header — slides fully off-screen while scrolling down, back in on scroll up. */
@@ -727,6 +730,11 @@ button.danger:hover:not(:disabled) {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.5rem;
+}
+.toolbar-actions {
+  display: flex;
+  align-items: center;
   gap: 0.5rem;
 }
 .character-view {

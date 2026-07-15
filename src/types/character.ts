@@ -149,6 +149,9 @@ export interface Character {
   torment: string;
   /** Free-form Damnation notes. */
   damnation: string;
+  /** Free-form Inheritance notes, two fields. */
+  inheritance1: string;
+  inheritance2: string;
   tricks: CharacterTrick[];
   injuries: InjuryTrack;
   armor: ArmorTrack;
