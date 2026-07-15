@@ -33,6 +33,10 @@ interface RollStoreState {
   toggleAttribute: (id: string) => void;
   /** Select a skill for the pool; tapping the selected one deselects it. */
   toggleSkill: (id: string) => void;
+  /** Set (or clear, with null) the attribute directly — used by the roll-bar dropdown. */
+  setAttribute: (id: string | null) => void;
+  /** Set (or clear, with null) the skill directly — used by the roll-bar dropdown. */
+  setSkill: (id: string | null) => void;
   setDifficulty: (n: number) => void;
   setEnhancement: (n: number) => void;
   /** Set severity; picking the current one again clears back to none. */
@@ -64,6 +68,8 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
   toggleAttribute: (id) =>
     set({ attributeId: get().attributeId === id ? null : id }),
   toggleSkill: (id) => set({ skillId: get().skillId === id ? null : id }),
+  setAttribute: (id) => set({ attributeId: id }),
+  setSkill: (id) => set({ skillId: id }),
   setDifficulty: (n) => set({ difficulty: Math.max(0, n) }),
   setEnhancement: (n) => set({ enhancement: Math.max(0, n) }),
   setComplicationSeverity: (n) =>
