@@ -22,7 +22,7 @@
   "skills": [
     { "id": "artistry", "label": { "en": "Artistry", "ko": "예술" } },
     { "id": "athletics", "label": { "en": "Athletics", "ko": "운동" } },
-    { "id": "closeCombat", "label": { "en": "Close Combat", "ko": "근접 전투" } },
+    { "id": "closeCombat", "label": { "en": "Close Combat", "ko": "근접전" } },
     { "id": "culture", "label": { "en": "Culture", "ko": "문화" } },
     { "id": "empathy", "label": { "en": "Empathy", "ko": "공감" } },
     { "id": "enigmas", "label": { "en": "Enigmas", "ko": "수수께끼" } },
