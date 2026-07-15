@@ -59,6 +59,7 @@
     "add": "추가",
     "namePlaceholder": "이름",
     "save": "저장",
+    "externalSheet": "외부 캐릭터 시트",
     "webhook": "디스코드 웹훅 URL",
     "showNameInWebhook": "웹훅 메시지에 캐릭터 이름 표시"
   },

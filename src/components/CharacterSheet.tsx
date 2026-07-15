@@ -215,7 +215,21 @@ function IdentityCard({
     return (
       <section className="card identity">
         <div className="identity-name">
-          <h1>{character.name}</h1>
+          <h1>
+            {character.name}
+            {character.externalSheetUrl && (
+              <a
+                className="external-sheet-link"
+                href={character.externalSheetUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={t('sheet.externalSheet')}
+                aria-label={t('sheet.externalSheet')}
+              >
+                🔗
+              </a>
+            )}
+          </h1>
         </div>
         <div className="identity-row muted">
           {[identity.lineage, identity.family, identity.concept]
@@ -261,6 +275,17 @@ function IdentityCard({
       </div>
       {goalsFold}
       {motifsFold}
+      <div className="form-row">
+        <label className="field grow">
+          <span className="field-label">{t('sheet.externalSheet')}</span>
+          <input
+            type="url"
+            placeholder="https://…"
+            defaultValue={character.externalSheetUrl}
+            onBlur={(e) => patch({ externalSheetUrl: e.target.value.trim() })}
+          />
+        </label>
+      </div>
       <div className="form-row">
         <label className="field grow">
           <span className="field-label">{t('sheet.webhook')}</span>

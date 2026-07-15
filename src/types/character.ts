@@ -128,6 +128,8 @@ export interface Character {
    * sheets.
    */
   webhookUrl: string;
+  /** Link to a fuller character sheet hosted elsewhere (e.g. a VTT or wiki page). */
+  externalSheetUrl: string;
   /**
    * Whether roll/tricks messages include the character name in the embed
    * title. Off by default makes sense when the webhook itself is already
