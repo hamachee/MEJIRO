@@ -159,7 +159,6 @@
     "title": "Settings",
     "appearance": "Appearance",
     "uiLanguage": "Interface language",
-    "discordLanguage": "Discord output language",
     "webhooks": "Discord webhooks",
     "webhookLabel": "Label",
     "webhookUrl": "Webhook URL",

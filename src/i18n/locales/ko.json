@@ -159,7 +159,6 @@
     "title": "설정",
     "appearance": "화면",
     "uiLanguage": "인터페이스 언어",
-    "discordLanguage": "디스코드 출력 언어",
     "webhooks": "디스코드 웹훅",
     "webhookLabel": "이름표",
     "webhookUrl": "웹훅 URL",

@@ -9,10 +9,8 @@ import {
 /** Persisted app settings (single record, keyed by a fixed id). */
 export interface AppSettings {
   id: 'app';
-  /** UI language code, e.g. "en" | "ko". */
+  /** UI language code, e.g. "en" | "ko". Also used for Discord output. */
   uiLang: string;
-  /** Language used for Discord output. */
-  discordLang: string;
   /** Color scheme mode: dark, light, by game rule, or user-defined. */
   themeMode: ThemeMode;
   /** Colors used when {@link themeMode} is "custom". */
@@ -64,8 +62,7 @@ export function getDB(): Promise<IDBPDatabase<MejiroDB>> {
 
 export const DEFAULT_SETTINGS: AppSettings = {
   id: 'app',
-  uiLang: 'en',
-  discordLang: 'en',
+  uiLang: 'ko',
   themeMode: 'system',
   customTheme: DEFAULT_CUSTOM_THEME,
 };

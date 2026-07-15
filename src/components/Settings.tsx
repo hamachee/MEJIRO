@@ -35,19 +35,6 @@ export function Settings() {
               ))}
             </select>
           </label>
-          <label className="field grow">
-            <span className="field-label">{t('settings.discordLanguage')}</span>
-            <select
-              value={settings.discordLang}
-              onChange={(e) => update({ discordLang: e.target.value })}
-            >
-              {SUPPORTED_LANGUAGES.map((l) => (
-                <option key={l.code} value={l.code}>
-                  {l.label}
-                </option>
-              ))}
-            </select>
-          </label>
         </div>
         <p className="muted hint">{t('settings.webhookMoved')}</p>
       </section>
