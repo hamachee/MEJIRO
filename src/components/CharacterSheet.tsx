@@ -855,14 +855,14 @@ export function CharacterSheet({ character, template, editing }: Props) {
         </h2>
         <div className="form-row">
           <textarea
-            className="torment-field grow"
+            className="torment-field inheritance-field"
             rows={4}
             placeholder={t('sheet.tormentPlaceholder')}
             defaultValue={character.inheritance1}
             onBlur={(e) => patch({ inheritance1: e.target.value })}
           />
           <textarea
-            className="torment-field grow"
+            className="torment-field inheritance-field"
             rows={4}
             placeholder={t('sheet.tormentPlaceholder')}
             defaultValue={character.inheritance2}
