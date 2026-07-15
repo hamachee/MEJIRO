@@ -6,7 +6,7 @@ import type { Character } from '../types/character';
 import type { SystemTemplate } from '../types/template';
 import { Stepper } from './Stepper';
 
-const BONUS_DICE_OPTIONS = [0, 1, 2, 3, 4, 5];
+const BONUS_DICE_OPTIONS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 interface Props {
   character: Character;
