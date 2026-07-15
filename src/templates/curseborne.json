@@ -55,7 +55,7 @@
       { "boxes": 2, "label": { "en": "Wounded", "ko": "부상" } },
       { "boxes": 2, "label": { "en": "Maimed", "ko": "불구" } },
       { "boxes": 1, "label": { "en": "Near Death", "ko": "빈사" } },
-      { "boxes": 1, "label": { "en": "Taken Out", "ko": "전투 불능" }, "terminal": true }
+      { "boxes": 1, "label": { "en": "Taken Out", "ko": "전투 탈락" }, "terminal": true }
     ]
   }
 }
