@@ -162,6 +162,8 @@ export interface Character {
    * on the sheet as play changes it; each roll replaces this many pool dice.
    */
   curseDice: number;
+  /** Total experience points earned, spent or unspent alike. */
+  exp: number;
   resources: Record<string, ResourceState>;
   createdAt: number;
   updatedAt: number;

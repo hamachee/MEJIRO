@@ -949,6 +949,50 @@ button.sheet-stat:hover:not(.selected) {
   width: 4rem;
 }
 
+/* Sticky EXP bar (edit mode only, same slot as the roll bar in play mode) */
+.exp-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0.6rem 1rem;
+  background: var(--bar-bg);
+  border-top: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+}
+@media (min-width: 1100px) {
+  .exp-bar {
+    border: 1px solid var(--border);
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+}
+.exp-bar > .field-label {
+  font-size: 0.86rem;
+  font-weight: 400;
+  color: var(--text);
+}
+.exp-value {
+  font-size: 1.3rem;
+  font-variant-numeric: tabular-nums;
+  min-width: 1.6rem;
+  text-align: center;
+}
+.exp-dots {
+  flex-wrap: wrap;
+}
+.exp-divider {
+  color: var(--divider-strong);
+  margin: 0 0.1rem;
+}
+
 /* Injury track */
 .injury-track {
   display: flex;
