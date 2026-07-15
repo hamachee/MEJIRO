@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCharacterStore } from '../store/characterStore';
 import { FieldLabel } from './FieldLabel';
@@ -21,17 +21,30 @@ interface Props {
 
 /**
  * Sticky bar at the bottom of the sheet, shown only in edit mode (in the
- * same slot the roll bar occupies in play mode). Total EXP is a number
- * field — click +/- or type/arrow-key a value directly. Every point earned
- * stays visible as a filled dot, clustered five to a group — there's no
- * "unfilled" state since EXP has no fixed cap.
+ * same slot the roll bar occupies in play mode). The total normally reads
+ * as plain text; double-clicking it (or the +/- buttons) is how you change
+ * it. Double-click swaps in a number field — Enter commits, Escape or
+ * clicking away cancels. Every point earned stays visible as a filled dot,
+ * clustered five to a group — there's no "unfilled" state since EXP has no
+ * fixed cap.
  */
 export function ExpTracker({ character }: Props) {
   const { t } = useTranslation();
   const patch = useCharacterStore((s) => s.patch);
   const exp = character.exp;
+  const [draft, setDraft] = useState<string | null>(null);
 
   const setExp = (n: number) => patch({ exp: Math.max(0, n) });
+
+  const startEditing = () => setDraft(String(exp));
+
+  const commit = () => {
+    if (draft !== null) {
+      const n = Number(draft);
+      if (!Number.isNaN(n)) setExp(n);
+    }
+    setDraft(null);
+  };
 
   return (
     <div className="exp-bar">
@@ -46,18 +59,40 @@ export function ExpTracker({ character }: Props) {
         >
           −
         </button>
-        <input
-          type="number"
-          className="exp-value"
-          inputMode="numeric"
-          min={0}
-          aria-label={t('sheet.exp')}
-          value={exp}
-          onChange={(e) => {
-            const n = Number(e.target.value);
-            if (!Number.isNaN(n)) setExp(n);
-          }}
-        />
+        {draft !== null ? (
+          <input
+            type="number"
+            className="exp-value"
+            inputMode="numeric"
+            min={0}
+            autoFocus
+            aria-label={t('sheet.exp')}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onFocus={(e) => e.target.select()}
+            onBlur={commit}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') commit();
+              else if (e.key === 'Escape') setDraft(null);
+            }}
+          />
+        ) : (
+          <span
+            className="exp-value"
+            role="button"
+            tabIndex={0}
+            aria-label={t('sheet.exp')}
+            onDoubleClick={startEditing}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                startEditing();
+              }
+            }}
+          >
+            {exp}
+          </span>
+        )}
         <button aria-label={`+ ${t('sheet.exp')}`} onClick={() => setExp(exp + 1)}>
           +
         </button>

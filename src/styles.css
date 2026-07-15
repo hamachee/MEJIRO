@@ -986,6 +986,21 @@ button.sheet-stat:hover:not(.selected) {
   font-variant-numeric: tabular-nums;
   text-align: center;
 }
+/* Read-only state: plain text until double-clicked into the number field above. */
+span.exp-value {
+  display: inline-block;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: text;
+  user-select: none;
+}
+span.exp-value:hover {
+  background: var(--card-2);
+}
+span.exp-value:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+}
 .exp-dots {
   flex-wrap: wrap;
 }
