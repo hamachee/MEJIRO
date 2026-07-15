@@ -342,6 +342,9 @@ export function CurseCard({
             <FieldLabel i18nKey="sheet.entanglement" en="Entanglement" />
           </span>
           {entanglementDots}
+          <span className="curse-line-divider" aria-hidden="true">
+            |
+          </span>
           <span className="field-label">
             <FieldLabel i18nKey="roller.curseDice" en="Curse dice" />
           </span>

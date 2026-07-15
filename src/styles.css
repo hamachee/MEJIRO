@@ -1100,6 +1100,9 @@ button.sheet-stat:hover:not(.selected) {
   gap: 0.75rem;
   flex-wrap: wrap;
 }
+.curse-line-divider {
+  color: var(--divider-strong);
+}
 /* These rows have no <h2>; label size matches the skill-row labels
    (.skill-grid .stat-label) rather than the small muted field-label. */
 .curse-row > .field-label,
@@ -1287,8 +1290,9 @@ button.fav-toggle:hover:not(:disabled) {
   color: var(--accent);
   text-shadow: none;
   transform: scale(1.08);
-  /* tight glow hugging the star's own points, not a circular halo */
-  filter: drop-shadow(0 0 1.5px currentColor) drop-shadow(0 0 2.5px currentColor);
+  /* tight, faint glow hugging the star's own points, not a circular halo */
+  filter: drop-shadow(0 0 1.5px color-mix(in srgb, currentColor 40%, transparent))
+    drop-shadow(0 0 2.5px color-mix(in srgb, currentColor 25%, transparent));
 }
 .item-card.editing {
   grid-column: 1 / -1;
