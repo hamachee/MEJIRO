@@ -35,7 +35,7 @@
     { "id": "rangedCombat", "label": { "en": "Ranged Combat", "ko": "원거리 전투" } },
     { "id": "science", "label": { "en": "Science", "ko": "과학" } },
     { "id": "survival", "label": { "en": "Survival", "ko": "생존" } },
-    { "id": "technology", "label": { "en": "Technology", "ko": "기술" } }
+    { "id": "technology", "label": { "en": "Technology", "ko": "공학" } }
   ],
   "dice": {
     "sides": 10,
