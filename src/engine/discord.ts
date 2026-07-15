@@ -14,6 +14,7 @@ const STRINGS: Record<string, Record<string, string>> = {
     cruel: 'Cruel Failure',
     botch: 'Botch',
     enhancement: 'Enhancement',
+    bonusDice: 'Bonus dice',
     complication: 'Complication',
     complicationResolved: 'Complication resolved',
     minor: 'Minor',
@@ -30,6 +31,7 @@ const STRINGS: Record<string, Record<string, string>> = {
     cruel: '잔혹한 실패',
     botch: '대실패',
     enhancement: '강화',
+    bonusDice: '추가 주사위',
     complication: '컴플리케이션',
     complicationResolved: '컴플리케이션 해소',
     minor: '경미',
@@ -94,6 +96,7 @@ export function buildRollEmbed(
   const poolParts = [
     skill ? `${statName(skill.label)} ${request.skillRating}` : null,
     attr ? `${statName(attr.label)} ${request.attributeRating}` : null,
+    request.bonusDice > 0 ? `${s(lang, 'bonusDice')} +${request.bonusDice}` : null,
     request.enhancement > 0
       ? `${s(lang, 'enhancement')} +${request.enhancement}`
       : null,
