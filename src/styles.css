@@ -1300,10 +1300,12 @@ p.fold-readonly {
   color: var(--on-accent);
 }
 
-/* Card grids (gear, spells) — wide cards, 2-up */
+/* Card grids (gear, spells) — wide cards, 2-up. min(360px, 100%) lets the
+   column shrink to the full available width instead of overflowing it on
+   narrow screens, collapsing to a single column with no fixed breakpoint. */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(360px, 100%), 1fr));
   gap: 0.6rem;
   margin-bottom: 0.5rem;
 }
@@ -1437,6 +1439,14 @@ button.fav-toggle:hover:not(:disabled) {
 
 .torment-field {
   min-height: 5.5rem;
+}
+
+/* Inheritance's two fields: unlike .grow (min-width: 0), give them a real
+   floor so the row wraps the second field below once it can't fit at a
+   usable width, instead of squeezing both arbitrarily narrow. */
+.inheritance-field {
+  flex: 1;
+  min-width: 220px;
 }
 
 /* Result modal */
