@@ -36,7 +36,7 @@ const STRINGS: Record<string, Record<string, string>> = {
     complicationResolved: '컴플리케이션 해소',
     minor: '경미',
     moderate: '보통',
-    major: '심각',
+    major: '중대',
     spent: '사용',
     remaining: '잔여',
   },
