@@ -92,14 +92,17 @@ export function TrickPurchase({ character }: Props) {
 
       <div className="form-row">
         <Stepper
-          label={t('roller.enhancement')}
+          label={<FieldLabel i18nKey="roller.enhancement" en="Enhancement" />}
+          ariaLabel={t('roller.enhancement')}
           value={enhancement}
           onChange={setEnhancement}
         />
       </div>
 
       <div className="field">
-        <span className="field-label">{t('tricks.complication')}</span>
+        <span className="field-label">
+          <FieldLabel i18nKey="tricks.complication" en="Complication" />
+        </span>
         <div className="severity-row">
           {SEVERITIES.map((n) => (
             <button
