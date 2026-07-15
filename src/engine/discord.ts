@@ -92,8 +92,8 @@ export function buildRollEmbed(
       : localized;
   };
   const poolParts = [
-    attr ? `${statName(attr.label)} ${request.attributeRating}` : null,
     skill ? `${statName(skill.label)} ${request.skillRating}` : null,
+    attr ? `${statName(attr.label)} ${request.attributeRating}` : null,
     request.enhancement > 0
       ? `${s(lang, 'enhancement')} +${request.enhancement}`
       : null,

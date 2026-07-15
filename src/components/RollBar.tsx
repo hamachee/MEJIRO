@@ -40,6 +40,21 @@ export function RollBar({ character, template }: Props) {
         <div className="roll-bar-parts">
           <select
             className="roll-bar-pick"
+            aria-label={t('sheet.skills')}
+            value={skillId ?? ''}
+            onChange={(e) => setSkill(e.target.value || null)}
+          >
+            <option value="">{t('sheet.skills')}</option>
+            {template.skills.map((sk) => (
+              <option key={sk.id} value={sk.id}>
+                {label(sk.label, lang)}
+              </option>
+            ))}
+          </select>
+          {skillId != null && <span className="roll-bar-rating">{skillRating}</span>}
+          <span className="roll-bar-plus muted">+</span>
+          <select
+            className="roll-bar-pick"
             aria-label={t('sheet.attributes')}
             value={attributeId ?? ''}
             onChange={(e) => setAttribute(e.target.value || null)}
@@ -60,21 +75,6 @@ export function RollBar({ character, template }: Props) {
           {attributeId != null && (
             <span className="roll-bar-rating">{attrRating}</span>
           )}
-          <span className="roll-bar-plus muted">+</span>
-          <select
-            className="roll-bar-pick"
-            aria-label={t('sheet.skills')}
-            value={skillId ?? ''}
-            onChange={(e) => setSkill(e.target.value || null)}
-          >
-            <option value="">{t('sheet.skills')}</option>
-            {template.skills.map((sk) => (
-              <option key={sk.id} value={sk.id}>
-                {label(sk.label, lang)}
-              </option>
-            ))}
-          </select>
-          {skillId != null && <span className="roll-bar-rating">{skillRating}</span>}
         </div>
       </div>
       <div className="roll-bar-controls">
