@@ -752,6 +752,19 @@ button.danger:hover:not(:disabled) {
 .identity-name h1 {
   margin: 0;
 }
+.external-sheet-link {
+  display: inline-block;
+  margin-left: 0.4rem;
+  font-size: 0.75em;
+  text-decoration: none;
+  vertical-align: middle;
+  opacity: 0.75;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.external-sheet-link:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
 .identity-row {
   font-size: 0.9rem;
 }

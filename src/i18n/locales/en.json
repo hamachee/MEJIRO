@@ -59,6 +59,7 @@
     "add": "Add",
     "save": "Save",
     "namePlaceholder": "Name",
+    "externalSheet": "External character sheet",
     "webhook": "Discord webhook URL",
     "showNameInWebhook": "Show character name in webhook messages"
   },
