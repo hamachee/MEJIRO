@@ -751,13 +751,15 @@ button.danger:hover:not(:disabled) {
 }
 .identity-name h1 {
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 .external-sheet-link {
-  display: inline-block;
-  margin-left: 0.4rem;
+  display: inline-flex;
+  align-items: center;
   font-size: 0.75em;
   text-decoration: none;
-  vertical-align: middle;
   opacity: 0.75;
   transition: opacity 0.15s ease, transform 0.15s ease;
 }
@@ -980,10 +982,26 @@ button.sheet-stat:hover:not(.selected) {
   color: var(--text);
 }
 .exp-value {
+  width: 3.4rem;
+  padding: 0.25rem 0.3rem;
   font-size: 1.3rem;
   font-variant-numeric: tabular-nums;
-  min-width: 1.6rem;
   text-align: center;
+}
+/* Read-only state: plain text until double-clicked into the number field above. */
+span.exp-value {
+  display: inline-block;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: text;
+  user-select: none;
+}
+span.exp-value:hover {
+  background: var(--card-2);
+}
+span.exp-value:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
 }
 .exp-dots {
   flex-wrap: wrap;
