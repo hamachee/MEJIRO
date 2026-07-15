@@ -5,6 +5,8 @@ import { useCharacterStore } from '../store/characterStore';
 import { useRollStore } from '../store/rollStore';
 import { getTemplate } from '../templates';
 import { useWide } from '../lib/useWide';
+import { useLang } from '../lib/useLang';
+import { exportCharacterFile } from '../lib/exportCharacterFile';
 import { CharacterSheet } from './CharacterSheet';
 import { CharacterGearPage } from './CharacterGearPage';
 import { CharacterSpellsPage } from './CharacterSpellsPage';
@@ -16,6 +18,7 @@ import { TrickPurchase } from './TrickPurchase';
 export function CharacterView() {
   const { id } = useParams();
   const { t } = useTranslation();
+  const lang = useLang();
   const active = useCharacterStore((s) => s.active);
   const open = useCharacterStore((s) => s.open);
   const resetFor = useRollStore((s) => s.resetFor);
@@ -58,12 +61,17 @@ export function CharacterView() {
         <Link to="/" className="back-link">
           ← {t('sheet.back')}
         </Link>
-        <button
-          className={editing ? 'primary' : ''}
-          onClick={() => setEditing(!editing)}
-        >
-          {editing ? `✓ ${t('sheet.done')}` : `✏️ ${t('sheet.edit')}`}
-        </button>
+        <div className="toolbar-actions">
+          <button onClick={() => exportCharacterFile(active, lang)}>
+            📤 {t('characters.export')}
+          </button>
+          <button
+            className={editing ? 'primary' : ''}
+            onClick={() => setEditing(!editing)}
+          >
+            {editing ? `✓ ${t('sheet.done')}` : `✏️ ${t('sheet.edit')}`}
+          </button>
+        </div>
       </div>
 
       {/* Bookmark-style tabs on the left margin switch sheet pages. */}

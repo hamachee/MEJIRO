@@ -729,6 +729,11 @@ button.danger:hover:not(:disabled) {
   justify-content: space-between;
   gap: 0.5rem;
 }
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
 .character-view {
   /* keep the sticky roll bar from covering the last cards */
   padding-bottom: 7rem;
