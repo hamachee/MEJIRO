@@ -113,6 +113,34 @@ function SheetStat({
   );
 }
 
+/** The character's guiding motifs, folded away until needed. */
+export function MotifsFold({
+  character,
+  editing,
+}: {
+  character: Character;
+  editing: boolean;
+}) {
+  const { t } = useTranslation();
+  const patch = useCharacterStore((s) => s.patch);
+  const { identity } = character;
+  return (
+    <details className="fold">
+      <summary>{t('sheet.motifs')}</summary>
+      {editing ? (
+        <textarea
+          rows={3}
+          placeholder={t('sheet.tormentPlaceholder')}
+          defaultValue={identity.motifs}
+          onBlur={(e) => patch({ identity: { ...identity, motifs: e.target.value } })}
+        />
+      ) : (
+        <p className="muted fold-readonly">{identity.motifs || '—'}</p>
+      )}
+    </details>
+  );
+}
+
 function IdentityCard({
   character,
   editing,
@@ -181,21 +209,7 @@ function IdentityCard({
     </details>
   );
 
-  const motifsFold = (
-    <details className="fold">
-      <summary>{t('sheet.motifs')}</summary>
-      {editing ? (
-        <textarea
-          rows={3}
-          placeholder={t('sheet.tormentPlaceholder')}
-          defaultValue={identity.motifs}
-          onBlur={(e) => patch({ identity: { ...identity, motifs: e.target.value } })}
-        />
-      ) : (
-        <p className="muted fold-readonly">{identity.motifs || '—'}</p>
-      )}
-    </details>
-  );
+  const motifsFold = <MotifsFold character={character} editing={editing} />;
 
   if (!editing) {
     return (
@@ -342,11 +356,15 @@ export function CurseCard({
             <FieldLabel i18nKey="sheet.entanglement" en="Entanglement" />
           </span>
           {entanglementDots}
+          <span className="curse-line-divider" aria-hidden="true">
+            |
+          </span>
           <span className="field-label">
             <FieldLabel i18nKey="roller.curseDice" en="Curse dice" />
           </span>
           {curseDiceControls}
         </div>
+        <MotifsFold character={character} editing={editing} />
       </section>
     );
   }

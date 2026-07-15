@@ -59,7 +59,7 @@ body {
   flex-direction: column;
 }
 
-/* Header */
+/* Header — slides fully off-screen while scrolling down, back in on scroll up. */
 .app-header {
   display: flex;
   align-items: center;
@@ -73,6 +73,10 @@ body {
   z-index: 10;
   backdrop-filter: blur(8px);
   flex-wrap: wrap;
+  transition: transform 0.25s ease;
+}
+.app-header.hidden {
+  transform: translateY(-100%);
 }
 
 .brand {
@@ -1100,6 +1104,9 @@ button.sheet-stat:hover:not(.selected) {
   gap: 0.75rem;
   flex-wrap: wrap;
 }
+.curse-line-divider {
+  color: var(--divider-strong);
+}
 /* These rows have no <h2>; label size matches the skill-row labels
    (.skill-grid .stat-label) rather than the small muted field-label. */
 .curse-row > .field-label,
@@ -1270,10 +1277,26 @@ p.fold-readonly {
   flex-shrink: 0;
 }
 .fav-toggle {
+  border: none;
+  background: transparent;
+  padding: 0.15rem 0.3rem;
   color: var(--muted);
+  font-size: 1.35rem;
+  line-height: 1;
+  /* subtle engraved/indented look at rest */
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3), 0 -1px 0 rgba(255, 255, 255, 0.08);
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+button.fav-toggle:hover:not(:disabled) {
+  background: transparent;
 }
 .fav-toggle.active {
   color: var(--accent);
+  text-shadow: none;
+  transform: scale(1.08);
+  /* tight, faint glow hugging the star's own points, not a circular halo */
+  filter: drop-shadow(0 0 1.5px color-mix(in srgb, currentColor 40%, transparent))
+    drop-shadow(0 0 2.5px color-mix(in srgb, currentColor 25%, transparent));
 }
 .item-card.editing {
   grid-column: 1 / -1;
