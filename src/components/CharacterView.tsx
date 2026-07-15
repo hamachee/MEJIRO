@@ -11,6 +11,7 @@ import { CharacterSheet } from './CharacterSheet';
 import { CharacterGearPage } from './CharacterGearPage';
 import { CharacterSpellsPage } from './CharacterSpellsPage';
 import { CharacterTricksPage } from './CharacterTricksPage';
+import { ExpTracker } from './ExpTracker';
 import { RollBar } from './RollBar';
 import { RollResult } from './RollResult';
 import { TrickPurchase } from './TrickPurchase';
@@ -116,7 +117,7 @@ export function CharacterView() {
         {wide && result && <aside className="result-col stack">{resultPanel}</aside>}
       </div>
 
-      {!editing && <RollBar character={active} template={template} />}
+      {editing ? <ExpTracker character={active} /> : <RollBar character={active} template={template} />}
 
       {!wide && result && (
         <div className="modal-scrim" onClick={clearResult}>
