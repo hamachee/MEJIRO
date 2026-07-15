@@ -278,7 +278,7 @@ function IdentityCard({
  * capacity follows Entanglement (• = 5, ••/••• = 7, •••• = 9) and every
  * capacity dot is drawn so the maximum stays visible.
  */
-function CurseCard({
+export function CurseCard({
   character,
   editing,
 }: {
@@ -342,12 +342,14 @@ function CurseCard({
   );
 }
 
-function InjuryCard({
+export function InjuryCard({
   character,
   template,
+  variant = 'full',
 }: {
   character: Character;
   template: SystemTemplate;
+  variant?: 'full' | 'compact';
 }) {
   const { t } = useTranslation();
   const patch = useCharacterStore((s) => s.patch);
@@ -465,7 +467,10 @@ function InjuryCard({
       // marked box. Shallower levels dim again as damage progresses.
       const lit = marked > start && marked <= offset;
       return (
-        <div key={start} className={`injury-level ${lit ? 'lit' : ''}`}>
+        <div
+          key={start}
+          className={`injury-level ${lit ? 'lit' : ''} ${variant === 'compact' ? 'thin' : ''}`}
+        >
           <div className="injury-boxes">
             {Array.from({ length: level.boxes }, (_, i) => box(start + i))}
           </div>
@@ -475,6 +480,13 @@ function InjuryCard({
         </div>
       );
     });
+    if (variant === 'compact') {
+      return (
+        <section className="card compact-tracker">
+          <div className="injury-track grouped compact">{groups}</div>
+        </section>
+      );
+    }
     return (
       <section className="card">
         <h2>
@@ -488,6 +500,15 @@ function InjuryCard({
   }
 
   // Fallback: flat track for templates without a structured injury track.
+  if (variant === 'compact') {
+    return (
+      <section className="card compact-tracker">
+        <div className="injury-track compact">
+          {Array.from({ length: total }, (_, i) => box(i))}
+        </div>
+      </section>
+    );
+  }
   return (
     <section className="card">
       <h2>

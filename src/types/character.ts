@@ -62,6 +62,7 @@ export interface GearItem {
   type?: string;
   tags: string[];
   description?: string;
+  favorite: boolean;
 }
 
 /** A spell. Cost is plain text (rules costs aren't always numbers). */
@@ -70,8 +71,11 @@ export interface SpellItem {
   name: string;
   cost?: string;
   attunements: string[];
+  /** Free-form effect text, multi-line. */
+  effect?: string;
   /** Free-form advancements, multi-line. */
   advancements?: string;
+  favorite: boolean;
 }
 
 /**

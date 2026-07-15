@@ -93,10 +93,15 @@ export function normalizeCharacter(raw: Partial<Character> & Pick<Character, 'id
     contacts: raw.contacts ?? [],
     bonds: raw.bonds ?? [],
     conditions: raw.conditions ?? [],
-    gear: (raw.gear ?? []).map((g) => ({ ...g, tags: g.tags ?? [] })),
+    gear: (raw.gear ?? []).map((g) => ({
+      ...g,
+      tags: g.tags ?? [],
+      favorite: g.favorite ?? false,
+    })),
     spells: (raw.spells ?? []).map((sp) => ({
       ...sp,
       attunements: sp.attunements ?? [],
+      favorite: sp.favorite ?? false,
     })),
     torment: raw.torment ?? '',
     damnation: raw.damnation ?? '',

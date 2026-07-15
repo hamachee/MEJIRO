@@ -55,8 +55,6 @@
     "longTerm": "장기 목표",
     "motifs": "모티프",
     "page1": "시트",
-    "page2": "장비·주문",
-    "page3": "트릭",
     "add": "추가",
     "namePlaceholder": "이름",
     "save": "저장",
@@ -122,6 +120,7 @@
     "cost": "비용",
     "costPlaceholder": "비용",
     "attunementsPlaceholder": "어튠먼트 (쉼표로 구분)",
+    "effectPlaceholder": "효과 (자유 서식, 여러 줄)",
     "advancementsPlaceholder": "발전 (자유 서식, 여러 줄)"
   },
   "resource": {
