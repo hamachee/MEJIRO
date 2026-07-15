@@ -24,6 +24,7 @@ function baseRequest(overrides: Partial<RollRequest> = {}): RollRequest {
     attributeRating: 3,
     skillRating: 2,
     enhancement: 0,
+    bonusDice: 0,
     difficulty: 1,
     curseDice: 0,
     ...overrides,
@@ -104,6 +105,13 @@ describe('roll — Curseborne (d10, 8-9 = 1 hit, 10 = 2 hits)', () => {
     // no curse dice at all
     const none = roll(template, baseRequest(), scriptedRng([8, 8, 8, 8, 8]));
     expect(hasCurseHit(none)).toBe(false);
+  });
+
+  it('adds bonus dice to the pool regardless of enhancement mode', () => {
+    const rng = scriptedRng([5]);
+    const result = roll(template, baseRequest({ bonusDice: 3 }), rng);
+    expect(result.poolSize).toBe(8); // 3 (attr) + 2 (skill) + 3 (bonus)
+    expect(result.dice).toHaveLength(8);
   });
 
   it('is deterministic under a fixed RNG', () => {

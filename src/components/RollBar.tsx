@@ -6,6 +6,8 @@ import type { Character } from '../types/character';
 import type { SystemTemplate } from '../types/template';
 import { Stepper } from './Stepper';
 
+const BONUS_DICE_OPTIONS = [0, 1, 2, 3, 4, 5];
+
 interface Props {
   character: Character;
   template: SystemTemplate;
@@ -24,13 +26,15 @@ export function RollBar({ character, template }: Props) {
   const skillId = useRollStore((s) => s.skillId);
   const setAttribute = useRollStore((s) => s.setAttribute);
   const setSkill = useRollStore((s) => s.setSkill);
+  const bonusDice = useRollStore((s) => s.bonusDice);
+  const setBonusDice = useRollStore((s) => s.setBonusDice);
   const difficulty = useRollStore((s) => s.difficulty);
   const setDifficulty = useRollStore((s) => s.setDifficulty);
   const performRoll = useRollStore((s) => s.performRoll);
 
   const attrRating = attributeId ? (character.attributes[attributeId] ?? 0) : 0;
   const skillRating = skillId ? (character.skills[skillId] ?? 0) : 0;
-  const pool = attrRating + skillRating;
+  const pool = attrRating + skillRating + bonusDice;
   const canRoll = pool > 0;
 
   // Sorted by the label actually shown, not template order, so the
@@ -81,6 +85,20 @@ export function RollBar({ character, template }: Props) {
           {attributeId != null && (
             <span className="roll-bar-rating">{attrRating}</span>
           )}
+          <span className="roll-bar-plus muted">+</span>
+          <select
+            className="roll-bar-pick roll-bar-bonus"
+            aria-label={t('roller.bonusDice')}
+            title={t('roller.bonusDice')}
+            value={bonusDice}
+            onChange={(e) => setBonusDice(Number(e.target.value))}
+          >
+            {BONUS_DICE_OPTIONS.map((n) => (
+              <option key={n} value={n}>
+                {n}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
       <div className="roll-bar-controls">

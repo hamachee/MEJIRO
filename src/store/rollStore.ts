@@ -28,6 +28,11 @@ interface RollStoreState {
   enhancement: number;
   /** Complication severity chosen to buy off post-roll: 0 none, 1-3. */
   complicationSeverity: number;
+  /**
+   * Dice manually added to the pool before rolling (GM boons etc.), 0-5.
+   * Resets to 0 once a roll is made.
+   */
+  bonusDice: number;
 
   /** Select an attribute for the pool; tapping the selected one deselects it. */
   toggleAttribute: (id: string) => void;
@@ -39,6 +44,7 @@ interface RollStoreState {
   setSkill: (id: string | null) => void;
   setDifficulty: (n: number) => void;
   setEnhancement: (n: number) => void;
+  setBonusDice: (n: number) => void;
   /** Set severity; picking the current one again clears back to none. */
   setComplicationSeverity: (n: number) => void;
   poolSize: (character: Character) => number;
@@ -52,6 +58,7 @@ interface RollStoreState {
 }
 
 const MAX_COMPLICATION = 3;
+const MAX_BONUS_DICE = 5;
 
 export const useRollStore = create<RollStoreState>((set, get) => ({
   attributeId: null,
@@ -62,6 +69,7 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
   selectedTrickIds: [],
   enhancement: 0,
   complicationSeverity: 0,
+  bonusDice: 0,
   postStatus: 'idle',
   postError: '',
 
@@ -72,6 +80,7 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
   setSkill: (id) => set({ skillId: id }),
   setDifficulty: (n) => set({ difficulty: Math.max(0, n) }),
   setEnhancement: (n) => set({ enhancement: Math.max(0, n) }),
+  setBonusDice: (n) => set({ bonusDice: Math.max(0, Math.min(MAX_BONUS_DICE, n)) }),
   setComplicationSeverity: (n) =>
     set({
       complicationSeverity:
@@ -88,7 +97,7 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
   },
 
   performRoll: (template, character) => {
-    const { attributeId, skillId, difficulty } = get();
+    const { attributeId, skillId, difficulty, bonusDice } = get();
     const request: RollRequest = {
       attributeId,
       skillId,
@@ -96,6 +105,7 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
       skillRating: skillId ? (character.skills[skillId] ?? 0) : 0,
       // Enhancement is applied in the purchase phase, after the dice are seen.
       enhancement: 0,
+      bonusDice,
       difficulty,
       // Curse dice live on the sheet — a persistent stat, not a roll option.
       curseDice: character.curseDice,
@@ -107,6 +117,7 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
       selectedTrickIds: [],
       enhancement: 0,
       complicationSeverity: 0,
+      bonusDice: 0,
     };
 
     const webhookUrl = character.webhookUrl.trim();
@@ -160,6 +171,7 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
       selectedTrickIds: [],
       enhancement: 0,
       complicationSeverity: 0,
+      bonusDice: 0,
       postStatus: 'idle',
       postError: '',
     }),

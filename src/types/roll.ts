@@ -12,6 +12,8 @@ export interface RollRequest {
   skillRating: number;
   /** Flat enhancement (added per the template's enhancementMode). */
   enhancement: number;
+  /** Dice manually added to the pool before rolling (GM boons etc.), 0-5. */
+  bonusDice: number;
   /** Difficulty: number of hits required to pass. */
   difficulty: number;
   /** How many pool dice are curse dice (Curseborne). Clamped to pool size. */

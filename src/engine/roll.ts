@@ -31,10 +31,11 @@ const MAX_EXPLOSIONS = 100;
 /**
  * Roll a dice pool for the given template and request.
  *
- * Pool size is attribute + skill ratings (plus enhancement dice in `poolDice`
- * mode). Each die is scored per {@link SystemTemplate.dice}; enhancement in
- * `flatSuccess` mode is added to the success total. Threshold successes —
- * successes beyond the difficulty — form the trick/stunt budget.
+ * Pool size is attribute + skill ratings, plus enhancement dice in `poolDice`
+ * mode, plus any manually added bonus dice. Each die is scored per
+ * {@link SystemTemplate.dice}; enhancement in `flatSuccess` mode is added to
+ * the success total instead. Threshold successes — successes beyond the
+ * difficulty — form the trick/stunt budget.
  *
  * `rng` defaults to `Math.random` but is injectable for deterministic tests.
  */
@@ -48,8 +49,9 @@ export function roll(
 
   const baseRatings = Math.max(0, request.attributeRating) + Math.max(0, request.skillRating);
   const enhancement = Math.max(0, request.enhancement);
+  const bonusDice = Math.max(0, request.bonusDice);
   const poolSize =
-    baseRatings + (enhancementMode === 'poolDice' ? enhancement : 0);
+    baseRatings + (enhancementMode === 'poolDice' ? enhancement : 0) + bonusDice;
   const curseDice = template.dice.curseDice
     ? Math.min(Math.max(0, request.curseDice), poolSize)
     : 0;

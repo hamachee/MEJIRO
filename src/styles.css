@@ -928,6 +928,9 @@ button.sheet-stat:hover:not(.selected) {
   padding: 0.25rem 0.4rem;
   max-width: 9rem;
 }
+.roll-bar-bonus {
+  max-width: 3.2rem;
+}
 .roll-bar-rating {
   font-size: 0.85rem;
   font-weight: 600;
