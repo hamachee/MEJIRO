@@ -732,7 +732,6 @@ export function CharacterSheet({ character, template, editing }: Props) {
             />
           ))}
         </div>
-        {!editing && <p className="muted hint">{t('roller.selectPrompt')}</p>}
       </details>
 
       <details className="card fold-card" open>
