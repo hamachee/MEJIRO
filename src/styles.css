@@ -1270,10 +1270,25 @@ p.fold-readonly {
   flex-shrink: 0;
 }
 .fav-toggle {
+  border: none;
+  background: transparent;
+  padding: 0.15rem 0.3rem;
   color: var(--muted);
+  font-size: 1.35rem;
+  line-height: 1;
+  /* subtle engraved/indented look at rest */
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3), 0 -1px 0 rgba(255, 255, 255, 0.08);
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+button.fav-toggle:hover:not(:disabled) {
+  background: transparent;
 }
 .fav-toggle.active {
   color: var(--accent);
+  text-shadow: none;
+  transform: scale(1.08);
+  /* tight glow hugging the star's own points, not a circular halo */
+  filter: drop-shadow(0 0 1.5px currentColor) drop-shadow(0 0 2.5px currentColor);
 }
 .item-card.editing {
   grid-column: 1 / -1;
