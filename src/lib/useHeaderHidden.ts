@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 
 // Ignore small jitters (trackpad momentum, mobile rubber-banding) and never
-// shrink while still near the very top of the page.
+// hide while still near the very top of the page.
 const DELTA_THRESHOLD = 8;
 const TOP_THRESHOLD = 40;
 
-/** Shrinks the header while scrolling down, restores it on scroll up. */
-export function useHeaderShrink(): boolean {
-  const [shrink, setShrink] = useState(false);
+/** Slides the header out while scrolling down, back in on scroll up. */
+export function useHeaderHidden(): boolean {
+  const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
     let lastY = window.scrollY;
@@ -17,11 +17,11 @@ export function useHeaderShrink(): boolean {
       const y = window.scrollY;
       const delta = y - lastY;
       if (y <= TOP_THRESHOLD) {
-        setShrink(false);
+        setHidden(false);
       } else if (delta > DELTA_THRESHOLD) {
-        setShrink(true);
+        setHidden(true);
       } else if (delta < -DELTA_THRESHOLD) {
-        setShrink(false);
+        setHidden(false);
       }
       lastY = y;
       ticking = false;
@@ -38,5 +38,5 @@ export function useHeaderShrink(): boolean {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  return shrink;
+  return hidden;
 }

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useSettingsStore } from './store/settingsStore';
 import { useCharacterStore } from './store/characterStore';
 import { useTheme } from './lib/useTheme';
-import { useHeaderShrink } from './lib/useHeaderShrink';
+import { useHeaderHidden } from './lib/useHeaderHidden';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { CharacterList } from './components/CharacterList';
 import { CharacterView } from './components/CharacterView';
@@ -15,7 +15,7 @@ export function App() {
   const loadSettings = useSettingsStore((s) => s.load);
   const loadRoster = useCharacterStore((s) => s.loadRoster);
   useTheme();
-  const shrink = useHeaderShrink();
+  const headerHidden = useHeaderHidden();
 
   useEffect(() => {
     loadSettings();
@@ -24,7 +24,7 @@ export function App() {
 
   return (
     <div className="app">
-      <header className={`app-header ${shrink ? 'shrink' : ''}`}>
+      <header className={`app-header ${headerHidden ? 'hidden' : ''}`}>
         <NavLink to="/" className="brand">
           <span className="brand-mark">目</span>
           <span className="brand-text">

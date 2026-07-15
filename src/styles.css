@@ -59,7 +59,7 @@ body {
   flex-direction: column;
 }
 
-/* Header */
+/* Header — slides fully off-screen while scrolling down, back in on scroll up. */
 .app-header {
   display: flex;
   align-items: center;
@@ -73,10 +73,10 @@ body {
   z-index: 10;
   backdrop-filter: blur(8px);
   flex-wrap: wrap;
-  transition: padding 0.2s ease;
+  transition: transform 0.25s ease;
 }
-.app-header.shrink {
-  padding: 0.35rem 1rem;
+.app-header.hidden {
+  transform: translateY(-100%);
 }
 
 .brand {
@@ -97,12 +97,6 @@ body {
   color: var(--on-accent);
   font-size: 1.2rem;
   font-weight: 700;
-  transition: width 0.2s ease, height 0.2s ease, font-size 0.2s ease;
-}
-.app-header.shrink .brand-mark {
-  width: 28px;
-  height: 28px;
-  font-size: 0.95rem;
 }
 
 .brand-text {
@@ -111,16 +105,8 @@ body {
   line-height: 1.1;
 }
 .brand-text small {
-  display: block;
   color: var(--muted);
   font-size: 0.72rem;
-  max-height: 1.2em;
-  overflow: hidden;
-  transition: max-height 0.2s ease, opacity 0.15s ease;
-}
-.app-header.shrink .brand-text small {
-  max-height: 0;
-  opacity: 0;
 }
 
 .app-nav {
@@ -134,11 +120,6 @@ body {
   padding: 0.35rem 0.6rem;
   border-radius: 8px;
   font-size: 0.95rem;
-  transition: padding 0.2s ease, font-size 0.2s ease;
-}
-.app-header.shrink .app-nav a {
-  padding: 0.25rem 0.5rem;
-  font-size: 0.88rem;
 }
 .app-nav a:hover {
   color: var(--text);
