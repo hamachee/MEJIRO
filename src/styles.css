@@ -992,6 +992,45 @@ button.sheet-stat:hover:not(.selected) {
   border-color: var(--failure-bright);
 }
 
+/* Compact injury tracker (Gear tab): armor, track and taken-out on one
+   thin, wrapping line — no card title. */
+.card.compact-tracker {
+  padding: 0.5rem 0.8rem;
+}
+.tracker-line {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.stat-track-row.thin {
+  margin: 0;
+  padding: 0;
+  border-bottom: none;
+  gap: 0.5rem;
+}
+.injury-track.compact {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 0.25rem;
+}
+.injury-track.compact .injury-box {
+  width: 12px;
+  height: 12px;
+}
+.injury-level.thin {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0 0.5rem;
+}
+.injury-level.thin .injury-boxes {
+  gap: 0.2rem;
+}
+.injury-level.thin .injury-level-label {
+  font-size: 0.62rem;
+}
+
 /* Named lists (edges, paths, tricks) */
 .named-list {
   list-style: none;
@@ -1054,11 +1093,19 @@ button.sheet-stat:hover:not(.selected) {
   padding-top: 0.6rem;
   border-top: 1px dashed var(--divider-strong);
 }
-/* These rows have no <h2>, so their labels double as the card's heading -
-   sized and weighted to match, rather than the small muted field-label. */
-.curse-row > .field-label {
-  font-size: 1.1rem;
-  font-weight: 700;
+/* Compact variant (Spells tab): Entanglement + Curse Dice on one line. */
+.curse-line {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+/* These rows have no <h2>; label size matches the skill-row labels
+   (.skill-grid .stat-label) rather than the small muted field-label. */
+.curse-row > .field-label,
+.curse-line > .field-label {
+  font-size: 0.86rem;
+  font-weight: 400;
   color: var(--text);
 }
 
@@ -1186,10 +1233,10 @@ p.fold-readonly {
   color: var(--on-accent);
 }
 
-/* Card grids (gear, spells) */
+/* Card grids (gear, spells) — wide cards, 2-up */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   gap: 0.6rem;
   margin-bottom: 0.5rem;
 }
@@ -1215,6 +1262,18 @@ p.fold-readonly {
   display: flex;
   gap: 0.2rem;
   flex-shrink: 0;
+}
+.item-card-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+.fav-toggle {
+  color: var(--muted);
+}
+.fav-toggle.active {
+  color: var(--accent);
 }
 .item-card.editing {
   grid-column: 1 / -1;

@@ -7,8 +7,8 @@ import { FieldLabel } from './FieldLabel';
 import { TrickInfo } from './TrickInfo';
 import type { Character } from '../types/character';
 
-/** Sheet page 3: the character's own trick list, editable in edit mode. */
-export function CharacterPage3({
+/** Tricks tab: the character's own trick list, editable in edit mode. */
+export function CharacterTricksPage({
   character,
   editing,
 }: {

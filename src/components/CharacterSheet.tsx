@@ -278,17 +278,78 @@ function IdentityCard({
  * capacity follows Entanglement (• = 5, ••/••• = 7, •••• = 9) and every
  * capacity dot is drawn so the maximum stays visible.
  */
-function CurseCard({
+export function CurseCard({
   character,
   editing,
+  variant = 'full',
 }: {
   character: Character;
   editing: boolean;
+  variant?: 'full' | 'compact';
 }) {
   const { t } = useTranslation();
   const patch = useCharacterStore((s) => s.patch);
   const { identity } = character;
   const curseCap = curseDiceCap(identity.entanglement);
+
+  const entanglementDots = (
+    <Dots
+      value={identity.entanglement}
+      max={MAX_ENTANGLEMENT}
+      editable={editing}
+      onSet={(n) =>
+        patch({
+          identity: { ...identity, entanglement: n },
+          // Lowering entanglement shrinks curse capacity too.
+          curseDice: Math.min(character.curseDice, curseDiceCap(n)),
+        })
+      }
+    />
+  );
+
+  const curseDiceControls = (
+    <div className="curse-controls">
+      <button
+        aria-label={`− ${t('roller.curseDice')}`}
+        disabled={character.curseDice <= 0}
+        onClick={() => patch({ curseDice: character.curseDice - 1 })}
+      >
+        −
+      </button>
+      <span className="dots curse-dots">
+        <Dots
+          value={character.curseDice}
+          max={curseCap}
+          editable
+          onSet={(n) => patch({ curseDice: n })}
+        />
+      </span>
+      <button
+        aria-label={`+ ${t('roller.curseDice')}`}
+        disabled={character.curseDice >= curseCap}
+        onClick={() => patch({ curseDice: character.curseDice + 1 })}
+      >
+        +
+      </button>
+    </div>
+  );
+
+  if (variant === 'compact') {
+    return (
+      <section className="card compact-tracker">
+        <div className="curse-line">
+          <span className="field-label">
+            <FieldLabel i18nKey="sheet.entanglement" en="Entanglement" />
+          </span>
+          {entanglementDots}
+          <span className="field-label">
+            <FieldLabel i18nKey="roller.curseDice" en="Curse dice" />
+          </span>
+          {curseDiceControls}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="card">
@@ -296,58 +357,26 @@ function CurseCard({
         <span className="field-label">
           <FieldLabel i18nKey="sheet.entanglement" en="Entanglement" />
         </span>
-        <Dots
-          value={identity.entanglement}
-          max={MAX_ENTANGLEMENT}
-          editable={editing}
-          onSet={(n) =>
-            patch({
-              identity: { ...identity, entanglement: n },
-              // Lowering entanglement shrinks curse capacity too.
-              curseDice: Math.min(character.curseDice, curseDiceCap(n)),
-            })
-          }
-        />
+        {entanglementDots}
       </div>
       <div className="curse-row">
         <span className="field-label">
           <FieldLabel i18nKey="roller.curseDice" en="Curse dice" />
         </span>
-        <div className="curse-controls">
-          <button
-            aria-label={`− ${t('roller.curseDice')}`}
-            disabled={character.curseDice <= 0}
-            onClick={() => patch({ curseDice: character.curseDice - 1 })}
-          >
-            −
-          </button>
-          <span className="dots curse-dots">
-            <Dots
-              value={character.curseDice}
-              max={curseCap}
-              editable
-              onSet={(n) => patch({ curseDice: n })}
-            />
-          </span>
-          <button
-            aria-label={`+ ${t('roller.curseDice')}`}
-            disabled={character.curseDice >= curseCap}
-            onClick={() => patch({ curseDice: character.curseDice + 1 })}
-          >
-            +
-          </button>
-        </div>
+        {curseDiceControls}
       </div>
     </section>
   );
 }
 
-function InjuryCard({
+export function InjuryCard({
   character,
   template,
+  variant = 'full',
 }: {
   character: Character;
   template: SystemTemplate;
+  variant?: 'full' | 'compact';
 }) {
   const { t } = useTranslation();
   const patch = useCharacterStore((s) => s.patch);
@@ -420,8 +449,10 @@ function InjuryCard({
       />
     );
   };
+  const compact = variant === 'compact';
+
   const armorRow = (
-    <div className="stat-track-row">
+    <div className={compact ? 'stat-track-row thin' : 'stat-track-row'}>
       <span className="field-label">
         <FieldLabel i18nKey="sheet.armor" en="Armor" />
       </span>
@@ -444,8 +475,8 @@ function InjuryCard({
   );
 
   const takenOutRow = terminalLevel && (
-    <div className="injury-standalone">
-      <div className={`injury-level terminal ${injuries.takenOut ? 'lit' : ''}`}>
+    <div className={compact ? undefined : 'injury-standalone'}>
+      <div className={`injury-level terminal ${injuries.takenOut ? 'lit' : ''} ${compact ? 'thin' : ''}`}>
         <div className="injury-boxes">
           {Array.from({ length: terminalLevel.boxes }, (_, i) => takenOutBox(i))}
         </div>
@@ -465,7 +496,10 @@ function InjuryCard({
       // marked box. Shallower levels dim again as damage progresses.
       const lit = marked > start && marked <= offset;
       return (
-        <div key={start} className={`injury-level ${lit ? 'lit' : ''}`}>
+        <div
+          key={start}
+          className={`injury-level ${lit ? 'lit' : ''} ${variant === 'compact' ? 'thin' : ''}`}
+        >
           <div className="injury-boxes">
             {Array.from({ length: level.boxes }, (_, i) => box(start + i))}
           </div>
@@ -475,6 +509,17 @@ function InjuryCard({
         </div>
       );
     });
+    if (compact) {
+      return (
+        <section className="card compact-tracker">
+          <div className="tracker-line">
+            {armorRow}
+            <div className="injury-track grouped compact">{groups}</div>
+            {takenOutRow}
+          </div>
+        </section>
+      );
+    }
     return (
       <section className="card">
         <h2>
@@ -488,6 +533,18 @@ function InjuryCard({
   }
 
   // Fallback: flat track for templates without a structured injury track.
+  if (compact) {
+    return (
+      <section className="card compact-tracker">
+        <div className="tracker-line">
+          {armorRow}
+          <div className="injury-track compact">
+            {Array.from({ length: total }, (_, i) => box(i))}
+          </div>
+        </div>
+      </section>
+    );
+  }
   return (
     <section className="card">
       <h2>

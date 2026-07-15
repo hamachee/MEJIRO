@@ -55,8 +55,6 @@
     "longTerm": "Long-term goal",
     "motifs": "Motifs",
     "page1": "Sheet",
-    "page2": "Gear & Spells",
-    "page3": "Tricks",
     "add": "Add",
     "save": "Save",
     "namePlaceholder": "Name",
@@ -122,6 +120,7 @@
     "cost": "Cost",
     "costPlaceholder": "Cost",
     "attunementsPlaceholder": "Attunements (comma separated)",
+    "effectPlaceholder": "Effect (free text, multiple lines)",
     "advancementsPlaceholder": "Advancements (free text, multiple lines)"
   },
   "resource": {

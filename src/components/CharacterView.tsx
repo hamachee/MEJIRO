@@ -6,8 +6,9 @@ import { useRollStore } from '../store/rollStore';
 import { getTemplate } from '../templates';
 import { useWide } from '../lib/useWide';
 import { CharacterSheet } from './CharacterSheet';
-import { CharacterPage2 } from './CharacterPage2';
-import { CharacterPage3 } from './CharacterPage3';
+import { CharacterGearPage } from './CharacterGearPage';
+import { CharacterSpellsPage } from './CharacterSpellsPage';
+import { CharacterTricksPage } from './CharacterTricksPage';
 import { RollBar } from './RollBar';
 import { RollResult } from './RollResult';
 import { TrickPurchase } from './TrickPurchase';
@@ -21,7 +22,7 @@ export function CharacterView() {
   const result = useRollStore((s) => s.result);
   const clearResult = useRollStore((s) => s.clearResult);
   const [editing, setEditing] = useState(false);
-  const [page, setPage] = useState<1 | 2 | 3>(1);
+  const [page, setPage] = useState<1 | 2 | 3 | 4>(1);
   const wide = useWide();
 
   useEffect(() => {
@@ -77,13 +78,19 @@ export function CharacterView() {
           className={`page-tab ${page === 2 ? 'active' : ''}`}
           onClick={() => setPage(2)}
         >
-          {t('sheet.page2')}
+          {t('sheet.gear')}
         </button>
         <button
           className={`page-tab ${page === 3 ? 'active' : ''}`}
           onClick={() => setPage(3)}
         >
-          {t('sheet.page3')}
+          {t('sheet.spells')}
+        </button>
+        <button
+          className={`page-tab ${page === 4 ? 'active' : ''}`}
+          onClick={() => setPage(4)}
+        >
+          {t('tricks.title')}
         </button>
       </nav>
 
@@ -93,8 +100,11 @@ export function CharacterView() {
         {page === 1 && (
           <CharacterSheet character={active} template={template} editing={editing} />
         )}
-        {page === 2 && <CharacterPage2 character={active} editing={editing} />}
-        {page === 3 && <CharacterPage3 character={active} editing={editing} />}
+        {page === 2 && (
+          <CharacterGearPage character={active} editing={editing} template={template} />
+        )}
+        {page === 3 && <CharacterSpellsPage character={active} editing={editing} />}
+        {page === 4 && <CharacterTricksPage character={active} editing={editing} />}
         {wide && result && <aside className="result-col stack">{resultPanel}</aside>}
       </div>
 
