@@ -51,6 +51,7 @@ export function RollBar({ character, template }: Props) {
       <div className="roll-bar-controls">
         <Stepper
           label={t('roller.difficulty')}
+          ariaLabel={t('roller.difficulty')}
           value={difficulty}
           onChange={setDifficulty}
         />

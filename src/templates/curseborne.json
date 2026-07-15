@@ -11,13 +11,13 @@
   "attributes": [
     { "id": "intellect", "label": { "en": "Intellect", "ko": "지성" }, "category": "mental" },
     { "id": "cunning", "label": { "en": "Cunning", "ko": "교활" }, "category": "mental" },
-    { "id": "resolve", "label": { "en": "Resolve", "ko": "결단" }, "category": "mental" },
+    { "id": "resolve", "label": { "en": "Resolve", "ko": "결의" }, "category": "mental" },
     { "id": "might", "label": { "en": "Might", "ko": "완력" }, "category": "physical" },
     { "id": "dexterity", "label": { "en": "Dexterity", "ko": "민첩" }, "category": "physical" },
     { "id": "stamina", "label": { "en": "Stamina", "ko": "체력" }, "category": "physical" },
     { "id": "presence", "label": { "en": "Presence", "ko": "존재감" }, "category": "social" },
     { "id": "manipulation", "label": { "en": "Manipulation", "ko": "조종" }, "category": "social" },
-    { "id": "composure", "label": { "en": "Composure", "ko": "침착" }, "category": "social" }
+    { "id": "composure", "label": { "en": "Composure", "ko": "평정" }, "category": "social" }
   ],
   "skills": [
     { "id": "artistry", "label": { "en": "Artistry", "ko": "예술" } },
@@ -27,11 +27,11 @@
     { "id": "empathy", "label": { "en": "Empathy", "ko": "공감" } },
     { "id": "enigmas", "label": { "en": "Enigmas", "ko": "수수께끼" } },
     { "id": "esoterica", "label": { "en": "Esoterica", "ko": "비학" } },
-    { "id": "larceny", "label": { "en": "Larceny", "ko": "절도" } },
+    { "id": "larceny", "label": { "en": "Larceny", "ko": "도둑질" } },
     { "id": "leadership", "label": { "en": "Leadership", "ko": "지휘" } },
     { "id": "medicine", "label": { "en": "Medicine", "ko": "의학" } },
     { "id": "persuasion", "label": { "en": "Persuasion", "ko": "설득" } },
-    { "id": "pilot", "label": { "en": "Pilot", "ko": "조종술" } },
+    { "id": "pilot", "label": { "en": "Pilot", "ko": "운전" } },
     { "id": "rangedCombat", "label": { "en": "Ranged Combat", "ko": "원거리 전투" } },
     { "id": "science", "label": { "en": "Science", "ko": "과학" } },
     { "id": "survival", "label": { "en": "Survival", "ko": "생존" } },
