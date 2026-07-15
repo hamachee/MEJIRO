@@ -336,13 +336,15 @@ export function CurseCard({
       value={identity.entanglement}
       max={MAX_ENTANGLEMENT}
       editable={editing}
-      onSet={(n) =>
+      onSet={(n) => {
+        // Entanglement can never drop below 1.
+        const clamped = Math.max(1, n);
         patch({
-          identity: { ...identity, entanglement: n },
+          identity: { ...identity, entanglement: clamped },
           // Lowering entanglement shrinks curse capacity too.
-          curseDice: Math.min(character.curseDice, curseDiceCap(n)),
-        })
-      }
+          curseDice: Math.min(character.curseDice, curseDiceCap(clamped)),
+        });
+      }}
     />
   );
 

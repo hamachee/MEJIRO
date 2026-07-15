@@ -35,7 +35,7 @@
     "entanglement": "얽힘",
     "injuries": "부상",
     "armor": "장갑",
-    "takenOut": "전투 탈락",
+    "takenOut": "탈락",
     "box": "칸",
     "edges": "엣지",
     "paths": "패스",
@@ -105,7 +105,7 @@
       "none": "없음",
       "minor": "경미",
       "moderate": "보통",
-      "major": "심각"
+      "major": "중대"
     },
     "namePlaceholder": "트릭 이름",
     "descPlaceholder": "설명 (선택)",
@@ -159,7 +159,6 @@
     "title": "설정",
     "appearance": "화면",
     "uiLanguage": "인터페이스 언어",
-    "discordLanguage": "디스코드 출력 언어",
     "webhooks": "디스코드 웹훅",
     "webhookLabel": "이름표",
     "webhookUrl": "웹훅 URL",

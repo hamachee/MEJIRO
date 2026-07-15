@@ -22,7 +22,7 @@
   "skills": [
     { "id": "artistry", "label": { "en": "Artistry", "ko": "예술" } },
     { "id": "athletics", "label": { "en": "Athletics", "ko": "운동" } },
-    { "id": "closeCombat", "label": { "en": "Close Combat", "ko": "근접 전투" } },
+    { "id": "closeCombat", "label": { "en": "Close Combat", "ko": "근접전" } },
     { "id": "culture", "label": { "en": "Culture", "ko": "문화" } },
     { "id": "empathy", "label": { "en": "Empathy", "ko": "공감" } },
     { "id": "enigmas", "label": { "en": "Enigmas", "ko": "수수께끼" } },
@@ -35,7 +35,7 @@
     { "id": "rangedCombat", "label": { "en": "Ranged Combat", "ko": "원거리 전투" } },
     { "id": "science", "label": { "en": "Science", "ko": "과학" } },
     { "id": "survival", "label": { "en": "Survival", "ko": "생존" } },
-    { "id": "technology", "label": { "en": "Technology", "ko": "기술" } }
+    { "id": "technology", "label": { "en": "Technology", "ko": "공학" } }
   ],
   "dice": {
     "sides": 10,
@@ -55,7 +55,7 @@
       { "boxes": 2, "label": { "en": "Wounded", "ko": "부상" } },
       { "boxes": 2, "label": { "en": "Maimed", "ko": "불구" } },
       { "boxes": 1, "label": { "en": "Near Death", "ko": "빈사" } },
-      { "boxes": 1, "label": { "en": "Taken Out", "ko": "전투 탈락" }, "terminal": true }
+      { "boxes": 1, "label": { "en": "Taken Out", "ko": "탈락" }, "terminal": true }
     ]
   }
 }

@@ -36,7 +36,7 @@ const STRINGS: Record<string, Record<string, string>> = {
     complicationResolved: '컴플리케이션 해소',
     minor: '경미',
     moderate: '보통',
-    major: '심각',
+    major: '중대',
     spent: '사용',
     remaining: '잔여',
   },
@@ -61,8 +61,8 @@ export interface DiscordContext {
 
 /**
  * Format the dice as a compact string, curse dice first and regular dice
- * after, separated by "|" so the table can spot curse dice without an
- * emoji marker. Hits are bolded within each group.
+ * after. Curse dice are bracketed behind a "→" so the table can spot them
+ * without an emoji marker. Hits are bolded within each group.
  */
 function formatDice(result: RollResult): string {
   const format = (dice: RollResult['dice']) =>
@@ -70,7 +70,7 @@ function formatDice(result: RollResult): string {
   const curse = result.dice.filter((d) => d.isCurse);
   const regular = result.dice.filter((d) => !d.isCurse);
   return curse.length > 0
-    ? `${format(curse)} | ${format(regular)}`
+    ? `→ [ ${format(curse)} ] ${format(regular)}`
     : format(regular);
 }
 

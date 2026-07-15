@@ -129,7 +129,7 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
     set({ ...fresh, postStatus: 'posting' as const, postError: '' });
     postRollResult(template, request, result, {
       webhookUrl,
-      lang: useSettingsStore.getState().settings.discordLang,
+      lang: useSettingsStore.getState().settings.uiLang,
       characterName: character.showNameInWebhook ? character.name : '',
     })
       .then(() => set({ postStatus: 'posted' }))

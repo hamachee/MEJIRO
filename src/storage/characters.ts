@@ -47,7 +47,7 @@ export function newCharacter(
     id: uid(),
     templateId: template.id,
     name: name.trim() || 'Unnamed',
-    identity: { lineage: '', family: '', concept: '', entanglement: 0, rolePath: '', shortTerm1: '', shortTerm2: '', longTerm: '', motifs: '' },
+    identity: { lineage: '', family: '', concept: '', entanglement: 1, rolePath: '', shortTerm1: '', shortTerm2: '', longTerm: '', motifs: '' },
     webhookUrl: '',
     externalSheetUrl: '',
     showNameInWebhook: true,
@@ -88,7 +88,12 @@ export function normalizeCharacter(raw: Partial<Character> & Pick<Character, 'id
     createdAt: now,
     updatedAt: now,
     ...raw,
-    identity: { ...{ lineage: '', family: '', concept: '', entanglement: 0, rolePath: '', shortTerm1: '', shortTerm2: '', longTerm: '', motifs: '' }, ...raw.identity },
+    identity: {
+      ...{ lineage: '', family: '', concept: '', entanglement: 1, rolePath: '', shortTerm1: '', shortTerm2: '', longTerm: '', motifs: '' },
+      ...raw.identity,
+      // Entanglement can never drop below 1, even for older saves stored at 0.
+      entanglement: Math.max(1, raw.identity?.entanglement ?? 1),
+    },
     webhookUrl: raw.webhookUrl ?? '',
     externalSheetUrl: raw.externalSheetUrl ?? '',
     showNameInWebhook: raw.showNameInWebhook ?? true,

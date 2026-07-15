@@ -61,7 +61,7 @@ export function TrickPurchase({ character }: Props) {
         },
         {
           webhookUrl: url,
-          lang: settings.discordLang,
+          lang: settings.uiLang,
           characterName: character.showNameInWebhook ? character.name : '',
         },
       );
