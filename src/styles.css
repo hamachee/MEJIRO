@@ -160,6 +160,21 @@ body {
   font-size: 1.1rem;
 }
 
+/* Fold-able top-level cards (Skills, Attributes): a <details>/<summary>
+   styled to match .card h2, so the native disclosure triangle doubles as
+   the fold toggle — same pattern as the smaller sub-section folds, just
+   sized for a card heading. Default open. */
+.card-summary {
+  margin: 0 0 0.75rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+}
+.fold-card:not([open]) .card-summary {
+  margin-bottom: 0;
+}
+
 .two-col {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -882,6 +897,22 @@ button.sheet-stat:hover:not(.selected) {
   line-height: 1;
 }
 .roll-bar-parts {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+}
+.roll-bar-pick {
+  font-size: 0.85rem;
+  padding: 0.25rem 0.4rem;
+  max-width: 9rem;
+}
+.roll-bar-rating {
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.roll-bar-plus {
   font-size: 0.85rem;
 }
 .roll-bar-controls {
@@ -1194,7 +1225,12 @@ p.fold-readonly {
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* Desktop: sheet + result side column */
+/* Desktop: sheet + result side column. When the result column is showing,
+   let the page grow to fit both at their normal widths instead of
+   squeezing the sheet into the same 1100px cap used everywhere else. */
+.app-main:has(.play-layout.with-result) {
+  max-width: calc(1100px + 380px + 1rem);
+}
 .play-layout.with-result {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 380px;

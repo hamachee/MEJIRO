@@ -715,10 +715,10 @@ export function CharacterSheet({ character, template, editing }: Props) {
         <CurseCard character={character} editing={editing} />
       </div>
 
-      <section className="card">
-        <h2>
+      <details className="card fold-card" open>
+        <summary className="card-summary">
           <FieldLabel i18nKey="sheet.skills" en="Skills" />
-        </h2>
+        </summary>
         <div className="skill-grid">
           {template.skills.map((stat) => (
             <SheetStat
@@ -733,12 +733,12 @@ export function CharacterSheet({ character, template, editing }: Props) {
           ))}
         </div>
         {!editing && <p className="muted hint">{t('roller.selectPrompt')}</p>}
-      </section>
+      </details>
 
-      <section className="card">
-        <h2>
+      <details className="card fold-card" open>
+        <summary className="card-summary">
           <FieldLabel i18nKey="sheet.attributes" en="Attributes" />
-        </h2>
+        </summary>
         <div className="attr-grid">
           {template.categories.map((cat) => (
             <div key={cat.id} className="attr-col">
@@ -761,7 +761,7 @@ export function CharacterSheet({ character, template, editing }: Props) {
             </div>
           ))}
         </div>
-      </section>
+      </details>
 
       <div className="two-col">
         <InjuryCard character={character} template={template} />
