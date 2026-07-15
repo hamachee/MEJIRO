@@ -751,13 +751,15 @@ button.danger:hover:not(:disabled) {
 }
 .identity-name h1 {
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 .external-sheet-link {
-  display: inline-block;
-  margin-left: 0.4rem;
+  display: inline-flex;
+  align-items: center;
   font-size: 0.75em;
   text-decoration: none;
-  vertical-align: middle;
   opacity: 0.75;
   transition: opacity 0.15s ease, transform 0.15s ease;
 }
