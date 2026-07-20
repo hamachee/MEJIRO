@@ -31,6 +31,8 @@
   --wicked-text: #dfa2f5;
   --cruel-text: #f08cc0;
   --radius: 12px;
+  --radius-md: 10px;
+  --radius-sm: 8px;
   color-scheme: dark;
 }
 
@@ -95,7 +97,7 @@ body {
   place-items: center;
   width: 38px;
   height: 38px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background: var(--accent-2);
   color: var(--on-accent);
   font-size: 1.2rem;
@@ -121,7 +123,7 @@ body {
   color: var(--muted);
   text-decoration: none;
   padding: 0.35rem 0.6rem;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 0.95rem;
 }
 .app-nav a:hover {
@@ -246,7 +248,7 @@ select,
 textarea {
   background: var(--bg-2);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 0.5rem 0.6rem;
 }
 textarea {
@@ -272,7 +274,7 @@ button {
   cursor: pointer;
   background: var(--card-2);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 0.5rem 0.8rem;
   transition: background 0.12s ease, transform 0.05s ease;
 }
@@ -337,7 +339,7 @@ button.danger:hover:not(:disabled) {
   gap: 0.5rem;
   background: var(--bg-2);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 0.5rem 0.6rem;
 }
 .roster-open {
@@ -391,7 +393,7 @@ button.danger:hover:not(:disabled) {
   padding: 0;
   display: grid;
   place-items: center;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
 }
 .stat-value {
   min-width: 1.5rem;
@@ -503,7 +505,7 @@ button.danger:hover:not(:disabled) {
   height: 34px;
   display: grid;
   place-items: center;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: var(--bg-2);
   border: 1px solid var(--border);
   font-variant-numeric: tabular-nums;
@@ -550,7 +552,7 @@ button.danger:hover:not(:disabled) {
   padding: 0.5rem 0.6rem;
   background: var(--bg-2);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   cursor: pointer;
 }
 /* Complication severity picker (purchase phase) */
@@ -673,7 +675,7 @@ button.danger:hover:not(:disabled) {
   gap: 0.5rem;
   background: var(--bg-2);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 0.5rem 0.6rem;
 }
 .webhook-active {
@@ -714,7 +716,7 @@ button.danger:hover:not(:disabled) {
   padding: 0.35rem 0.5rem;
   background: var(--bg-2);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 0.85rem;
 }
 .swatch input[type='color'] {
@@ -843,7 +845,7 @@ button.dot.filled:hover {
   gap: 0.4rem;
   width: 100%;
   padding: 0.3rem 0.45rem;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 1px solid transparent;
   background: transparent;
   text-align: left;
@@ -992,7 +994,7 @@ button.sheet-stat:hover:not(.selected) {
 span.exp-value {
   display: inline-block;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   cursor: text;
   user-select: none;
 }
@@ -1060,14 +1062,14 @@ span.exp-value:focus-visible {
   gap: 0.75rem;
   margin-bottom: 0.6rem;
   padding-bottom: 0.6rem;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+  border-bottom: 1px dashed var(--divider-strong);
 }
 
 /* Taken Out: its own line below the injury groups. */
 .injury-standalone {
   margin-top: 0.6rem;
   padding-top: 0.6rem;
-  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+  border-top: 1px dashed var(--divider-strong);
 }
 
 /* Grouped injury track — severity levels split by dividers, labels light up */
@@ -1274,7 +1276,7 @@ p.fold-readonly {
   padding: 0;
   display: grid;
   place-items: center;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
 }
 .curse-dots .dot {
   border-color: var(--curse);
@@ -1351,7 +1353,7 @@ p.fold-readonly {
   text-orientation: mixed;
   padding: 0.7rem 0.3rem;
   font-size: 0.78rem;
-  border-radius: 0 8px 8px 0;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   border-left: none;
   background: var(--card);
   color: var(--muted);
@@ -1374,7 +1376,7 @@ p.fold-readonly {
 .item-card {
   background: var(--bg-2);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 0.6rem 0.7rem;
 }
 .item-card-head {
