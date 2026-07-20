@@ -14,6 +14,7 @@ import type { L10n as L10nLabel, Stat, SystemTemplate } from '../types/template'
 import { ResourceTracker } from './ResourceTracker';
 import { FieldLabel } from './FieldLabel';
 import { uid } from '../lib/uid';
+import { attributesByCategory } from '../templates';
 
 const MAX_DOTS = 5;
 
@@ -771,8 +772,7 @@ export function CharacterSheet({ character, template, editing }: Props) {
               <h3 className="group-title">
                 <L l10n={cat.label} />
               </h3>
-              {template.attributes
-                .filter((a) => a.category === cat.id)
+              {(attributesByCategory(template).get(cat.id) ?? [])
                 .map((stat) => (
                   <SheetStat
                     key={stat.id}

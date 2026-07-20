@@ -20,6 +20,19 @@ function initialResources(template: SystemTemplate): Record<string, ResourceStat
 /** Fallback injury box count when a template defines no injury track. */
 const DEFAULT_INJURY_BOXES = 8;
 
+/** Identity defaults shared by new characters and older-save normalisation. */
+const DEFAULT_IDENTITY: Character['identity'] = {
+  lineage: '',
+  family: '',
+  concept: '',
+  entanglement: 1,
+  rolePath: '',
+  shortTerm1: '',
+  shortTerm2: '',
+  longTerm: '',
+  motifs: '',
+};
+
 /** Total injury boxes for a template (sum of its levels, or the fallback). */
 export function injuryTotal(template: SystemTemplate): number {
   const levels = template.injuryTrack?.levels;
@@ -47,7 +60,7 @@ export function newCharacter(
     id: uid(),
     templateId: template.id,
     name: name.trim() || 'Unnamed',
-    identity: { lineage: '', family: '', concept: '', entanglement: 1, rolePath: '', shortTerm1: '', shortTerm2: '', longTerm: '', motifs: '' },
+    identity: { ...DEFAULT_IDENTITY },
     webhookUrl: '',
     externalSheetUrl: '',
     showNameInWebhook: true,
@@ -90,7 +103,7 @@ export function normalizeCharacter(raw: Partial<Character> & Pick<Character, 'id
     updatedAt: now,
     ...raw,
     identity: {
-      ...{ lineage: '', family: '', concept: '', entanglement: 1, rolePath: '', shortTerm1: '', shortTerm2: '', longTerm: '', motifs: '' },
+      ...DEFAULT_IDENTITY,
       ...raw.identity,
       // Entanglement can never drop below 1, even for older saves stored at 0.
       entanglement: Math.max(1, raw.identity?.entanglement ?? 1),
