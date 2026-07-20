@@ -29,5 +29,5 @@ export function canAfford(
   trick: Costed,
   budget: number,
 ): boolean {
-  return validatePurchase([...selected, trick], budget).valid;
+  return validatePurchase(selected, budget).remaining >= Math.max(0, trick.cost);
 }

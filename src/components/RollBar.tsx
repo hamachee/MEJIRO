@@ -1,7 +1,9 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRollStore } from '../store/rollStore';
 import { label } from '../lib/localize';
 import { useLang } from '../lib/useLang';
+import { attributesByCategory } from '../templates';
 import type { Character } from '../types/character';
 import type { SystemTemplate } from '../types/template';
 import { Stepper } from './Stepper';
@@ -39,8 +41,12 @@ export function RollBar({ character, template }: Props) {
 
   // Sorted by the label actually shown, not template order, so the
   // dropdown reads A-Z in whichever language is active.
-  const sortedSkills = [...template.skills].sort((a, b) =>
-    label(a.label, lang).localeCompare(label(b.label, lang), lang),
+  const sortedSkills = useMemo(
+    () =>
+      template.skills
+        .map((sk) => ({ id: sk.id, name: label(sk.label, lang) }))
+        .sort((a, b) => a.name.localeCompare(b.name, lang)),
+    [template.skills, lang],
   );
 
   return (
@@ -57,7 +63,7 @@ export function RollBar({ character, template }: Props) {
             <option value="">{t('sheet.skills')}</option>
             {sortedSkills.map((sk) => (
               <option key={sk.id} value={sk.id}>
-                {label(sk.label, lang)}
+                {sk.name}
               </option>
             ))}
           </select>
@@ -72,13 +78,11 @@ export function RollBar({ character, template }: Props) {
             <option value="">{t('sheet.attributes')}</option>
             {template.categories.map((cat) => (
               <optgroup key={cat.id} label={label(cat.label, lang)}>
-                {template.attributes
-                  .filter((a) => a.category === cat.id)
-                  .map((a) => (
-                    <option key={a.id} value={a.id}>
-                      {label(a.label, lang)}
-                    </option>
-                  ))}
+                {(attributesByCategory(template).get(cat.id) ?? []).map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {label(a.label, lang)}
+                  </option>
+                ))}
               </optgroup>
             ))}
           </select>

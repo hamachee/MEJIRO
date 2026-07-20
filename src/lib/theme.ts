@@ -187,21 +187,17 @@ export const RULE_THEMES: Record<string, Theme> = {
   curseborne: CURSEBORNE_THEME,
 };
 
+/** A theme's core palette (the user-editable keys), without the extras. */
+function corePalette(theme: Theme): ThemePalette {
+  return Object.fromEntries(
+    PALETTE_KEYS.map((key) => [key, theme[key]]),
+  ) as Record<keyof ThemePalette, string>;
+}
+
 /** Starting point for the custom editor: the Curseborne core palette. */
 export const DEFAULT_CUSTOM_THEME: CustomTheme = {
   base: 'dark',
-  bg: CURSEBORNE_THEME.bg,
-  bg2: CURSEBORNE_THEME.bg2,
-  card: CURSEBORNE_THEME.card,
-  card2: CURSEBORNE_THEME.card2,
-  border: CURSEBORNE_THEME.border,
-  text: CURSEBORNE_THEME.text,
-  muted: CURSEBORNE_THEME.muted,
-  accent: CURSEBORNE_THEME.accent,
-  accent2: CURSEBORNE_THEME.accent2,
-  success: CURSEBORNE_THEME.success,
-  failure: CURSEBORNE_THEME.failure,
-  danger: CURSEBORNE_THEME.danger,
+  ...corePalette(CURSEBORNE_THEME),
 };
 
 /** "#rrggbb" → "rgba(r, g, b, alpha)"; returns the input if not parseable. */
