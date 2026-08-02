@@ -15,6 +15,7 @@ import { ResourceTracker } from './ResourceTracker';
 import { FieldLabel } from './FieldLabel';
 import { uid } from '../lib/uid';
 import { attributesByCategory } from '../templates';
+import { useDragReorder } from '../lib/useDragReorder';
 
 const MAX_DOTS = 5;
 
@@ -604,7 +605,95 @@ export function InjuryCard({
   );
 }
 
-/** A user-managed list of named entries with dot ratings (edges, paths). */
+/** A single row within a RatedListCard: read-only, or an inline edit form when opened. */
+function RatedItemRow({
+  item,
+  index,
+  editing,
+  onSave,
+  onRemove,
+  dragHandleProps,
+  dragItemProps,
+}: {
+  item: RatedItem;
+  index: number;
+  editing: boolean;
+  onSave: (item: RatedItem) => void;
+  onRemove: () => void;
+  dragHandleProps: ReturnType<typeof useDragReorder<RatedItem>>['handleProps'];
+  dragItemProps: ReturnType<typeof useDragReorder<RatedItem>>['itemProps'];
+}) {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState(item.name);
+  const [note, setNote] = useState(item.note ?? '');
+
+  const save = () => {
+    if (!name.trim()) return;
+    onSave({ ...item, name: name.trim(), note: note.trim() || undefined });
+    setOpen(false);
+  };
+
+  const drag = dragItemProps(index);
+
+  if (editing && open) {
+    return (
+      <li className={`named-item named-item-editing ${drag.className}`} data-drag-index={index}>
+        <div className="form-row">
+          <input
+            className="grow"
+            placeholder={t('sheet.namePlaceholder')}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && save()}
+          />
+        </div>
+        <div className="form-row">
+          <input
+            className="grow"
+            placeholder={t('sheet.notePlaceholder')}
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && save()}
+          />
+        </div>
+        <div className="form-row">
+          <button className="primary" onClick={save}>
+            {t('sheet.save')}
+          </button>
+          <button onClick={() => setOpen(false)}>{t('common.cancel')}</button>
+        </div>
+      </li>
+    );
+  }
+
+  return (
+    <li className={`named-item ${drag.className}`} data-drag-index={index}>
+      <div className="named-item-row">
+        {editing && <span className="drag-handle" {...dragHandleProps(index)} />}
+        <span className="named-name">{item.name}</span>
+        <Dots value={item.dots} editable={editing} onSet={(n) => onSave({ ...item, dots: n })} />
+        {editing && (
+          <div className="item-card-actions">
+            <button
+              className="chip ghost"
+              aria-label={`edit ${item.name}`}
+              onClick={() => setOpen(true)}
+            >
+              ✏️
+            </button>
+            <button className="chip ghost" aria-label={`remove ${item.name}`} onClick={onRemove}>
+              ✕
+            </button>
+          </div>
+        )}
+      </div>
+      {item.note && <p className="muted item-card-desc named-item-note">{item.note}</p>}
+    </li>
+  );
+}
+
+/** A user-managed list of named entries with dot ratings (edges, paths, contacts, bonds). */
 function RatedListCard({
   title,
   items,
@@ -618,6 +707,7 @@ function RatedListCard({
 }) {
   const { t } = useTranslation();
   const [name, setName] = useState('');
+  const { handleProps, itemProps } = useDragReorder(items, onChange);
 
   const add = () => {
     if (!name.trim()) return;
@@ -630,26 +720,19 @@ function RatedListCard({
       <h2>{title}</h2>
       {items.length === 0 && <p className="muted">—</p>}
       <ul className="named-list">
-        {items.map((item) => (
-          <li key={item.id} className="named-item">
-            <span className="named-name">{item.name}</span>
-            <Dots
-              value={item.dots}
-              editable={editing}
-              onSet={(n) =>
-                onChange(items.map((x) => (x.id === item.id ? { ...x, dots: n } : x)))
-              }
-            />
-            {editing && (
-              <button
-                className="chip ghost"
-                aria-label={`remove ${item.name}`}
-                onClick={() => onChange(items.filter((x) => x.id !== item.id))}
-              >
-                ✕
-              </button>
-            )}
-          </li>
+        {items.map((item, i) => (
+          <RatedItemRow
+            key={item.id}
+            item={item}
+            index={i}
+            editing={editing}
+            onSave={(updated) =>
+              onChange(items.map((x) => (x.id === item.id ? updated : x)))
+            }
+            onRemove={() => onChange(items.filter((x) => x.id !== item.id))}
+            dragHandleProps={handleProps}
+            dragItemProps={itemProps}
+          />
         ))}
       </ul>
       {editing && (
