@@ -1,0 +1,727 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>MEJIRO 캐릭터 시트 목업 (한국어)</title>
+<link rel="stylesheet" href="../src/styles.css" />
+<style>
+  /* Mockup-only helper CSS — not part of the app, just view/edit toggling. */
+  body.editing .view-only { display: none !important; }
+  body:not(.editing) .edit-only { display: none !important; }
+  .mockup-banner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0.5rem 1rem 0;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .mockup-banner code { color: var(--text); }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="app-header">
+    <a href="#" class="brand">
+      <span class="brand-mark">目</span>
+      <span class="brand-text">
+        <strong>MEJIRO</strong>
+        <small>TRPG 시트 & 굴림기</small>
+      </span>
+    </a>
+    <nav class="app-nav">
+      <a href="#" class="active">캐릭터</a>
+      <a href="#">설정</a>
+    </nav>
+  </header>
+
+  <p class="mockup-banner">
+    CSS 테스트용 정적 목업입니다. <code>src/styles.css</code>를 수정하고 새로고침하면 적용됩니다.
+    상단 버튼으로 편집/읽기 모드를 전환하세요.
+  </p>
+
+  <main class="app-main">
+    <div class="character-view">
+      <div class="toolbar">
+        <a href="#" class="back-link">← 뒤로</a>
+        <div class="toolbar-actions">
+          <button type="button">📤 내보내기</button>
+          <button type="button" id="editToggle">✏️ 시트 편집</button>
+        </div>
+      </div>
+
+      <nav class="page-tabs" aria-label="sheet pages">
+        <button type="button" class="page-tab active">시트</button>
+        <button type="button" class="page-tab">장비</button>
+        <button type="button" class="page-tab">주문</button>
+        <button type="button" class="page-tab">트릭</button>
+      </nav>
+
+      <div class="play-layout">
+        <div class="stack">
+
+          <div class="two-col identity-split">
+            <section class="card identity view-only">
+              <div class="identity-name">
+                <h1>윤소하 <a class="external-sheet-link" href="#" title="외부 캐릭터 시트">🔗</a></h1>
+              </div>
+              <div class="identity-row muted">가시덤불 · 벨몬트 가 · 밤거리를 떠도는 탐정</div>
+              <details class="fold">
+                <summary>롤 패스 & 목표</summary>
+                <div class="fold-readonly">
+                  <div><span class="field-label">롤 패스</span> 그림자 정보상</div>
+                  <div><span class="field-label">단기 목표 1</span> 실종된 동생의 행방을 찾는다</div>
+                  <div><span class="field-label">단기 목표 2</span> 조직의 눈을 피해 은신처를 확보한다</div>
+                  <div><span class="field-label">장기 목표</span> 가문에 걸린 저주의 근원을 밝혀낸다</div>
+                </div>
+              </details>
+              <details class="fold">
+                <summary>모티프</summary>
+                <p class="muted fold-readonly">까마귀 깃털
+낡은 회중시계
+붉은 실</p>
+              </details>
+            </section>
+
+            <section class="card identity edit-only">
+              <div class="form-row">
+                <label class="field grow"><span class="field-label">이름</span><input value="윤소하"></label>
+              </div>
+              <div class="form-row">
+                <label class="field grow"><span class="field-label">혈통</span><input value="가시덤불"></label>
+                <label class="field grow"><span class="field-label">가문</span><input value="벨몬트 가"></label>
+              </div>
+              <div class="form-row">
+                <label class="field grow"><span class="field-label">컨셉</span><input value="밤거리를 떠도는 탐정"></label>
+              </div>
+              <details class="fold" open>
+                <summary>롤 패스 & 목표</summary>
+                <div class="form-row">
+                  <label class="field grow"><span class="field-label">롤 패스</span><input value="그림자 정보상"></label>
+                </div>
+                <div class="form-row">
+                  <label class="field grow"><span class="field-label">단기 목표 1</span><input value="실종된 동생의 행방을 찾는다"></label>
+                  <label class="field grow"><span class="field-label">단기 목표 2</span><input value="조직의 눈을 피해 은신처를 확보한다"></label>
+                </div>
+                <div class="form-row">
+                  <label class="field grow"><span class="field-label">장기 목표</span><input value="가문에 걸린 저주의 근원을 밝혀낸다"></label>
+                </div>
+              </details>
+              <details class="fold">
+                <summary>모티프</summary>
+                <textarea rows="3">까마귀 깃털
+낡은 회중시계
+붉은 실</textarea>
+              </details>
+              <div class="form-row">
+                <label class="field grow"><span class="field-label">외부 캐릭터 시트</span><input type="url" placeholder="https://…"></label>
+              </div>
+              <div class="form-row">
+                <label class="field grow"><span class="field-label">디스코드 웹훅 URL</span><input type="url" placeholder="https://discord.com/api/webhooks/…"></label>
+              </div>
+              <div class="form-row">
+                <label class="field-check"><input type="checkbox" checked><span>웹훅 메시지에 캐릭터 이름 표시</span></label>
+              </div>
+            </section>
+
+            <section class="card view-only">
+              <div class="curse-row">
+                <span class="field-label">얽힘</span>
+                <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span><span class="dot "></span></span>
+              </div>
+              <div class="curse-row">
+                <span class="field-label">저주 주사위</span>
+                <div class="curse-controls">
+                  <button aria-label="− 저주 주사위" type="button">−</button>
+                  <span class="dots curse-dots"><span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot filled" aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button><button class="dot " aria-label="6"></button><button class="dot " aria-label="7"></button></span></span>
+                  <button aria-label="+ 저주 주사위" type="button">+</button>
+                </div>
+              </div>
+            </section>
+
+            <section class="card edit-only">
+              <div class="curse-row">
+                <span class="field-label">얽힘</span>
+                <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot " aria-label="3"></button><button class="dot " aria-label="4"></button></span>
+              </div>
+              <div class="curse-row">
+                <span class="field-label">저주 주사위</span>
+                <div class="curse-controls">
+                  <button aria-label="− 저주 주사위" type="button">−</button>
+                  <span class="dots curse-dots"><span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot filled" aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button><button class="dot " aria-label="6"></button><button class="dot " aria-label="7"></button></span></span>
+                  <button aria-label="+ 저주 주사위" type="button">+</button>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <details class="card fold-card" open>
+            <summary class="card-summary">기술</summary>
+            <div class="skill-grid view-only">
+            <button class="sheet-stat " type="button">
+              <span class="stat-label">예술<small class="label-en">Artistry</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot "></span><span class="dot "></span><span class="dot "></span><span class="dot "></span></span>
+            </button>
+            <button class="sheet-stat " type="button">
+              <span class="stat-label">운동<small class="label-en">Athletics</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span><span class="dot "></span><span class="dot "></span></span>
+            </button>
+            <button class="sheet-stat " type="button">
+              <span class="stat-label">근접전<small class="label-en">Close Combat</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span><span class="dot "></span></span>
+            </button>
+            <button class="sheet-stat " type="button">
+              <span class="stat-label">문화<small class="label-en">Culture</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot "></span><span class="dot "></span><span class="dot "></span><span class="dot "></span></span>
+            </button>
+            <button class="sheet-stat " type="button">
+              <span class="stat-label">공감<small class="label-en">Empathy</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span><span class="dot "></span><span class="dot "></span></span>
+            </button>
+            <button class="sheet-stat selected" type="button">
+              <span class="stat-label">수수께끼<small class="label-en">Enigmas</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span></span>
+            </button>
+            <button class="sheet-stat " type="button">
+              <span class="stat-label">비학<small class="label-en">Esoterica</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span><span class="dot "></span></span>
+            </button>
+            <button class="sheet-stat " type="button">
+              <span class="stat-label">도둑질<small class="label-en">Larceny</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span><span class="dot "></span><span class="dot "></span></span>
+            </button>
+            <button class="sheet-stat " type="button">
+              <span class="stat-label">지휘<small class="label-en">Leadership</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot "></span><span class="dot "></span><span class="dot "></span><span class="dot "></span></span>
+            </button>
+            <button class="sheet-stat " type="button">
+              <span class="stat-label">의학<small class="label-en">Medicine</small></span>
+              <span class="dots"><span class="dot "></span><span class="dot "></span><span class="dot "></span><span class="dot "></span><span class="dot "></span></span>
+            </button>
+            <button class="sheet-stat " type="button">
+              <span class="stat-label">설득<small class="label-en">Persuasion</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span><span class="dot "></span></span>
+            </button>
+            <button class="sheet-stat " type="button">
+              <span class="stat-label">운전<small class="label-en">Pilot</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot "></span><span class="dot "></span><span class="dot "></span><span class="dot "></span></span>
+            </button>
+            <button class="sheet-stat " type="button">
+              <span class="stat-label">원거리 전투<small class="label-en">Ranged Combat</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span><span class="dot "></span><span class="dot "></span></span>
+            </button>
+            <button class="sheet-stat " type="button">
+              <span class="stat-label">과학<small class="label-en">Science</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot "></span><span class="dot "></span><span class="dot "></span><span class="dot "></span></span>
+            </button>
+            <button class="sheet-stat " type="button">
+              <span class="stat-label">생존<small class="label-en">Survival</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span><span class="dot "></span><span class="dot "></span></span>
+            </button>
+            <button class="sheet-stat " type="button">
+              <span class="stat-label">공학<small class="label-en">Technology</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot "></span><span class="dot "></span><span class="dot "></span><span class="dot "></span></span>
+            </button>
+            </div>
+            <div class="skill-grid edit-only">
+            <div class="sheet-stat editing">
+              <span class="stat-label">예술<small class="label-en">Artistry</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot " aria-label="2"></button><button class="dot " aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+            <div class="sheet-stat editing">
+              <span class="stat-label">운동<small class="label-en">Athletics</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot " aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+            <div class="sheet-stat editing">
+              <span class="stat-label">근접전<small class="label-en">Close Combat</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot filled" aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+            <div class="sheet-stat editing">
+              <span class="stat-label">문화<small class="label-en">Culture</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot " aria-label="2"></button><button class="dot " aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+            <div class="sheet-stat editing">
+              <span class="stat-label">공감<small class="label-en">Empathy</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot " aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+            <div class="sheet-stat editing">
+              <span class="stat-label">수수께끼<small class="label-en">Enigmas</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot filled" aria-label="3"></button><button class="dot filled" aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+            <div class="sheet-stat editing">
+              <span class="stat-label">비학<small class="label-en">Esoterica</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot filled" aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+            <div class="sheet-stat editing">
+              <span class="stat-label">도둑질<small class="label-en">Larceny</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot " aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+            <div class="sheet-stat editing">
+              <span class="stat-label">지휘<small class="label-en">Leadership</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot " aria-label="2"></button><button class="dot " aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+            <div class="sheet-stat editing">
+              <span class="stat-label">의학<small class="label-en">Medicine</small></span>
+              <span class="dots" role="radiogroup"><button class="dot " aria-label="1"></button><button class="dot " aria-label="2"></button><button class="dot " aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+            <div class="sheet-stat editing">
+              <span class="stat-label">설득<small class="label-en">Persuasion</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot filled" aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+            <div class="sheet-stat editing">
+              <span class="stat-label">운전<small class="label-en">Pilot</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot " aria-label="2"></button><button class="dot " aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+            <div class="sheet-stat editing">
+              <span class="stat-label">원거리 전투<small class="label-en">Ranged Combat</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot " aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+            <div class="sheet-stat editing">
+              <span class="stat-label">과학<small class="label-en">Science</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot " aria-label="2"></button><button class="dot " aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+            <div class="sheet-stat editing">
+              <span class="stat-label">생존<small class="label-en">Survival</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot " aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+            <div class="sheet-stat editing">
+              <span class="stat-label">공학<small class="label-en">Technology</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot " aria-label="2"></button><button class="dot " aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+            </div>
+          </details>
+
+          <details class="card fold-card" open>
+            <summary class="card-summary">능력치</summary>
+            <div class="attr-grid view-only">
+          <div class="attr-col">
+            <h3 class="group-title">정신</h3>
+            
+            <button class="sheet-stat selected" type="button">
+              <span class="stat-label">지성<small class="label-en">Intellect</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span><span class="dot "></span></span>
+            </button>
+            <button class="sheet-stat " type="button">
+              <span class="stat-label">교활<small class="label-en">Cunning</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span></span>
+            </button>
+            <button class="sheet-stat " type="button">
+              <span class="stat-label">결의<small class="label-en">Resolve</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span><span class="dot "></span><span class="dot "></span></span>
+            </button>
+          </div>
+          <div class="attr-col">
+            <h3 class="group-title">신체</h3>
+            
+            <button class="sheet-stat " type="button">
+              <span class="stat-label">완력<small class="label-en">Might</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span><span class="dot "></span><span class="dot "></span></span>
+            </button>
+            <button class="sheet-stat " type="button">
+              <span class="stat-label">민첩<small class="label-en">Dexterity</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span><span class="dot "></span></span>
+            </button>
+            <button class="sheet-stat " type="button">
+              <span class="stat-label">체력<small class="label-en">Stamina</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span><span class="dot "></span><span class="dot "></span></span>
+            </button>
+          </div>
+          <div class="attr-col">
+            <h3 class="group-title">사회</h3>
+            
+            <button class="sheet-stat " type="button">
+              <span class="stat-label">존재감<small class="label-en">Presence</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span><span class="dot "></span><span class="dot "></span></span>
+            </button>
+            <button class="sheet-stat " type="button">
+              <span class="stat-label">조종<small class="label-en">Manipulation</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span><span class="dot "></span></span>
+            </button>
+            <button class="sheet-stat " type="button">
+              <span class="stat-label">평정<small class="label-en">Composure</small></span>
+              <span class="dots"><span class="dot filled"></span><span class="dot "></span><span class="dot "></span><span class="dot "></span><span class="dot "></span></span>
+            </button>
+          </div>
+            </div>
+            <div class="attr-grid edit-only">
+          <div class="attr-col">
+            <h3 class="group-title">정신</h3>
+            
+            <div class="sheet-stat editing">
+              <span class="stat-label">지성<small class="label-en">Intellect</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot filled" aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+            <div class="sheet-stat editing">
+              <span class="stat-label">교활<small class="label-en">Cunning</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot filled" aria-label="3"></button><button class="dot filled" aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+            <div class="sheet-stat editing">
+              <span class="stat-label">결의<small class="label-en">Resolve</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot " aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+          </div>
+          <div class="attr-col">
+            <h3 class="group-title">신체</h3>
+            
+            <div class="sheet-stat editing">
+              <span class="stat-label">완력<small class="label-en">Might</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot " aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+            <div class="sheet-stat editing">
+              <span class="stat-label">민첩<small class="label-en">Dexterity</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot filled" aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+            <div class="sheet-stat editing">
+              <span class="stat-label">체력<small class="label-en">Stamina</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot " aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+          </div>
+          <div class="attr-col">
+            <h3 class="group-title">사회</h3>
+            
+            <div class="sheet-stat editing">
+              <span class="stat-label">존재감<small class="label-en">Presence</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot " aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+            <div class="sheet-stat editing">
+              <span class="stat-label">조종<small class="label-en">Manipulation</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot filled" aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+            <div class="sheet-stat editing">
+              <span class="stat-label">평정<small class="label-en">Composure</small></span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot " aria-label="2"></button><button class="dot " aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+            </div>
+          </div>
+            </div>
+          </details>
+
+          <div class="two-col">
+            <section class="card">
+              <h2>부상</h2>
+              
+        <div class="stat-track-row">
+          <span class="field-label">장갑</span>
+          <div class="curse-controls">
+            <button aria-label="− 장갑">−</button>
+            <div class="injury-boxes"><button class="injury-box marked" aria-label="1"></button><button class="injury-box " aria-label="2"></button></div>
+            <button aria-label="+ 장갑">+</button>
+          </div>
+        </div>
+              <div class="injury-track grouped">
+          <div class="injury-level ">
+            <div class="injury-boxes"><button class="injury-box marked" aria-label="1"></button><button class="injury-box marked" aria-label="2"></button></div>
+            <span class="injury-level-label">피투성이</span>
+          </div>
+          <div class="injury-level lit">
+            <div class="injury-boxes"><button class="injury-box marked" aria-label="1"></button><button class="injury-box " aria-label="2"></button></div>
+            <span class="injury-level-label">부상</span>
+          </div>
+          <div class="injury-level ">
+            <div class="injury-boxes"><button class="injury-box " aria-label="1"></button><button class="injury-box " aria-label="2"></button></div>
+            <span class="injury-level-label">불구</span>
+          </div>
+          <div class="injury-level ">
+            <div class="injury-boxes"><button class="injury-box " aria-label="1"></button></div>
+            <span class="injury-level-label">빈사</span>
+          </div>
+              </div>
+              
+        <div class="injury-standalone">
+          <div class="injury-level terminal">
+            <div class="injury-boxes"><button class="injury-box " aria-label="1"></button></div>
+            <span class="injury-level-label">탈락</span>
+          </div>
+        </div>
+            </section>
+            <section class="card">
+              <h2>상태</h2>
+              <div class="condition-chips">
+                <span class="condition">출혈<button aria-label="remove" type="button">✕</button></span>
+                <span class="condition">혼란<button aria-label="remove" type="button">✕</button></span>
+              </div>
+              <div class="form-row">
+                <input class="grow" placeholder="이름">
+                <button type="button">추가</button>
+              </div>
+            </section>
+          </div>
+
+          <div class="two-col view-only">
+            
+        <section class="card">
+          <h2>엣지</h2>
+          <ul class="named-list">
+          <li class="named-item">
+            <div class="named-item-row">
+              <span class="named-name">그림자 속에서</span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span><span class="dot "></span></span>
+            </div>
+            
+          </li>
+          <li class="named-item">
+            <div class="named-item-row">
+              <span class="named-name">언변의 달인</span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span><span class="dot "></span><span class="dot "></span></span>
+            </div>
+            
+          </li>
+          <li class="named-item">
+            <div class="named-item-row">
+              <span class="named-name">야행성</span>
+              <span class="dots"><span class="dot filled"></span><span class="dot "></span><span class="dot "></span><span class="dot "></span><span class="dot "></span></span>
+            </div>
+            
+          </li>
+          </ul>
+        </section>
+            
+        <section class="card">
+          <h2>패스</h2>
+          <ul class="named-list">
+          <li class="named-item">
+            <div class="named-item-row">
+              <span class="named-name">탐정의 길</span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span><span class="dot "></span></span>
+            </div>
+            
+          </li>
+          <li class="named-item">
+            <div class="named-item-row">
+              <span class="named-name">저주받은 혈통</span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span><span class="dot "></span><span class="dot "></span></span>
+            </div>
+            
+          </li>
+          </ul>
+        </section>
+          </div>
+          <div class="two-col edit-only">
+            
+        <section class="card">
+          <h2>엣지</h2>
+          <ul class="named-list">
+          <li class="named-item">
+            <div class="named-item-row">
+              <span class="drag-handle"></span>
+              <span class="named-name">그림자 속에서</span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot filled" aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+              <div class="item-card-actions">
+                <button class="chip ghost" aria-label="edit 그림자 속에서" type="button">✏️</button>
+                <button class="chip ghost" aria-label="remove 그림자 속에서" type="button">✕</button>
+              </div>
+            </div>
+            
+          </li>
+          <li class="named-item">
+            <div class="named-item-row">
+              <span class="drag-handle"></span>
+              <span class="named-name">언변의 달인</span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot " aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+              <div class="item-card-actions">
+                <button class="chip ghost" aria-label="edit 언변의 달인" type="button">✏️</button>
+                <button class="chip ghost" aria-label="remove 언변의 달인" type="button">✕</button>
+              </div>
+            </div>
+            
+          </li>
+          <li class="named-item">
+            <div class="named-item-row">
+              <span class="drag-handle"></span>
+              <span class="named-name">야행성</span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot " aria-label="2"></button><button class="dot " aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+              <div class="item-card-actions">
+                <button class="chip ghost" aria-label="edit 야행성" type="button">✏️</button>
+                <button class="chip ghost" aria-label="remove 야행성" type="button">✕</button>
+              </div>
+            </div>
+            
+          </li>
+          </ul>
+          <div class="form-row">
+            <input class="grow" placeholder="이름">
+            <button type="button">추가</button>
+          </div>
+        </section>
+            
+        <section class="card">
+          <h2>패스</h2>
+          <ul class="named-list">
+          <li class="named-item">
+            <div class="named-item-row">
+              <span class="drag-handle"></span>
+              <span class="named-name">탐정의 길</span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot filled" aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+              <div class="item-card-actions">
+                <button class="chip ghost" aria-label="edit 탐정의 길" type="button">✏️</button>
+                <button class="chip ghost" aria-label="remove 탐정의 길" type="button">✕</button>
+              </div>
+            </div>
+            
+          </li>
+          <li class="named-item">
+            <div class="named-item-row">
+              <span class="drag-handle"></span>
+              <span class="named-name">저주받은 혈통</span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot " aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+              <div class="item-card-actions">
+                <button class="chip ghost" aria-label="edit 저주받은 혈통" type="button">✏️</button>
+                <button class="chip ghost" aria-label="remove 저주받은 혈통" type="button">✕</button>
+              </div>
+            </div>
+            
+          </li>
+          </ul>
+          <div class="form-row">
+            <input class="grow" placeholder="이름">
+            <button type="button">추가</button>
+          </div>
+        </section>
+          </div>
+
+          <div class="two-col view-only">
+            
+        <section class="card">
+          <h2>인맥</h2>
+          <ul class="named-list">
+          <li class="named-item">
+            <div class="named-item-row">
+              <span class="named-name">정보상 ‘까치’</span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span><span class="dot "></span><span class="dot "></span></span>
+            </div>
+            <p class="muted item-card-desc named-item-note">뒷골목 소문에 빠삭함. 현금을 좋아함.</p>
+          </li>
+          <li class="named-item">
+            <div class="named-item-row">
+              <span class="named-name">형사 박도윤</span>
+              <span class="dots"><span class="dot filled"></span><span class="dot "></span><span class="dot "></span><span class="dot "></span><span class="dot "></span></span>
+            </div>
+            <p class="muted item-card-desc named-item-note">가끔 정보를 흘려주지만 믿을 수 없음.</p>
+          </li>
+          </ul>
+        </section>
+            
+        <section class="card">
+          <h2>유대</h2>
+          <ul class="named-list">
+          <li class="named-item">
+            <div class="named-item-row">
+              <span class="named-name">여동생 윤하늘</span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span></span>
+            </div>
+            <p class="muted item-card-desc named-item-note">실종 상태. 반드시 찾아야 함.</p>
+          </li>
+          <li class="named-item">
+            <div class="named-item-row">
+              <span class="named-name">옛 스승</span>
+              <span class="dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot "></span><span class="dot "></span><span class="dot "></span></span>
+            </div>
+            
+          </li>
+          </ul>
+        </section>
+          </div>
+          <div class="two-col edit-only">
+            
+        <section class="card">
+          <h2>인맥</h2>
+          <ul class="named-list">
+          <li class="named-item">
+            <div class="named-item-row">
+              <span class="drag-handle"></span>
+              <span class="named-name">정보상 ‘까치’</span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot " aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+              <div class="item-card-actions">
+                <button class="chip ghost" aria-label="edit 정보상 ‘까치’" type="button">✏️</button>
+                <button class="chip ghost" aria-label="remove 정보상 ‘까치’" type="button">✕</button>
+              </div>
+            </div>
+            <p class="muted item-card-desc named-item-note">뒷골목 소문에 빠삭함. 현금을 좋아함.</p>
+          </li>
+          <li class="named-item named-item-editing">
+            <div class="form-row">
+              <input class="grow" placeholder="이름" value="형사 박도윤">
+            </div>
+            <div class="form-row">
+              <input class="grow" placeholder="메모 (선택)" value="가끔 정보를 흘려주지만 믿을 수 없음.">
+            </div>
+            <div class="form-row">
+              <button class="primary" type="button">저장</button>
+              <button type="button">취소</button>
+            </div>
+          </li>
+          </ul>
+          <div class="form-row">
+            <input class="grow" placeholder="이름">
+            <button type="button">추가</button>
+          </div>
+        </section>
+            
+        <section class="card">
+          <h2>유대</h2>
+          <ul class="named-list">
+          <li class="named-item">
+            <div class="named-item-row">
+              <span class="drag-handle"></span>
+              <span class="named-name">여동생 윤하늘</span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot filled" aria-label="3"></button><button class="dot filled" aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+              <div class="item-card-actions">
+                <button class="chip ghost" aria-label="edit 여동생 윤하늘" type="button">✏️</button>
+                <button class="chip ghost" aria-label="remove 여동생 윤하늘" type="button">✕</button>
+              </div>
+            </div>
+            <p class="muted item-card-desc named-item-note">실종 상태. 반드시 찾아야 함.</p>
+          </li>
+          <li class="named-item">
+            <div class="named-item-row">
+              <span class="drag-handle"></span>
+              <span class="named-name">옛 스승</span>
+              <span class="dots" role="radiogroup"><button class="dot filled" aria-label="1"></button><button class="dot filled" aria-label="2"></button><button class="dot " aria-label="3"></button><button class="dot " aria-label="4"></button><button class="dot " aria-label="5"></button></span>
+              <div class="item-card-actions">
+                <button class="chip ghost" aria-label="edit 옛 스승" type="button">✏️</button>
+                <button class="chip ghost" aria-label="remove 옛 스승" type="button">✕</button>
+              </div>
+            </div>
+            
+          </li>
+          </ul>
+          <div class="form-row">
+            <input class="grow" placeholder="이름">
+            <button type="button">추가</button>
+          </div>
+        </section>
+          </div>
+
+          <div class="two-col">
+            <section class="card">
+              <h2>번민</h2>
+              <textarea class="torment-field" rows="4">밤마다 반복되는 악몽 속에서 낯선 목소리가 이름을 부른다.</textarea>
+            </section>
+            <section class="card">
+              <h2>천형</h2>
+              <textarea class="torment-field" rows="4">손끝에서 그림자가 스며나올 때마다 이성을 붙잡기 어렵다.</textarea>
+            </section>
+          </div>
+
+          <section class="card">
+            <h2>유산</h2>
+            <div class="form-row">
+              <textarea class="torment-field inheritance-field" rows="4">할머니의 낡은 열쇠</textarea>
+              <textarea class="torment-field inheritance-field" rows="4">가문의 문장이 새겨진 반지</textarea>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script>
+  var btn = document.getElementById('editToggle');
+  btn.addEventListener('click', function () {
+    var editing = document.body.classList.toggle('editing');
+    btn.classList.toggle('primary', editing);
+    btn.textContent = editing ? '✓ 완료' : '✏️ 시트 편집';
+  });
+</script>
+</body>
+</html>
