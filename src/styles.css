@@ -847,14 +847,14 @@ button.dot.filled:hover {
   justify-content: space-between;
   gap: 0.4rem;
   width: 100%;
-  padding: 0.3rem 0.45rem;
+  padding: 0.2rem 0.45rem;
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
   background: transparent;
   text-align: left;
 }
 .skill-grid .stat-label {
-  font-size: 0.86rem;
+  font-size: 0.9rem;
 }
 /* Long skill names + the Korean gloss don't fit on one line together;
    the gloss drops to its own tight line instead of competing for width. */
