@@ -1368,7 +1368,7 @@ p.fold-readonly {
   writing-mode: vertical-rl;
   text-orientation: mixed;
   padding: 0.7rem 0.3rem;
-  font-size: 0.78rem;
+  font-size: 0.86rem;
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   border-left: none;
   background: var(--card);
