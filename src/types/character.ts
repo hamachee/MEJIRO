@@ -42,11 +42,13 @@ export function curseDiceCap(entanglement: number): number {
   return 5;
 }
 
-/** A user-entered named entry with a dot rating (edges, paths). */
+/** A user-entered named entry with a dot rating (edges, paths, contacts, bonds). */
 export interface RatedItem {
   id: string;
   name: string;
   dots: number;
+  /** Optional free-form note, shown folded under the name. */
+  note?: string;
 }
 
 /** A user-entered condition currently affecting the character. */
