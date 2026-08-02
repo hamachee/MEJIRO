@@ -596,9 +596,20 @@ button.danger:hover:not(:disabled) {
   white-space: pre-wrap;
 }
 .trick-info {
-  display: flex;
+  /* inline-flex, not flex: a block-level flex container fills its
+     containing block's width, which is what stretched the fold toggle
+     into a full-width highlighted bar. inline-flex shrinks to content. */
+  display: inline-flex;
   flex-direction: column;
   min-width: 0;
+}
+.trick-name-cost {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  flex-wrap: wrap;
 }
 .trick-name-toggle {
   display: inline-flex;

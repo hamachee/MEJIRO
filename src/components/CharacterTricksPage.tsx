@@ -61,22 +61,24 @@ export function CharacterTricksPage({
                 className={`named-item ${dragProps.className}`}
                 data-drag-index={dragProps['data-drag-index']}
               >
-                {editing && <span className="drag-handle" {...handleProps(i)} />}
-                <span className="named-name">
-                  <TrickInfo trick={tr} />
-                </span>
-                <span className="trick-cost">
-                  {t('tricks.cost')} {tr.cost}
-                </span>
-                {editing && (
-                  <button
-                    className="chip ghost"
-                    aria-label={`remove ${tr.name}`}
-                    onClick={() => patch({ tricks: tricks.filter((x) => x.id !== tr.id) })}
-                  >
-                    ✕
-                  </button>
-                )}
+                <div className="named-item-row">
+                  {editing && <span className="drag-handle" {...handleProps(i)} />}
+                  <span className="trick-name-cost">
+                    <TrickInfo trick={tr} />
+                    <span className="trick-cost">
+                      · {t('tricks.cost')} {tr.cost}
+                    </span>
+                  </span>
+                  {editing && (
+                    <button
+                      className="chip ghost"
+                      aria-label={`remove ${tr.name}`}
+                      onClick={() => patch({ tricks: tricks.filter((x) => x.id !== tr.id) })}
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
               </li>
             );
           })}
