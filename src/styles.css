@@ -49,7 +49,7 @@ body,
 body {
   margin: 0;
   color: var(--text);
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans KR',
+  font-family: -apple-system, 'Segoe UI', Roboto, 'Pretendard', 'Noto Sans KR',
     sans-serif;
   line-height: 1.5;
 }
@@ -199,7 +199,7 @@ body {
 }
 
 .toolbar {
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 .back-link {
   color: var(--muted);
@@ -738,6 +738,9 @@ button.danger:hover:not(:disabled) {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+.toolbar-actions button{
+  padding: 5px 8px;
 }
 .character-view {
   /* keep the sticky roll bar from covering the last cards */
