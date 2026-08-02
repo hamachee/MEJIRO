@@ -58,7 +58,7 @@ interface RollStoreState {
 }
 
 const MAX_COMPLICATION = 3;
-const MAX_BONUS_DICE = 5;
+const MAX_BONUS_DICE = 9;
 
 export const useRollStore = create<RollStoreState>((set, get) => ({
   attributeId: null,
