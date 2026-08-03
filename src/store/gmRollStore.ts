@@ -9,7 +9,7 @@ import { useSettingsStore } from './settingsStore';
 /** GM rolls always use the Curseborne dice engine — the only bundled system. */
 const CURSEBORNE = getTemplate('curseborne')!;
 
-export type AdversaryPool = 'primary' | 'secondary' | 'desperation';
+export type AdversaryPool = 'primary' | 'secondary' | 'desperation' | 'custom';
 
 export type PostStatus = 'idle' | 'posting' | 'posted' | 'error';
 

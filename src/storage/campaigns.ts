@@ -37,7 +37,13 @@ export function normalizeCampaign(
       ...tpl,
       stats: { ...blankAdversaryStats(), ...tpl.stats },
     })),
-    instances: (raw.instances ?? []).map((i) => ({ ...i, memo: i.memo ?? '' })),
+    instances: (raw.instances ?? []).map((i) => ({
+      ...i,
+      memo: i.memo ?? '',
+      stats: { ...blankAdversaryStats(), ...i.stats },
+      customPool: i.customPool ?? 0,
+      conditions: i.conditions ?? [],
+    })),
     tricks: raw.tricks ?? [],
   };
 }

@@ -339,12 +339,24 @@ function AddInstanceRow({ campaign }: { campaign: Campaign }) {
   const add = () => {
     const template = templates.find((tpl) => tpl.id === templateId);
     if (!template) return;
-    const count = instances.filter((i) => i.templateId === template.id).length;
+    // Stats are copied now, not linked — count by label prefix instead of a template id.
+    const count = instances.filter(
+      (i) => i.label === template.name || i.label.startsWith(`${template.name} #`),
+    ).length;
     const label = count === 0 ? template.name : `${template.name} #${count + 1}`;
     patch({
       instances: [
         ...instances,
-        { id: uid(), templateId: template.id, label, memo: '', marked: 0, takenOut: false },
+        {
+          id: uid(),
+          label,
+          stats: { ...template.stats },
+          customPool: 0,
+          memo: '',
+          conditions: [],
+          marked: 0,
+          takenOut: false,
+        },
       ],
     });
   };
@@ -446,7 +458,6 @@ export function CampaignSheet({ campaign, editing }: Props) {
             {instances.map((instance) => (
               <AdversaryCard
                 key={instance.id}
-                campaign={campaign}
                 instance={instance}
                 onChange={(updated) =>
                   patch({ instances: instances.map((x) => (x.id === updated.id ? updated : x)) })
