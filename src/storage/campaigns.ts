@@ -11,6 +11,7 @@ export function newCampaign(name: string, tricks: CharacterTrick[] = []): Campai
     name: name.trim() || 'Unnamed',
     webhookUrl: '',
     autoPostToDiscord: true,
+    customPool: 0,
     templates: [],
     instances: [],
     tricks,
@@ -33,6 +34,7 @@ export function normalizeCampaign(
     ...raw,
     webhookUrl: raw.webhookUrl ?? '',
     autoPostToDiscord: raw.autoPostToDiscord ?? true,
+    customPool: raw.customPool ?? 0,
     templates: (raw.templates ?? []).map((tpl) => ({
       ...tpl,
       stats: { ...blankAdversaryStats(), ...tpl.stats },
@@ -41,7 +43,6 @@ export function normalizeCampaign(
       ...i,
       memo: i.memo ?? '',
       stats: { ...blankAdversaryStats(), ...i.stats },
-      customPool: i.customPool ?? 0,
       conditions: i.conditions ?? [],
     })),
     tricks: raw.tricks ?? [],

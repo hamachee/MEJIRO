@@ -3,8 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { useGmRollStore, type AdversaryPool } from '../store/gmRollStore';
 import { parseTags } from '../lib/tags';
 import { uid } from '../lib/uid';
-import { desperationPool, type AdversaryInstance } from '../types/campaign';
+import { desperationPool, type AdversaryInstance, type AdversaryStats } from '../types/campaign';
 import { FieldLabel } from './FieldLabel';
+import { Stepper } from './Stepper';
 import { TagChips } from './TagChips';
 
 /** A "Primary N" style pool button, hidden when the rating is 0. */
@@ -39,6 +40,25 @@ function StatLine({ label, value }: { label: ReactNode; value: number }) {
   );
 }
 
+/**
+ * Two label/value pairs on one line (e.g. Defense · Integrity); each pair
+ * hidden when its value is 0, whole line hidden when both are.
+ */
+function StatLinePair({ items }: { items: { label: ReactNode; value: number }[] }) {
+  const visible = items.filter((i) => i.value > 0);
+  if (visible.length === 0) return null;
+  return (
+    <div className="curse-line">
+      {visible.map((i, idx) => (
+        <span className="stat-pair" key={idx}>
+          <span className="field-label">{i.label}</span>
+          <span className="stat-value">{i.value}</span>
+        </span>
+      ))}
+    </div>
+  );
+}
+
 /** A label/free-text pair, hidden when the text is empty. */
 function TextLine({ label, text }: { label: ReactNode; text: string }) {
   if (!text.trim()) return null;
@@ -51,101 +71,130 @@ function TextLine({ label, text }: { label: ReactNode; text: string }) {
 }
 
 /**
- * An always-visible free dice pool for one-off rolls that don't fit the
- * card's regular pools — a numeric value with +/- steppers (click) and a
- * double-click-to-type field, same interaction as the sheet's EXP tracker.
- * The whole control doubles as a selectable button for the roll bar; the
- * inner stepper/value controls stop the click from also toggling selection.
+ * Controlled fields for an adversary's full stat block, in the order shared
+ * by the template form, the template summary, and a deployed card's inline
+ * editor: pools -> Enhancement -> Defense/Integrity -> injury boxes ->
+ * armor -> qualities -> dread power -> special.
  */
-function CustomPoolControl({
-  value,
-  selected,
-  onSelect,
+export function AdversaryStatsFields({
+  stats,
   onChange,
 }: {
-  value: number;
-  selected: boolean;
-  onSelect: () => void;
-  onChange: (n: number) => void;
+  stats: AdversaryStats;
+  onChange: <K extends keyof AdversaryStats>(key: K, value: AdversaryStats[K]) => void;
 }) {
   const { t } = useTranslation();
-  const [draft, setDraft] = useState<string | null>(null);
-
-  const setValue = (n: number) => onChange(Math.max(0, n));
-  const startEditing = () => setDraft(String(value));
-  const commit = () => {
-    if (draft !== null) {
-      const n = Number(draft);
-      if (!Number.isNaN(n)) setValue(n);
-    }
-    setDraft(null);
-  };
-
   return (
-    <div
-      className={`custom-pool ${selected ? 'selected' : ''}`}
-      role="button"
-      tabIndex={0}
-      aria-pressed={selected}
-      onClick={onSelect}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onSelect();
-        }
-      }}
-    >
-      <span className="field-label">
-        <FieldLabel i18nKey="gm.customPool" en="Free roll" />
-      </span>
-      <div className="curse-controls" onClick={(e) => e.stopPropagation()}>
-        <button aria-label={`− ${t('gm.customPool')}`} disabled={value <= 0} onClick={() => setValue(value - 1)}>
-          −
-        </button>
-        {draft !== null ? (
-          <input
-            type="number"
-            className="exp-value"
-            inputMode="numeric"
-            min={0}
-            autoFocus
-            aria-label={t('gm.customPool')}
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            onFocus={(e) => e.target.select()}
-            onBlur={commit}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') commit();
-              else if (e.key === 'Escape') setDraft(null);
-            }}
-          />
-        ) : (
-          <span
-            className="exp-value"
-            role="button"
-            tabIndex={0}
-            aria-label={t('gm.customPool')}
-            onDoubleClick={startEditing}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                startEditing();
-              }
-            }}
-          >
-            {value}
-          </span>
-        )}
-        <button aria-label={`+ ${t('gm.customPool')}`} onClick={() => setValue(value + 1)}>
-          +
-        </button>
+    <>
+      <div className="form-row">
+        <Stepper
+          label={<FieldLabel i18nKey="gm.primaryPool" en="Primary" />}
+          ariaLabel={t('gm.primaryPool')}
+          value={stats.primaryPool}
+          onChange={(n) => onChange('primaryPool', n)}
+        />
+        <Stepper
+          label={<FieldLabel i18nKey="gm.secondaryPool" en="Secondary" />}
+          ariaLabel={t('gm.secondaryPool')}
+          value={stats.secondaryPool}
+          onChange={(n) => onChange('secondaryPool', n)}
+        />
+        <div className="field">
+          <span className="field-label"><FieldLabel i18nKey="gm.desperationPool" en="Desperation" /></span>
+          <span className="stat-value">{desperationPool(stats.primaryPool)}</span>
+        </div>
       </div>
-    </div>
+      <div className="form-row">
+        <label className="field grow">
+          <span className="field-label"><FieldLabel i18nKey="gm.enhancement" en="Enhancement" /></span>
+          <input
+            className="grow"
+            placeholder={t('gm.enhancementPlaceholder')}
+            value={stats.enhancement}
+            onChange={(e) => onChange('enhancement', e.target.value)}
+          />
+        </label>
+      </div>
+      <div className="form-row">
+        <Stepper
+          label={<FieldLabel i18nKey="gm.defense" en="Defense" />}
+          ariaLabel={t('gm.defense')}
+          value={stats.defense}
+          onChange={(n) => onChange('defense', n)}
+        />
+        <Stepper
+          label={<FieldLabel i18nKey="gm.integrity" en="Integrity" />}
+          ariaLabel={t('gm.integrity')}
+          value={stats.integrity}
+          onChange={(n) => onChange('integrity', n)}
+        />
+      </div>
+      <div className="form-row">
+        <Stepper
+          label={<FieldLabel i18nKey="gm.injuryBoxes" en="Injury boxes" />}
+          ariaLabel={t('gm.injuryBoxes')}
+          value={stats.injuryBoxes}
+          onChange={(n) => onChange('injuryBoxes', n)}
+        />
+      </div>
+      <div className="form-row">
+        <label className="field-check">
+          <input type="checkbox" checked={stats.hasArmor} onChange={(e) => onChange('hasArmor', e.target.checked)} />
+          <span><FieldLabel i18nKey="gm.armor" en="Armor" /></span>
+        </label>
+        {stats.hasArmor && (
+          <Stepper
+            label={t('gm.armorRating')}
+            ariaLabel={t('gm.armorRating')}
+            value={stats.armorRating}
+            onChange={(n) => onChange('armorRating', n)}
+          />
+        )}
+      </div>
+      {stats.hasArmor && (
+        <div className="form-row">
+          <input
+            className="grow"
+            placeholder={t('gm.armorTagsPlaceholder')}
+            value={stats.armorTags}
+            onChange={(e) => onChange('armorTags', e.target.value)}
+          />
+        </div>
+      )}
+      <div className="form-row">
+        <textarea
+          className="grow"
+          rows={2}
+          placeholder={t('gm.qualities')}
+          value={stats.qualities}
+          onChange={(e) => onChange('qualities', e.target.value)}
+        />
+      </div>
+      <div className="form-row">
+        <textarea
+          className="grow"
+          rows={2}
+          placeholder={t('gm.dreadPower')}
+          value={stats.dreadPower}
+          onChange={(e) => onChange('dreadPower', e.target.value)}
+        />
+      </div>
+      <div className="form-row">
+        <textarea
+          className="grow"
+          rows={2}
+          placeholder={t('gm.special')}
+          value={stats.special}
+          onChange={(e) => onChange('special', e.target.value)}
+        />
+      </div>
+    </>
   );
 }
 
 interface Props {
   instance: AdversaryInstance;
+  editing: boolean;
   onChange: (updated: AdversaryInstance) => void;
   onRemove: () => void;
 }
@@ -157,7 +206,7 @@ function autoGrow(el: HTMLTextAreaElement | null) {
   el.style.height = `${el.scrollHeight}px`;
 }
 
-export function AdversaryCard({ instance, onChange, onRemove }: Props) {
+export function AdversaryCard({ instance, editing, onChange, onRemove }: Props) {
   const { t } = useTranslation();
   const selectedInstanceId = useGmRollStore((s) => s.selectedInstanceId);
   const selectedPool = useGmRollStore((s) => s.selectedPool);
@@ -220,57 +269,64 @@ export function AdversaryCard({ instance, onChange, onRemove }: Props) {
         </button>
       </div>
 
-      <CustomPoolControl
-        value={instance.customPool}
-        selected={isSelected('custom')}
-        onSelect={() => select(instance.id, 'custom')}
-        onChange={(n) => onChange({ ...instance, customPool: n })}
-      />
-
-      <div className="adversary-pools">
-        <PoolButton
-          label={<FieldLabel i18nKey="gm.primaryPool" en="Primary" />}
-          rating={stats.primaryPool}
-          selected={isSelected('primary')}
-          onClick={() => select(instance.id, 'primary')}
+      {editing ? (
+        <AdversaryStatsFields
+          stats={stats}
+          onChange={(key, value) => onChange({ ...instance, stats: { ...instance.stats, [key]: value } })}
         />
-        <PoolButton
-          label={<FieldLabel i18nKey="gm.secondaryPool" en="Secondary" />}
-          rating={stats.secondaryPool}
-          selected={isSelected('secondary')}
-          onClick={() => select(instance.id, 'secondary')}
-        />
-        <PoolButton
-          label={<FieldLabel i18nKey="gm.desperationPool" en="Desperation" />}
-          rating={desperationPool(stats.primaryPool)}
-          selected={isSelected('desperation')}
-          onClick={() => select(instance.id, 'desperation')}
-        />
-      </div>
+      ) : (
+        <>
+          <div className="adversary-pools">
+            <PoolButton
+              label={<FieldLabel i18nKey="gm.primaryPool" en="Primary" />}
+              rating={stats.primaryPool}
+              selected={isSelected('primary')}
+              onClick={() => select(instance.id, 'primary')}
+            />
+            <PoolButton
+              label={<FieldLabel i18nKey="gm.secondaryPool" en="Secondary" />}
+              rating={stats.secondaryPool}
+              selected={isSelected('secondary')}
+              onClick={() => select(instance.id, 'secondary')}
+            />
+            <PoolButton
+              label={<FieldLabel i18nKey="gm.desperationPool" en="Desperation" />}
+              rating={desperationPool(stats.primaryPool)}
+              selected={isSelected('desperation')}
+              onClick={() => select(instance.id, 'desperation')}
+            />
+          </div>
 
-      <TextLine label={<FieldLabel i18nKey="gm.enhancement" en="Enhancement" />} text={stats.enhancement} />
-      <StatLine label={<FieldLabel i18nKey="gm.defense" en="Defense" />} value={stats.defense} />
-      <StatLine label={<FieldLabel i18nKey="gm.integrity" en="Integrity" />} value={stats.integrity} />
+          <TextLine label={<FieldLabel i18nKey="gm.enhancement" en="Enhancement" />} text={stats.enhancement} />
+          <StatLinePair
+            items={[
+              { label: <FieldLabel i18nKey="gm.defense" en="Defense" />, value: stats.defense },
+              { label: <FieldLabel i18nKey="gm.integrity" en="Integrity" />, value: stats.integrity },
+            ]}
+          />
+          <StatLine label={<FieldLabel i18nKey="gm.injuryBoxes" en="Injury boxes" />} value={stats.injuryBoxes} />
 
-      {stats.hasArmor && (stats.armorRating > 0 || armorTags.length > 0) && (
-        <div className="curse-line">
-          <span className="field-label">
-            <FieldLabel i18nKey="gm.armor" en="Armor" />
-          </span>
-          {stats.armorRating > 0 && <span className="stat-value">{stats.armorRating}</span>}
-          <TagChips tags={armorTags} />
-        </div>
-      )}
+          {stats.hasArmor && (stats.armorRating > 0 || armorTags.length > 0) && (
+            <div className="curse-line">
+              <span className="field-label">
+                <FieldLabel i18nKey="gm.armor" en="Armor" />
+              </span>
+              {stats.armorRating > 0 && <span className="stat-value">{stats.armorRating}</span>}
+              <TagChips tags={armorTags} />
+            </div>
+          )}
 
-      {details.length > 0 && (
-        <details className="fold">
-          <summary>{t('gm.details')}</summary>
-          {details.map((d) => (
-            <p key={d.key} className="muted item-card-desc">
-              <span className="field-label">{d.label}</span> {d.text}
-            </p>
-          ))}
-        </details>
+          {details.length > 0 && (
+            <details className="fold">
+              <summary>{t('gm.details')}</summary>
+              {details.map((d) => (
+                <p key={d.key} className="muted item-card-desc">
+                  <span className="field-label">{d.label}</span> {d.text}
+                </p>
+              ))}
+            </details>
+          )}
+        </>
       )}
 
       <div>

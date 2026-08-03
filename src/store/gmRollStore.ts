@@ -36,8 +36,12 @@ interface GmRollStoreState {
   /** Complication severity chosen to buy off post-roll: 0 none, 1-3. */
   complicationSeverity: number;
 
-  /** Select a pool on an instance's card; selecting the same one again clears it. */
-  select: (instanceId: string, pool: AdversaryPool) => void;
+  /**
+   * Select a pool on an instance's card, or a campaign-level pool when
+   * instanceId is null (e.g. the free-roll pool); selecting the same one
+   * again clears it.
+   */
+  select: (instanceId: string | null, pool: AdversaryPool) => void;
   setDifficulty: (n: number) => void;
   setBonusDice: (n: number) => void;
   setEnhancement: (n: number) => void;

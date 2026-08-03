@@ -153,7 +153,7 @@
     "noTricks": "No tricks in this campaign yet. Add them on the Tricks tab.",
     "copySuffix": " (Copy)",
     "webhook": "Discord webhook URL",
-    "autoPostToDiscord": "Post rolls to Discord automatically",
+    "autoPostToDiscord": "Discord sync",
     "postToDiscord": "Post to Discord",
     "noWebhook": "No webhook set for this campaign."
   },
