@@ -6,6 +6,7 @@ import { blankAdversaryStats, type AdversaryStats, type AdversaryTemplate, type 
 import { AdversaryStatsFields } from './AdversaryCard';
 import { statSummary } from './CampaignSheet';
 import { IconCheck, IconClose, IconCopy, IconEdit } from './icons';
+import { ListImportExport } from './ListImportExport';
 
 /** Shared form fields for creating or editing an adversary template. */
 function AdversaryTemplateForm({
@@ -141,6 +142,14 @@ export function CampaignTemplatesPage({ campaign }: { campaign: Campaign }) {
               {adding ? <><IconClose /> {t('common.cancel')}</> : `+ ${t('gm.addTemplate')}`}
             </button>
           </div>
+        )}
+        {editing && (
+          <ListImportExport
+            kind="adversaries"
+            items={templates}
+            ownerName={campaign.name}
+            onChange={(next) => patch({ templates: next })}
+          />
         )}
         {editing && adding && (
           <AdversaryTemplateForm

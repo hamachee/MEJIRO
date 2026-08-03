@@ -5,6 +5,7 @@ import { uid } from '../lib/uid';
 import { useDragReorder } from '../lib/useDragReorder';
 import { FieldLabel } from './FieldLabel';
 import { IconCheck, IconClose, IconEdit } from './icons';
+import { ListImportExport } from './ListImportExport';
 import { TrickInfo } from './TrickInfo';
 import type { Campaign } from '../types/campaign';
 
@@ -113,6 +114,12 @@ export function CampaignTricksPage({ campaign }: { campaign: Campaign }) {
                 onKeyDown={(e) => e.key === 'Enter' && add()}
               />
             </div>
+            <ListImportExport
+              kind="tricks"
+              items={tricks}
+              ownerName={campaign.name}
+              onChange={(next) => patch({ tricks: next })}
+            />
           </>
         )}
       </section>

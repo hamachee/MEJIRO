@@ -238,6 +238,12 @@ body {
   flex: 1;
   min-width: 0;
 }
+/* Per-list import/export toolbar, set off from the add-entry form above it. */
+.list-io {
+  margin-top: 0.8rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--border);
+}
 .field {
   display: flex;
   flex-direction: column;

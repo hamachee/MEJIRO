@@ -215,6 +215,15 @@
     "webhookMoved": "Discord webhooks now live on each character sheet (Edit sheet → Discord webhook URL).",
     "fanDisclaimer": "MEJIRO is an unofficial, free, non-commercial fan tool and is not affiliated with or endorsed by any game publisher. Game system names are the property of their respective owners."
   },
+  "listIO": {
+    "export": "Export",
+    "importAdd": "Import (add)",
+    "importReplace": "Import (replace)",
+    "clear": "Clear",
+    "confirmReplace": "Replace this list with the {{count}} imported entries? The current entries will be removed.",
+    "confirmClear": "Remove all entries from this list? This cannot be undone.",
+    "importError": "Could not import file: {{message}}"
+  },
   "common": {
     "cancel": "Cancel",
     "close": "Close"

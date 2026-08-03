@@ -5,6 +5,7 @@ import { uid } from '../lib/uid';
 import { useDragReorder } from '../lib/useDragReorder';
 import { FieldLabel } from './FieldLabel';
 import { IconClose } from './icons';
+import { ListImportExport } from './ListImportExport';
 import { TrickInfo } from './TrickInfo';
 import type { Character } from '../types/character';
 
@@ -114,6 +115,12 @@ export function CharacterTricksPage({
                 onKeyDown={(e) => e.key === 'Enter' && add()}
               />
             </div>
+            <ListImportExport
+              kind="tricks"
+              items={tricks}
+              ownerName={character.name}
+              onChange={(next) => patch({ tricks: next })}
+            />
           </>
         )}
       </section>
