@@ -660,13 +660,17 @@ button.danger:hover:not(:disabled) {
   margin-top: 0.15rem;
   white-space: pre-wrap;
 }
-.trick-info {
-  /* inline-flex, not flex: a block-level flex container fills its
-     containing block's width, which is what stretched the fold toggle
-     into a full-width highlighted bar. inline-flex shrinks to content. */
-  display: inline-flex;
-  flex-direction: column;
+/* Same native details/summary fold as .template-fold, scoped to trick rows. */
+.trick-fold {
   min-width: 0;
+}
+.trick-fold summary {
+  cursor: pointer;
+  user-select: none;
+  overflow-wrap: anywhere;
+}
+.trick-fold summary:hover {
+  color: var(--accent);
 }
 .trick-name-cost {
   flex: 1;
@@ -675,24 +679,6 @@ button.danger:hover:not(:disabled) {
   align-items: baseline;
   gap: 0.4rem;
   flex-wrap: wrap;
-}
-.trick-name-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  background: transparent;
-  border: none;
-  padding: 0;
-  text-align: left;
-  color: inherit;
-}
-.trick-name-toggle:hover {
-  background: transparent;
-  color: var(--accent);
-}
-.chevron {
-  color: var(--muted);
-  font-size: 0.75rem;
 }
 .trick-cost {
   font-size: 0.8rem;
