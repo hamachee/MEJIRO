@@ -755,6 +755,31 @@ button.danger:hover:not(:disabled) {
   cursor: pointer;
 }
 
+/* Tiny live sample of the custom palette, sat on the page background so
+   bg vs. card contrast is visible without scrolling the whole app. */
+.theme-preview {
+  margin-top: 0.35rem;
+  padding: 0.6rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.theme-preview .card {
+  max-width: 220px;
+  margin: 0;
+}
+.theme-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+.theme-preview-row button {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+}
+
 /* Character view toolbar */
 .character-view .toolbar {
   display: flex;

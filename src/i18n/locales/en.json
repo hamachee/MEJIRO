@@ -143,6 +143,7 @@
     "ruleHint": "\"By rule\" uses the color scheme of the game system you are playing.",
     "base": "Base tone",
     "reset": "Reset colors",
+    "preview": "Preview",
     "colors": {
       "bg": "Background",
       "bg2": "Background 2",
