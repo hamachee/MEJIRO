@@ -537,11 +537,48 @@ button.danger:hover:not(:disabled) {
 .die.exploded {
   box-shadow: 0 0 0 2px rgba(255, 200, 90, 0.5);
 }
-/* Per-die-type shape hook: d10 reads as a hexagon. The clip-path's widest
-   point sits at 50% height, where the centered digit already sits, so
-   two-digit values (10) aren't clipped. */
+/* Per-die-type shape hook: d10 reads as a pointy-top hexagon. The flat
+   sides span 25%-75% of the height, so the centered digit (which sits at
+   the full-width middle) isn't clipped even for two-digit values (10).
+   clip-path chops off a plain border/box-shadow at the points, so the
+   "border" is faked as two stacked hex layers instead: this element paints
+   as the ring color, and an inset ::before paints the fill color on top. */
 .die.d10 {
-  clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%);
+  position: relative;
+  border: none;
+  background: var(--border);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+.die.d10::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  background: var(--bg-2);
+}
+.die.d10.hit {
+  background: var(--accent);
+}
+.die.d10.hit::before {
+  background: var(--accent-2);
+}
+.die.d10.curse {
+  background: var(--curse);
+  box-shadow: none;
+}
+.die.d10.curse::before {
+  background: var(--bg-2);
+}
+.die.d10.curse.hit {
+  background: var(--curse-hit-border);
+}
+.die.d10.curse.hit::before {
+  background: var(--curse-strong);
+}
+.die.d10.exploded {
+  box-shadow: none;
+  filter: drop-shadow(0 0 2px rgba(255, 200, 90, 0.8));
 }
 .die.mini {
   width: 22px;
