@@ -1291,6 +1291,15 @@ span.exp-value:focus-visible {
   min-width: 0;
   overflow-wrap: anywhere;
 }
+.template-fold {
+  flex: 1;
+  min-width: 0;
+}
+.template-fold summary {
+  cursor: pointer;
+  user-select: none;
+  overflow-wrap: anywhere;
+}
 .named-item-note {
   margin: 0.3rem 0 0;
   font-size: 0.83rem;
@@ -1346,6 +1355,13 @@ span.exp-value:focus-visible {
 }
 .curse-line-divider {
   color: var(--divider-strong);
+}
+/* Keeps a label/value pair (e.g. Defense 3) from wrapping apart when several
+   share a .curse-line. */
+.stat-pair {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 /* These rows have no <h2>; label size matches the skill-row labels
    (.skill-grid .stat-label) rather than the small muted field-label. */
@@ -1583,6 +1599,12 @@ button.fav-toggle:hover:not(:disabled) {
   background: var(--card-2);
 }
 .adversary-pools button.sheet-stat:hover:not(.selected) {
+  border-color: var(--accent);
+}
+/* Higher specificity than .adversary-pools .sheet-stat above, which would
+   otherwise win the cascade by source order and hide the selected state. */
+.adversary-pools .sheet-stat.selected {
+  background: var(--accent-2);
   border-color: var(--accent);
 }
 /* Memo grows to fit its content (sized in JS via scrollHeight) — no manual

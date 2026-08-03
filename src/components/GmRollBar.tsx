@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { useCampaignStore } from '../store/campaignStore';
 import { useGmRollStore } from '../store/gmRollStore';
 import { desperationPool, type Campaign } from '../types/campaign';
 import { Stepper } from './Stepper';
@@ -12,6 +13,7 @@ interface Props {
 /** Sticky bar at the bottom of the GM page: rolls whichever pool was tapped on a card. */
 export function GmRollBar({ campaign }: Props) {
   const { t } = useTranslation();
+  const patch = useCampaignStore((s) => s.patch);
 
   const selectedInstanceId = useGmRollStore((s) => s.selectedInstanceId);
   const selectedPool = useGmRollStore((s) => s.selectedPool);
@@ -33,18 +35,18 @@ export function GmRollBar({ campaign }: Props) {
     : null;
 
   const poolRating =
-    instance && selectedPool
-      ? selectedPool === 'primary'
-        ? instance.stats.primaryPool
-        : selectedPool === 'secondary'
-          ? instance.stats.secondaryPool
-          : selectedPool === 'desperation'
-            ? desperationPool(instance.stats.primaryPool)
-            : instance.customPool
-      : 0;
+    selectedPool === 'custom'
+      ? campaign.customPool
+      : instance && selectedPool
+        ? selectedPool === 'primary'
+          ? instance.stats.primaryPool
+          : selectedPool === 'secondary'
+            ? instance.stats.secondaryPool
+            : desperationPool(instance.stats.primaryPool)
+        : 0;
 
   const pool = poolRating + bonusDice;
-  const canRoll = Boolean(instance && poolRating > 0);
+  const canRoll = selectedPool === 'custom' ? poolRating > 0 : Boolean(instance && poolRating > 0);
 
   return (
     <div className="roll-bar">
@@ -52,9 +54,13 @@ export function GmRollBar({ campaign }: Props) {
         <strong className="roll-bar-total">{pool}</strong>
         <div className="roll-bar-parts">
           <span className="roll-bar-pick muted">
-            {instance ? `${instance.label} — ${poolLabel}` : t('gm.pickAPool')}
+            {instance
+              ? `${instance.label} — ${poolLabel}`
+              : selectedPool === 'custom'
+                ? poolLabel
+                : t('gm.pickAPool')}
           </span>
-          {instance && <span className="roll-bar-rating">{poolRating}</span>}
+          {(instance || selectedPool === 'custom') && <span className="roll-bar-rating">{poolRating}</span>}
           <span className="roll-bar-plus muted">+</span>
           <select
             className="roll-bar-pick roll-bar-bonus"
@@ -72,6 +78,14 @@ export function GmRollBar({ campaign }: Props) {
         </div>
       </div>
       <div className="roll-bar-controls">
+        <label className="field-check">
+          <input
+            type="checkbox"
+            checked={campaign.autoPostToDiscord}
+            onChange={(e) => patch({ autoPostToDiscord: e.target.checked })}
+          />
+          <span>{t('gm.autoPostToDiscord')}</span>
+        </label>
         <Stepper
           label={t('roller.difficulty')}
           ariaLabel={t('roller.difficulty')}
@@ -82,11 +96,10 @@ export function GmRollBar({ campaign }: Props) {
           className="primary roll-button"
           disabled={!canRoll}
           onClick={() =>
-            instance &&
             poolLabel &&
             performRoll({
               campaign,
-              instanceLabel: instance.label,
+              instanceLabel: instance ? instance.label : campaign.name,
               poolLabel,
               poolRating,
             })

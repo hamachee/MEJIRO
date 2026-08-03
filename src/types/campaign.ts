@@ -70,8 +70,6 @@ export interface AdversaryInstance {
   id: string;
   label: string;
   stats: AdversaryStats;
-  /** Ad-hoc dice pool for a one-off roll that doesn't fit the template's pools. */
-  customPool: number;
   /** Small free-text note, local to this card. */
   memo: string;
   /** Status-effect tags currently affecting this adversary. */
@@ -89,6 +87,8 @@ export interface Campaign {
   webhookUrl: string;
   /** If false, rolls wait for the GM to press "post" instead of posting immediately. */
   autoPostToDiscord: boolean;
+  /** Ad-hoc dice pool for a one-off roll that doesn't fit any adversary's pools — shared by the whole campaign. */
+  customPool: number;
   templates: AdversaryTemplate[];
   instances: AdversaryInstance[];
   /** The GM's own trick list, purchased with extra hits after an adversary roll. */
