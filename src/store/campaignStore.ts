@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { Campaign } from '../types/campaign';
+import type { CharacterTrick } from '../types/character';
 import {
   deleteCampaign,
   getCampaign,
@@ -12,7 +13,7 @@ interface CampaignStoreState {
   roster: Campaign[];
   active: Campaign | null;
   loadRoster: () => Promise<void>;
-  create: (name: string) => Promise<Campaign>;
+  create: (name: string, tricks?: CharacterTrick[]) => Promise<Campaign>;
   open: (id: string) => Promise<Campaign | undefined>;
   clearActive: () => void;
   rename: (name: string) => void;
@@ -49,8 +50,8 @@ export const useCampaignStore = create<CampaignStoreState>((set, get) => ({
     set({ roster: await listCampaigns() });
   },
 
-  create: async (name) => {
-    const campaign = await saveCampaign(newCampaign(name));
+  create: async (name, tricks) => {
+    const campaign = await saveCampaign(newCampaign(name, tricks));
     set({ roster: [campaign, ...get().roster], active: campaign });
     return campaign;
   },

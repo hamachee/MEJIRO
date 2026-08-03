@@ -24,11 +24,25 @@ interface GmRollStoreState {
   poolLabel: string;
   postStatus: PostStatus;
   postError: string;
+  /** Selected trick ids for the post-roll purchase phase. */
+  selectedTrickIds: string[];
+  /**
+   * Extra hits bought during the purchase phase, after the dice are seen —
+   * distinct from a template's fixed Enhancement trait, which is already
+   * baked into the roll itself. Mirrors the character sheet's purchase flow.
+   */
+  enhancement: number;
+  /** Complication severity chosen to buy off post-roll: 0 none, 1-3. */
+  complicationSeverity: number;
 
   /** Select a pool on an instance's card; selecting the same one again clears it. */
   select: (instanceId: string, pool: AdversaryPool) => void;
   setDifficulty: (n: number) => void;
   setBonusDice: (n: number) => void;
+  setEnhancement: (n: number) => void;
+  /** Set severity; picking the current one again clears back to none. */
+  setComplicationSeverity: (n: number) => void;
+  toggleTrick: (trickId: string) => void;
   performRoll: (params: {
     campaign: Campaign;
     instanceLabel: string;
@@ -43,6 +57,7 @@ interface GmRollStoreState {
 }
 
 const MAX_BONUS_DICE = 9;
+const MAX_COMPLICATION = 3;
 
 export const useGmRollStore = create<GmRollStoreState>((set, get) => ({
   selectedInstanceId: null,
@@ -55,6 +70,9 @@ export const useGmRollStore = create<GmRollStoreState>((set, get) => ({
   poolLabel: '',
   postStatus: 'idle',
   postError: '',
+  selectedTrickIds: [],
+  enhancement: 0,
+  complicationSeverity: 0,
 
   select: (instanceId, pool) => {
     const same = get().selectedInstanceId === instanceId && get().selectedPool === pool;
@@ -63,6 +81,22 @@ export const useGmRollStore = create<GmRollStoreState>((set, get) => ({
 
   setDifficulty: (n) => set({ difficulty: Math.max(0, n) }),
   setBonusDice: (n) => set({ bonusDice: Math.max(0, Math.min(MAX_BONUS_DICE, n)) }),
+  setEnhancement: (n) => set({ enhancement: Math.max(0, n) }),
+  setComplicationSeverity: (n) =>
+    set({
+      complicationSeverity:
+        get().complicationSeverity === n
+          ? 0
+          : Math.min(MAX_COMPLICATION, Math.max(0, n)),
+    }),
+  toggleTrick: (trickId) => {
+    const { selectedTrickIds } = get();
+    set({
+      selectedTrickIds: selectedTrickIds.includes(trickId)
+        ? selectedTrickIds.filter((id) => id !== trickId)
+        : [...selectedTrickIds, trickId],
+    });
+  },
 
   performRoll: ({ campaign, instanceLabel, poolLabel, poolRating, enhancement }) => {
     const { difficulty, bonusDice } = get();
@@ -87,6 +121,9 @@ export const useGmRollStore = create<GmRollStoreState>((set, get) => ({
       selectedInstanceId: null,
       selectedPool: null,
       bonusDice: 0,
+      selectedTrickIds: [],
+      enhancement: 0,
+      complicationSeverity: 0,
     };
 
     if (!webhookUrl || !campaign.autoPostToDiscord) {
@@ -138,6 +175,9 @@ export const useGmRollStore = create<GmRollStoreState>((set, get) => ({
       poolLabel: '',
       postStatus: 'idle',
       postError: '',
+      selectedTrickIds: [],
+      enhancement: 0,
+      complicationSeverity: 0,
     }),
 
   resetFor: () =>
@@ -150,6 +190,9 @@ export const useGmRollStore = create<GmRollStoreState>((set, get) => ({
       request: null,
       instanceLabel: '',
       poolLabel: '',
+      selectedTrickIds: [],
+      enhancement: 0,
+      complicationSeverity: 0,
       postStatus: 'idle',
       postError: '',
     }),

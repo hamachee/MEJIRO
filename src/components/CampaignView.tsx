@@ -5,8 +5,10 @@ import { useCampaignStore } from '../store/campaignStore';
 import { useGmRollStore } from '../store/gmRollStore';
 import { useWide } from '../lib/useWide';
 import { CampaignSheet } from './CampaignSheet';
+import { CampaignTricksPage } from './CampaignTricksPage';
 import { GmRollBar } from './GmRollBar';
 import { GmRollResult } from './GmRollResult';
+import { GmTrickPurchase } from './GmTrickPurchase';
 
 export function CampaignView() {
   const { id } = useParams();
@@ -17,6 +19,7 @@ export function CampaignView() {
   const result = useGmRollStore((s) => s.result);
   const clearResult = useGmRollStore((s) => s.clearResult);
   const [editing, setEditing] = useState(false);
+  const [page, setPage] = useState<1 | 2>(1);
   const wide = useWide();
 
   useEffect(() => {
@@ -39,6 +42,7 @@ export function CampaignView() {
   const resultPanel = result && (
     <>
       <GmRollResult campaign={active} />
+      <GmTrickPurchase campaign={active} />
       <button onClick={clearResult}>{t('common.close')}</button>
     </>
   );
@@ -59,8 +63,24 @@ export function CampaignView() {
         </div>
       </div>
 
+      <nav className="page-tabs" aria-label="campaign pages">
+        <button
+          className={`page-tab ${page === 1 ? 'active' : ''}`}
+          onClick={() => setPage(1)}
+        >
+          {t('sheet.page1')}
+        </button>
+        <button
+          className={`page-tab ${page === 2 ? 'active' : ''}`}
+          onClick={() => setPage(2)}
+        >
+          {t('tricks.title')}
+        </button>
+      </nav>
+
       <div className={`play-layout ${wide && result ? 'with-result' : ''}`}>
-        <CampaignSheet campaign={active} editing={editing} />
+        {page === 1 && <CampaignSheet campaign={active} editing={editing} />}
+        {page === 2 && <CampaignTricksPage campaign={active} editing={editing} />}
         {wide && result && <aside className="result-col stack">{resultPanel}</aside>}
       </div>
 
