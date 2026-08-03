@@ -1,6 +1,6 @@
 import { getDB } from './db';
 import { uid } from '../lib/uid';
-import type { Campaign } from '../types/campaign';
+import { blankAdversaryStats, type Campaign } from '../types/campaign';
 
 /** Create (but do not yet persist) a blank campaign. */
 export function newCampaign(name: string): Campaign {
@@ -31,8 +31,11 @@ export function normalizeCampaign(
     ...raw,
     webhookUrl: raw.webhookUrl ?? '',
     autoPostToDiscord: raw.autoPostToDiscord ?? true,
-    templates: raw.templates ?? [],
-    instances: raw.instances ?? [],
+    templates: (raw.templates ?? []).map((tpl) => ({
+      ...tpl,
+      stats: { ...blankAdversaryStats(), ...tpl.stats },
+    })),
+    instances: (raw.instances ?? []).map((i) => ({ ...i, memo: i.memo ?? '' })),
   };
 }
 

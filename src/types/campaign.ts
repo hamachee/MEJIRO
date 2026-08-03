@@ -12,9 +12,11 @@ export interface AdversaryStats {
   secondaryPool: number;
   enhancement: number;
   defense: number;
-  /** Also doubles as the injury track's box count. */
   integrity: number;
+  /** The injury track's box count — set independently of Defense/Integrity. */
+  injuryBoxes: number;
   hasArmor: boolean;
+  armorRating: number;
   /** Comma-separated tags, shown via TagChips. */
   armorTags: string;
   qualities: string;
@@ -35,7 +37,9 @@ export function blankAdversaryStats(): AdversaryStats {
     enhancement: 0,
     defense: 0,
     integrity: 0,
+    injuryBoxes: 0,
     hasArmor: false,
+    armorRating: 0,
     armorTags: '',
     qualities: '',
     dreadPower: '',
@@ -59,7 +63,9 @@ export interface AdversaryInstance {
   id: string;
   templateId: string;
   label: string;
-  /** Boxes filled on the injury track; capped at the linked template's integrity. */
+  /** Small free-text note, local to this card (not shared via the template). */
+  memo: string;
+  /** Boxes filled on the injury track; capped at the linked template's injuryBoxes. */
   marked: number;
   takenOut: boolean;
 }

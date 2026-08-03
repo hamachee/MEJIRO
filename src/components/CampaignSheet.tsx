@@ -10,6 +10,7 @@ import {
 } from '../types/campaign';
 import type { Campaign } from '../types/campaign';
 import { Stepper } from './Stepper';
+import { FieldLabel } from './FieldLabel';
 import { AdversaryCard } from './AdversaryCard';
 
 /** A compact "Primary 5 · Integrity 3" style summary line for a template row. */
@@ -18,6 +19,7 @@ function statSummary(stats: AdversaryStats, t: (key: string) => string): string 
     stats.primaryPool > 0 ? `${t('gm.primaryPool')} ${stats.primaryPool}` : null,
     stats.secondaryPool > 0 ? `${t('gm.secondaryPool')} ${stats.secondaryPool}` : null,
     stats.integrity > 0 ? `${t('gm.integrity')} ${stats.integrity}` : null,
+    stats.injuryBoxes > 0 ? `${t('gm.injuryBoxes')} ${stats.injuryBoxes}` : null,
   ].filter(Boolean);
   return parts.join(' · ') || '—';
 }
@@ -64,40 +66,50 @@ function AdversaryTemplateForm({
       </div>
       <div className="form-row">
         <Stepper
-          label={t('gm.primaryPool')}
+          label={<FieldLabel i18nKey="gm.primaryPool" en="Primary" />}
           ariaLabel={t('gm.primaryPool')}
           value={stats.primaryPool}
           onChange={(n) => set('primaryPool', n)}
         />
         <Stepper
-          label={t('gm.secondaryPool')}
+          label={<FieldLabel i18nKey="gm.secondaryPool" en="Secondary" />}
           ariaLabel={t('gm.secondaryPool')}
           value={stats.secondaryPool}
           onChange={(n) => set('secondaryPool', n)}
         />
         <div className="field">
-          <span className="field-label">{t('gm.desperationPool')}</span>
+          <span className="field-label">
+            <FieldLabel i18nKey="gm.desperationPool" en="Desperation" />
+          </span>
           <span className="stat-value">{desperationPool(stats.primaryPool)}</span>
         </div>
       </div>
       <div className="form-row">
         <Stepper
-          label={t('gm.enhancement')}
+          label={<FieldLabel i18nKey="gm.enhancement" en="Enhancement" />}
           ariaLabel={t('gm.enhancement')}
           value={stats.enhancement}
           onChange={(n) => set('enhancement', n)}
         />
         <Stepper
-          label={t('gm.defense')}
+          label={<FieldLabel i18nKey="gm.defense" en="Defense" />}
           ariaLabel={t('gm.defense')}
           value={stats.defense}
           onChange={(n) => set('defense', n)}
         />
+      </div>
+      <div className="form-row">
         <Stepper
-          label={t('gm.integrity')}
+          label={<FieldLabel i18nKey="gm.integrity" en="Integrity" />}
           ariaLabel={t('gm.integrity')}
           value={stats.integrity}
           onChange={(n) => set('integrity', n)}
+        />
+        <Stepper
+          label={<FieldLabel i18nKey="gm.injuryBoxes" en="Injury boxes" />}
+          ariaLabel={t('gm.injuryBoxes')}
+          value={stats.injuryBoxes}
+          onChange={(n) => set('injuryBoxes', n)}
         />
       </div>
       <div className="form-row">
@@ -107,17 +119,29 @@ function AdversaryTemplateForm({
             checked={stats.hasArmor}
             onChange={(e) => set('hasArmor', e.target.checked)}
           />
-          <span>{t('gm.armor')}</span>
+          <span>
+            <FieldLabel i18nKey="gm.armor" en="Armor" />
+          </span>
         </label>
         {stats.hasArmor && (
+          <Stepper
+            label={<FieldLabel i18nKey="gm.armorRating" en="Armor rating" />}
+            ariaLabel={t('gm.armorRating')}
+            value={stats.armorRating}
+            onChange={(n) => set('armorRating', n)}
+          />
+        )}
+      </div>
+      {stats.hasArmor && (
+        <div className="form-row">
           <input
             className="grow"
             placeholder={t('gm.armorTagsPlaceholder')}
             value={stats.armorTags}
             onChange={(e) => set('armorTags', e.target.value)}
           />
-        )}
-      </div>
+        </div>
+      )}
       <div className="form-row">
         <textarea
           className="grow"
@@ -260,7 +284,7 @@ function AddInstanceRow({ campaign }: { campaign: Campaign }) {
     patch({
       instances: [
         ...instances,
-        { id: uid(), templateId: template.id, label, marked: 0, takenOut: false },
+        { id: uid(), templateId: template.id, label, memo: '', marked: 0, takenOut: false },
       ],
     });
   };
@@ -353,23 +377,25 @@ export function CampaignSheet({ campaign, editing }: Props) {
       <AdversaryTemplatesCard campaign={campaign} editing={editing} />
       <AddInstanceRow campaign={campaign} />
 
-      {instances.length === 0 ? (
-        <p className="muted">{t('gm.noAdversaries')}</p>
-      ) : (
-        <div className="card-grid">
-          {instances.map((instance) => (
-            <AdversaryCard
-              key={instance.id}
-              campaign={campaign}
-              instance={instance}
-              onChange={(updated) =>
-                patch({ instances: instances.map((x) => (x.id === updated.id ? updated : x)) })
-              }
-              onRemove={() => patch({ instances: instances.filter((x) => x.id !== instance.id) })}
-            />
-          ))}
-        </div>
-      )}
+      {/* Deployed stat-block cards clutter template authoring, so they're hidden while editing. */}
+      {!editing &&
+        (instances.length === 0 ? (
+          <p className="muted">{t('gm.noAdversaries')}</p>
+        ) : (
+          <div className="card-grid">
+            {instances.map((instance) => (
+              <AdversaryCard
+                key={instance.id}
+                campaign={campaign}
+                instance={instance}
+                onChange={(updated) =>
+                  patch({ instances: instances.map((x) => (x.id === updated.id ? updated : x)) })
+                }
+                onRemove={() => patch({ instances: instances.filter((x) => x.id !== instance.id) })}
+              />
+            ))}
+          </div>
+        ))}
     </div>
   );
 }

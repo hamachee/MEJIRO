@@ -1,7 +1,9 @@
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGmRollStore, type AdversaryPool } from '../store/gmRollStore';
 import { parseTags } from '../lib/tags';
 import { desperationPool, type AdversaryInstance, type Campaign } from '../types/campaign';
+import { FieldLabel } from './FieldLabel';
 import { TagChips } from './TagChips';
 
 /** A "Primary N" style pool button, hidden when the rating is 0. */
@@ -11,7 +13,7 @@ function PoolButton({
   selected,
   onClick,
 }: {
-  label: string;
+  label: ReactNode;
   rating: number;
   selected: boolean;
   onClick: () => void;
@@ -26,7 +28,7 @@ function PoolButton({
 }
 
 /** A simple label/value pair, hidden when the value is 0. */
-function StatLine({ label, value }: { label: string; value: number }) {
+function StatLine({ label, value }: { label: ReactNode; value: number }) {
   if (value <= 0) return null;
   return (
     <div className="curse-line">
@@ -66,14 +68,17 @@ export function AdversaryCard({ campaign, instance, onChange, onRemove }: Props)
   }
 
   const { stats } = template;
-  const boxes = Math.max(0, stats.integrity);
+  const boxes = Math.max(0, stats.injuryBoxes);
   const marked = Math.min(instance.marked, boxes);
   const armorTags = stats.hasArmor ? parseTags(stats.armorTags) : [];
+  type DetailRow = { key: string; label: ReactNode; text: string };
+  const detailRow = (key: string, text: string, label: ReactNode): DetailRow | null =>
+    text.trim() ? { key, label, text } : null;
   const details = [
-    stats.qualities.trim() && { label: t('gm.qualities'), text: stats.qualities },
-    stats.dreadPower.trim() && { label: t('gm.dreadPower'), text: stats.dreadPower },
-    stats.special.trim() && { label: t('gm.special'), text: stats.special },
-  ].filter((d): d is { label: string; text: string } => Boolean(d));
+    detailRow('qualities', stats.qualities, <FieldLabel i18nKey="gm.qualities" en="Qualities" />),
+    detailRow('dreadPower', stats.dreadPower, <FieldLabel i18nKey="gm.dreadPower" en="Dread power" />),
+    detailRow('special', stats.special, <FieldLabel i18nKey="gm.special" en="Special" />),
+  ].filter((d): d is DetailRow => d !== null);
 
   const isSelected = (pool: AdversaryPool) =>
     selectedInstanceId === instance.id && selectedPool === pool;
@@ -108,32 +113,35 @@ export function AdversaryCard({ campaign, instance, onChange, onRemove }: Props)
 
       <div className="adversary-pools">
         <PoolButton
-          label={t('gm.primaryPool')}
+          label={<FieldLabel i18nKey="gm.primaryPool" en="Primary" />}
           rating={stats.primaryPool}
           selected={isSelected('primary')}
           onClick={() => select(instance.id, 'primary')}
         />
         <PoolButton
-          label={t('gm.secondaryPool')}
+          label={<FieldLabel i18nKey="gm.secondaryPool" en="Secondary" />}
           rating={stats.secondaryPool}
           selected={isSelected('secondary')}
           onClick={() => select(instance.id, 'secondary')}
         />
         <PoolButton
-          label={t('gm.desperationPool')}
+          label={<FieldLabel i18nKey="gm.desperationPool" en="Desperation" />}
           rating={desperationPool(stats.primaryPool)}
           selected={isSelected('desperation')}
           onClick={() => select(instance.id, 'desperation')}
         />
       </div>
 
-      <StatLine label={t('gm.enhancement')} value={stats.enhancement} />
-      <StatLine label={t('gm.defense')} value={stats.defense} />
-      <StatLine label={t('gm.integrity')} value={stats.integrity} />
+      <StatLine label={<FieldLabel i18nKey="gm.enhancement" en="Enhancement" />} value={stats.enhancement} />
+      <StatLine label={<FieldLabel i18nKey="gm.defense" en="Defense" />} value={stats.defense} />
+      <StatLine label={<FieldLabel i18nKey="gm.integrity" en="Integrity" />} value={stats.integrity} />
 
-      {armorTags.length > 0 && (
+      {stats.hasArmor && (stats.armorRating > 0 || armorTags.length > 0) && (
         <div className="curse-line">
-          <span className="field-label">{t('gm.armor')}</span>
+          <span className="field-label">
+            <FieldLabel i18nKey="gm.armor" en="Armor" />
+          </span>
+          {stats.armorRating > 0 && <span className="stat-value">{stats.armorRating}</span>}
           <TagChips tags={armorTags} />
         </div>
       )}
@@ -142,12 +150,19 @@ export function AdversaryCard({ campaign, instance, onChange, onRemove }: Props)
         <details className="fold">
           <summary>{t('gm.details')}</summary>
           {details.map((d) => (
-            <p key={d.label} className="muted item-card-desc">
+            <p key={d.key} className="muted item-card-desc">
               <span className="field-label">{d.label}</span> {d.text}
             </p>
           ))}
         </details>
       )}
+
+      <input
+        className="grow"
+        placeholder={t('gm.memoPlaceholder')}
+        defaultValue={instance.memo}
+        onBlur={(e) => onChange({ ...instance, memo: e.target.value })}
+      />
 
       <div className="injury-track">
         {Array.from({ length: boxes }, (_, i) => box(i))}
