@@ -5,6 +5,7 @@ import { FieldLabel } from './FieldLabel';
 import { IconClose, IconEdit, IconStar } from './icons';
 import { TagChips } from './TagChips';
 import { CurseCard } from './CharacterSheet';
+import { ListImportExport } from './ListImportExport';
 import { uid } from '../lib/uid';
 import { parseTags } from '../lib/tags';
 import { useDragReorder } from '../lib/useDragReorder';
@@ -251,6 +252,12 @@ function SpellSection({
             />
             <button onClick={add}>{t('sheet.add')}</button>
           </div>
+          <ListImportExport
+            kind="spells"
+            items={items}
+            ownerName={character.name}
+            onChange={(next) => patch({ spells: next })}
+          />
         </>
       )}
     </section>

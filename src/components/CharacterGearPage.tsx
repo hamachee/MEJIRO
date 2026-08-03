@@ -5,6 +5,7 @@ import { FieldLabel } from './FieldLabel';
 import { IconClose, IconEdit, IconStar } from './icons';
 import { TagChips } from './TagChips';
 import { InjuryCard } from './CharacterSheet';
+import { ListImportExport } from './ListImportExport';
 import { uid } from '../lib/uid';
 import { parseTags } from '../lib/tags';
 import { useDragReorder } from '../lib/useDragReorder';
@@ -223,6 +224,12 @@ function GearSection({
             />
             <button onClick={add}>{t('sheet.add')}</button>
           </div>
+          <ListImportExport
+            kind="gear"
+            items={items}
+            ownerName={character.name}
+            onChange={(next) => patch({ gear: next })}
+          />
         </>
       )}
     </section>
