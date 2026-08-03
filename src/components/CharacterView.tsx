@@ -8,6 +8,7 @@ import { useWide } from '../lib/useWide';
 import { useLang } from '../lib/useLang';
 import { exportCharacterFile } from '../lib/exportCharacterFile';
 import { CharacterSheet } from './CharacterSheet';
+import { IconBack, IconCheck, IconEdit, IconExport } from './icons';
 import { CharacterGearPage } from './CharacterGearPage';
 import { CharacterSpellsPage } from './CharacterSpellsPage';
 import { CharacterTricksPage } from './CharacterTricksPage';
@@ -60,17 +61,17 @@ export function CharacterView() {
     <div className="character-view">
       <div className="toolbar">
         <Link to="/" className="back-link">
-          ← {t('sheet.back')}
+          <IconBack /> {t('sheet.back')}
         </Link>
         <div className="toolbar-actions">
           <button onClick={() => exportCharacterFile(active, lang)}>
-            📤 {t('characters.export')}
+            <IconExport /> {t('characters.export')}
           </button>
           <button
             className={editing ? 'primary' : ''}
             onClick={() => setEditing(!editing)}
           >
-            {editing ? `✓ ${t('sheet.done')}` : `✏️ ${t('sheet.edit')}`}
+            {editing ? <><IconCheck /> {t('sheet.done')}</> : <><IconEdit /> {t('sheet.edit')}</>}
           </button>
         </div>
       </div>

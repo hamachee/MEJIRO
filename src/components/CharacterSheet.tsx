@@ -13,6 +13,7 @@ import {
 import type { L10n as L10nLabel, Stat, SystemTemplate } from '../types/template';
 import { ResourceTracker } from './ResourceTracker';
 import { FieldLabel } from './FieldLabel';
+import { IconClose, IconEdit, IconLink } from './icons';
 import { uid } from '../lib/uid';
 import { attributesByCategory } from '../templates';
 import { useDragReorder } from '../lib/useDragReorder';
@@ -228,7 +229,7 @@ function IdentityCard({
                 title={t('sheet.externalSheet')}
                 aria-label={t('sheet.externalSheet')}
               >
-                🔗
+                <IconLink />
               </a>
             )}
           </h1>
@@ -680,10 +681,10 @@ function RatedItemRow({
               aria-label={`edit ${item.name}`}
               onClick={() => setOpen(true)}
             >
-              ✏️
+              <IconEdit />
             </button>
             <button className="chip ghost" aria-label={`remove ${item.name}`} onClick={onRemove}>
-              ✕
+              <IconClose />
             </button>
           </div>
         )}
@@ -779,7 +780,7 @@ function ConditionsCard({ character }: { character: Character }) {
                 patch({ conditions: conditions.filter((x) => x.id !== c.id) })
               }
             >
-              ✕
+              <IconClose />
             </button>
           </span>
         ))}

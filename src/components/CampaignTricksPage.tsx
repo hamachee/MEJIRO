@@ -4,6 +4,7 @@ import { useCampaignStore } from '../store/campaignStore';
 import { uid } from '../lib/uid';
 import { useDragReorder } from '../lib/useDragReorder';
 import { FieldLabel } from './FieldLabel';
+import { IconCheck, IconClose, IconEdit } from './icons';
 import { TrickInfo } from './TrickInfo';
 import type { Campaign } from '../types/campaign';
 
@@ -47,7 +48,7 @@ export function CampaignTricksPage({ campaign }: { campaign: Campaign }) {
             <FieldLabel i18nKey="tricks.title" en="Tricks" />
           </h2>
           <button className={editing ? 'primary' : ''} onClick={() => setEditing((v) => !v)}>
-            {editing ? `✓ ${t('sheet.done')}` : `✏️ ${t('sheet.edit')}`}
+            {editing ? <><IconCheck /> {t('sheet.done')}</> : <><IconEdit /> {t('sheet.edit')}</>}
           </button>
         </div>
         <p className="muted hint">{t('tricks.manageHint')}</p>
@@ -74,7 +75,7 @@ export function CampaignTricksPage({ campaign }: { campaign: Campaign }) {
                       aria-label={`remove ${tr.name}`}
                       onClick={() => patch({ tricks: tricks.filter((x) => x.id !== tr.id) })}
                     >
-                      ✕
+                      <IconClose />
                     </button>
                   )}
                 </div>

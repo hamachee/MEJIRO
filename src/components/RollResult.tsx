@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useRollStore, effectiveTotals } from '../store/rollStore';
 import { hasCurseHit } from '../engine/roll';
+import { IconWarning } from './icons';
 
 export function RollResult() {
   const { t } = useTranslation();
@@ -69,11 +70,11 @@ export function RollResult() {
           <span className="ok">{t('result.posted')}</span>
         )}
         {postStatus === 'noWebhook' && (
-          <span className="danger-text">⚠ {t('result.noWebhook')}</span>
+          <span className="danger-text"><IconWarning /> {t('result.noWebhook')}</span>
         )}
         {postStatus === 'error' && (
           <span className="danger-text">
-            ⚠ {t('result.postError', { message: postError })}
+            <IconWarning /> {t('result.postError', { message: postError })}
           </span>
         )}
       </div>

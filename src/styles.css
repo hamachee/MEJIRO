@@ -287,6 +287,12 @@ select:focus {
   outline-offset: 0;
 }
 
+/* Inline SVG icons (src/components/icons.tsx): size with the surrounding
+   text and sit on its baseline like the emoji glyphs they replaced. */
+.icon {
+  vertical-align: -0.125em;
+}
+
 button {
   cursor: pointer;
   background: var(--card-2);

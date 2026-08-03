@@ -7,6 +7,7 @@ import { parseTags } from '../lib/tags';
 import { desperationPool, type AdversaryInstance, type AdversaryStats } from '../types/campaign';
 import type { Campaign } from '../types/campaign';
 import { FieldLabel } from './FieldLabel';
+import { IconCheck, IconEdit } from './icons';
 import { AdversaryCard } from './AdversaryCard';
 
 /** Shorten a free-text field for the summary line; full text lives in the edit form. */
@@ -259,7 +260,7 @@ function CampaignSettingsCard({ campaign }: { campaign: Campaign }) {
         <div className="item-card-head">
           <h1 className="grow">{campaign.name}</h1>
           <button className="chip ghost" aria-label={t('sheet.edit')} onClick={() => setEditing(true)}>
-            ✏️
+            <IconEdit />
           </button>
         </div>
         {customPoolControl}
@@ -275,7 +276,7 @@ function CampaignSettingsCard({ campaign }: { campaign: Campaign }) {
           <input defaultValue={campaign.name} onBlur={(e) => rename(e.target.value)} />
         </label>
         <button className="chip ghost" aria-label={t('sheet.done')} onClick={() => setEditing(false)}>
-          ✓
+          <IconCheck />
         </button>
       </div>
       {customPoolControl}
