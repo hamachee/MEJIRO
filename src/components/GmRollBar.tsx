@@ -90,7 +90,6 @@ export function GmRollBar({ campaign }: Props) {
               instanceLabel: instance.label,
               poolLabel,
               poolRating,
-              enhancement: template.stats.enhancement,
             })
           }
         >

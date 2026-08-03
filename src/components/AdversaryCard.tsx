@@ -38,6 +38,17 @@ function StatLine({ label, value }: { label: ReactNode; value: number }) {
   );
 }
 
+/** A label/free-text pair, hidden when the text is empty. */
+function TextLine({ label, text }: { label: ReactNode; text: string }) {
+  if (!text.trim()) return null;
+  return (
+    <div className="curse-line">
+      <span className="field-label">{label}</span>
+      <span className="stat-value">{text}</span>
+    </div>
+  );
+}
+
 interface Props {
   campaign: Campaign;
   instance: AdversaryInstance;
@@ -142,7 +153,7 @@ export function AdversaryCard({ campaign, instance, onChange, onRemove }: Props)
         />
       </div>
 
-      <StatLine label={<FieldLabel i18nKey="gm.enhancement" en="Enhancement" />} value={stats.enhancement} />
+      <TextLine label={<FieldLabel i18nKey="gm.enhancement" en="Enhancement" />} text={stats.enhancement} />
       <StatLine label={<FieldLabel i18nKey="gm.defense" en="Defense" />} value={stats.defense} />
       <StatLine label={<FieldLabel i18nKey="gm.integrity" en="Integrity" />} value={stats.integrity} />
 

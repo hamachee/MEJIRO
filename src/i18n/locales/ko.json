@@ -133,6 +133,7 @@
     "secondaryPool": "부능력",
     "desperationPool": "그 외",
     "enhancement": "강화",
+    "enhancementPlaceholder": "예: 2 — 자동 적용 안 됨, 굴림 후 직접 더하세요",
     "defense": "방어력",
     "integrity": "강단",
     "injuryBoxes": "부상 박스 수",

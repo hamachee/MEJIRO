@@ -11,7 +11,12 @@ import type { CharacterTrick } from './character';
 export interface AdversaryStats {
   primaryPool: number;
   secondaryPool: number;
-  enhancement: number;
+  /**
+   * Free-text reference note — nothing applies this automatically. Like a
+   * character's Enhancement, it's added by hand after the dice are seen,
+   * so it isn't a plain number plugged into the roll.
+   */
+  enhancement: string;
   defense: number;
   integrity: number;
   /** The injury track's box count — set independently of Defense/Integrity. */
@@ -35,7 +40,7 @@ export function blankAdversaryStats(): AdversaryStats {
   return {
     primaryPool: 0,
     secondaryPool: 0,
-    enhancement: 0,
+    enhancement: '',
     defense: 0,
     integrity: 0,
     injuryBoxes: 0,
