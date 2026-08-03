@@ -7,16 +7,11 @@ import { FieldLabel } from './FieldLabel';
 import { TrickInfo } from './TrickInfo';
 import type { Campaign } from '../types/campaign';
 
-/** Tricks tab: the GM's own trick list, editable in edit mode. */
-export function CampaignTricksPage({
-  campaign,
-  editing,
-}: {
-  campaign: Campaign;
-  editing: boolean;
-}) {
+/** Tricks tab: the GM's own trick list, editable via its own edit toggle. */
+export function CampaignTricksPage({ campaign }: { campaign: Campaign }) {
   const { t } = useTranslation();
   const patch = useCampaignStore((s) => s.patch);
+  const [editing, setEditing] = useState(false);
   const [name, setName] = useState('');
   // Held as a string so clearing the field doesn't snap to a sticky "0".
   const [cost, setCost] = useState('1');
@@ -47,9 +42,14 @@ export function CampaignTricksPage({
   return (
     <div className="stack">
       <section className="card">
-        <h2>
-          <FieldLabel i18nKey="tricks.title" en="Tricks" />
-        </h2>
+        <div className="item-card-head">
+          <h2 className="grow">
+            <FieldLabel i18nKey="tricks.title" en="Tricks" />
+          </h2>
+          <button className={editing ? 'primary' : ''} onClick={() => setEditing((v) => !v)}>
+            {editing ? `✓ ${t('sheet.done')}` : `✏️ ${t('sheet.edit')}`}
+          </button>
+        </div>
         <p className="muted hint">{t('tricks.manageHint')}</p>
         <ul className="named-list">
           {tricks.map((tr, i) => {

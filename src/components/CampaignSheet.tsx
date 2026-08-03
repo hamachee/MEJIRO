@@ -4,7 +4,7 @@ import { useCampaignStore } from '../store/campaignStore';
 import { useGmRollStore } from '../store/gmRollStore';
 import { uid } from '../lib/uid';
 import { parseTags } from '../lib/tags';
-import { desperationPool, type AdversaryStats } from '../types/campaign';
+import { desperationPool, type AdversaryInstance, type AdversaryStats } from '../types/campaign';
 import type { Campaign } from '../types/campaign';
 import { FieldLabel } from './FieldLabel';
 import { AdversaryCard } from './AdversaryCard';
@@ -164,6 +164,19 @@ function CustomPoolControl({
   );
 }
 
+/**
+ * A unique instance label derived from `baseName`: the bare name if it's
+ * free, otherwise "`baseName` #N" for the next free N. Used both when
+ * dropping a template onto the table and when duplicating a deployed card
+ * (stats are copied, not linked, so uniqueness is by label prefix).
+ */
+function nextInstanceLabel(baseName: string, instances: AdversaryInstance[]): string {
+  const count = instances.filter(
+    (i) => i.label === baseName || i.label.startsWith(`${baseName} #`),
+  ).length;
+  return count === 0 ? baseName : `${baseName} #${count + 1}`;
+}
+
 function AddInstanceRow({ campaign }: { campaign: Campaign }) {
   const { t } = useTranslation();
   const patch = useCampaignStore((s) => s.patch);
@@ -174,11 +187,7 @@ function AddInstanceRow({ campaign }: { campaign: Campaign }) {
   const add = () => {
     const template = templates.find((tpl) => tpl.id === templateId);
     if (!template) return;
-    // Stats are copied now, not linked — count by label prefix instead of a template id.
-    const count = instances.filter(
-      (i) => i.label === template.name || i.label.startsWith(`${template.name} #`),
-    ).length;
-    const label = count === 0 ? template.name : `${template.name} #${count + 1}`;
+    const label = nextInstanceLabel(template.name, instances);
     patch({
       instances: [
         ...instances,
@@ -225,13 +234,15 @@ function AddInstanceRow({ campaign }: { campaign: Campaign }) {
   );
 }
 
-function CampaignSettingsCard({ campaign, editing }: { campaign: Campaign; editing: boolean }) {
+/** Campaign name + free-roll pool + Discord webhook. Manages its own edit toggle, since the name may only be changed while it's open. */
+function CampaignSettingsCard({ campaign }: { campaign: Campaign }) {
   const { t } = useTranslation();
   const rename = useCampaignStore((s) => s.rename);
   const patch = useCampaignStore((s) => s.patch);
   const selectedInstanceId = useGmRollStore((s) => s.selectedInstanceId);
   const selectedPool = useGmRollStore((s) => s.selectedPool);
   const select = useGmRollStore((s) => s.select);
+  const [editing, setEditing] = useState(false);
 
   const customPoolControl = (
     <CustomPoolControl
@@ -245,7 +256,12 @@ function CampaignSettingsCard({ campaign, editing }: { campaign: Campaign; editi
   if (!editing) {
     return (
       <section className="card identity">
-        <h1>{campaign.name}</h1>
+        <div className="item-card-head">
+          <h1 className="grow">{campaign.name}</h1>
+          <button className="chip ghost" aria-label={t('sheet.edit')} onClick={() => setEditing(true)}>
+            ✏️
+          </button>
+        </div>
         {customPoolControl}
       </section>
     );
@@ -258,6 +274,9 @@ function CampaignSettingsCard({ campaign, editing }: { campaign: Campaign; editi
           <span className="field-label">{t('sheet.rename')}</span>
           <input defaultValue={campaign.name} onBlur={(e) => rename(e.target.value)} />
         </label>
+        <button className="chip ghost" aria-label={t('sheet.done')} onClick={() => setEditing(false)}>
+          ✓
+        </button>
       </div>
       {customPoolControl}
       <div className="form-row">
@@ -277,17 +296,16 @@ function CampaignSettingsCard({ campaign, editing }: { campaign: Campaign; editi
 
 interface Props {
   campaign: Campaign;
-  editing: boolean;
 }
 
-export function CampaignSheet({ campaign, editing }: Props) {
+export function CampaignSheet({ campaign }: Props) {
   const { t } = useTranslation();
   const patch = useCampaignStore((s) => s.patch);
   const { instances } = campaign;
 
   return (
     <div className="stack">
-      <CampaignSettingsCard campaign={campaign} editing={editing} />
+      <CampaignSettingsCard campaign={campaign} />
       <AddInstanceRow campaign={campaign} />
       {instances.length === 0 ? (
         <p className="muted">{t('gm.noAdversaries')}</p>
@@ -297,11 +315,27 @@ export function CampaignSheet({ campaign, editing }: Props) {
             <AdversaryCard
               key={instance.id}
               instance={instance}
-              editing={editing}
               onChange={(updated) =>
                 patch({ instances: instances.map((x) => (x.id === updated.id ? updated : x)) })
               }
               onRemove={() => patch({ instances: instances.filter((x) => x.id !== instance.id) })}
+              onDuplicate={() => {
+                const baseName = instance.label.replace(/ #\d+$/, '');
+                patch({
+                  instances: [
+                    ...instances,
+                    {
+                      id: uid(),
+                      label: nextInstanceLabel(baseName, instances),
+                      stats: { ...instance.stats },
+                      memo: '',
+                      conditions: [],
+                      marked: 0,
+                      takenOut: false,
+                    },
+                  ],
+                });
+              }}
             />
           ))}
         </div>
