@@ -20,31 +20,55 @@ function truncate(s: string, max = 24): string {
   return trimmed.length > max ? `${trimmed.slice(0, max)}…` : trimmed;
 }
 
-/** A full "Primary 5 · Integrity 3 · …" summary line — every non-zero/non-empty field. */
+/**
+ * A multi-line summary for a template row — grouped and ordered for
+ * scanning: pools together, Enhancement on its own line (it's a note, not
+ * a number), Defense/Integrity together, then Armor and the free-text
+ * fields each on their own line. Rendered with `white-space: pre-wrap`, so
+ * the "\n" joins below become real line breaks.
+ */
 function statSummary(stats: AdversaryStats, t: (key: string) => string): string {
   const armorTags = stats.hasArmor ? parseTags(stats.armorTags) : [];
-  const armorPart =
-    stats.hasArmor && (stats.armorRating > 0 || armorTags.length > 0)
-      ? `${t('gm.armor')}${stats.armorRating > 0 ? ` ${stats.armorRating}` : ''}${
-          armorTags.length > 0 ? ` (${armorTags.join(', ')})` : ''
-        }`
-      : null;
-  const parts = [
+
+  const poolsLine = [
     stats.primaryPool > 0 ? `${t('gm.primaryPool')} ${stats.primaryPool}` : null,
     stats.secondaryPool > 0 ? `${t('gm.secondaryPool')} ${stats.secondaryPool}` : null,
     desperationPool(stats.primaryPool) > 0
       ? `${t('gm.desperationPool')} ${desperationPool(stats.primaryPool)}`
       : null,
-    stats.enhancement.trim() ? `${t('gm.enhancement')} ${truncate(stats.enhancement)}` : null,
+  ]
+    .filter(Boolean)
+    .join(' · ');
+
+  const survivalLine = [
     stats.defense > 0 ? `${t('gm.defense')} ${stats.defense}` : null,
     stats.integrity > 0 ? `${t('gm.integrity')} ${stats.integrity}` : null,
     stats.injuryBoxes > 0 ? `${t('gm.injuryBoxes')} ${stats.injuryBoxes}` : null,
-    armorPart,
-    stats.qualities.trim() ? `${t('gm.qualities')} ${truncate(stats.qualities)}` : null,
-    stats.dreadPower.trim() ? `${t('gm.dreadPower')} ${truncate(stats.dreadPower)}` : null,
-    stats.special.trim() ? `${t('gm.special')} ${truncate(stats.special)}` : null,
-  ].filter(Boolean);
-  return parts.join(' · ') || '—';
+  ]
+    .filter(Boolean)
+    .join(' · ');
+
+  const armorLine =
+    stats.hasArmor && (stats.armorRating > 0 || armorTags.length > 0)
+      ? `${t('gm.armor')}: ${[
+          stats.armorRating > 0 ? stats.armorRating : null,
+          armorTags.length > 0 ? `(${armorTags.join(', ')})` : null,
+        ]
+          .filter(Boolean)
+          .join(' ')}`
+      : '';
+
+  const lines = [
+    poolsLine,
+    stats.enhancement.trim() ? `${t('gm.enhancement')}: ${truncate(stats.enhancement)}` : '',
+    survivalLine,
+    armorLine,
+    stats.qualities.trim() ? `${t('gm.qualities')}: ${truncate(stats.qualities)}` : '',
+    stats.dreadPower.trim() ? `${t('gm.dreadPower')}: ${truncate(stats.dreadPower)}` : '',
+    stats.special.trim() ? `${t('gm.special')}: ${truncate(stats.special)}` : '',
+  ].filter((line) => line.length > 0);
+
+  return lines.join('\n') || '—';
 }
 
 /** Shared form fields for creating or editing an adversary template. */
