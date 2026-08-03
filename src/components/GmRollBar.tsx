@@ -3,7 +3,6 @@ import { useCampaignStore } from '../store/campaignStore';
 import { useGmRollStore } from '../store/gmRollStore';
 import { desperationPool, type Campaign } from '../types/campaign';
 import { Stepper } from './Stepper';
-import { IconDice } from './icons';
 
 const BONUS_DICE_OPTIONS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -106,7 +105,7 @@ export function GmRollBar({ campaign }: Props) {
             })
           }
         >
-          <IconDice /> {t('roller.roll')}
+          🎲 {t('roller.roll')}
         </button>
       </div>
     </div>

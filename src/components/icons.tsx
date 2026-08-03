@@ -88,20 +88,6 @@ export function IconExport(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-/** 🎲 — dice roll */
-export function IconDice(props: SVGProps<SVGSVGElement>) {
-  return (
-    <Icon {...props}>
-      <rect x="3" y="3" width="18" height="18" rx="3" />
-      <circle cx="8.25" cy="8.25" r="0.75" fill="currentColor" stroke="none" />
-      <circle cx="15.75" cy="8.25" r="0.75" fill="currentColor" stroke="none" />
-      <circle cx="12" cy="12" r="0.75" fill="currentColor" stroke="none" />
-      <circle cx="8.25" cy="15.75" r="0.75" fill="currentColor" stroke="none" />
-      <circle cx="15.75" cy="15.75" r="0.75" fill="currentColor" stroke="none" />
-    </Icon>
-  );
-}
-
 const STAR_POINTS =
   'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z';
 

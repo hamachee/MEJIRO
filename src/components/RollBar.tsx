@@ -7,7 +7,6 @@ import { attributesByCategory } from '../templates';
 import type { Character } from '../types/character';
 import type { SystemTemplate } from '../types/template';
 import { Stepper } from './Stepper';
-import { IconDice } from './icons';
 
 const BONUS_DICE_OPTIONS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -118,7 +117,7 @@ export function RollBar({ character, template }: Props) {
           disabled={!canRoll}
           onClick={() => performRoll(template, character)}
         >
-          <IconDice /> {t('roller.roll')}
+          🎲 {t('roller.roll')}
         </button>
       </div>
     </div>
