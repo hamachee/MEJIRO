@@ -124,6 +124,59 @@ export function buildRollEmbed(
   };
 }
 
+/** Context for an adversary roll embed — no attribute/skill lookup, just a pool label. */
+export interface AdversaryRollContext {
+  webhookUrl: string;
+  lang: string;
+  instanceLabel: string;
+  poolLabel: string;
+}
+
+/** Build the roll-result embed for an adversary (GM page) roll. */
+export function buildAdversaryRollEmbed(
+  request: RollRequest,
+  result: RollResult,
+  ctx: AdversaryRollContext,
+) {
+  const { lang } = ctx;
+  const poolParts = [
+    `${ctx.poolLabel} ${request.skillRating}`,
+    request.bonusDice > 0 ? `${s(lang, 'bonusDice')} +${request.bonusDice}` : null,
+    request.enhancement > 0
+      ? `${s(lang, 'enhancement')} +${request.enhancement}`
+      : null,
+  ].filter(Boolean);
+
+  const curseHit = hasCurseHit(result);
+  const outcome = result.botched
+    ? s(lang, 'botch')
+    : result.passed
+      ? s(lang, curseHit ? 'wicked' : 'success')
+      : s(lang, curseHit ? 'cruel' : 'failure');
+
+  const poolLine = `${poolParts.join(' + ') || '—'}\n${formatDice(result) || '—'}`;
+  const hitsLine = `${hitsLabel(lang, result.totalSuccesses)} vs ${s(lang, 'difficulty')} ${result.difficulty} = *${outcome}*`;
+
+  return {
+    embeds: [
+      {
+        title: ctx.instanceLabel || undefined,
+        description: `${poolLine}\n${hitsLine}`,
+        color: result.botched ? 0x8a1a1a : result.passed ? THEME_COLOR : 0x555555,
+      },
+    ],
+  };
+}
+
+/** Post an adversary roll result to the campaign's Discord webhook. */
+export function postAdversaryRoll(
+  request: RollRequest,
+  result: RollResult,
+  ctx: AdversaryRollContext,
+): Promise<void> {
+  return post(ctx.webhookUrl, buildAdversaryRollEmbed(request, result, ctx));
+}
+
 /** What the player did with their extra hits after the roll. */
 export interface PurchaseSummary {
   tricks: CharacterTrick[];

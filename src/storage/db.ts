@@ -1,5 +1,6 @@
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
 import type { Character } from '../types/character';
+import type { Campaign } from '../types/campaign';
 import {
   DEFAULT_CUSTOM_THEME,
   type CustomTheme,
@@ -27,10 +28,15 @@ interface MejiroDB extends DBSchema {
     key: string;
     value: AppSettings;
   };
+  campaigns: {
+    key: string;
+    value: Campaign;
+    indexes: { 'by-updated': number };
+  };
 }
 
 const DB_NAME = 'mejiro';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 
 let dbPromise: Promise<IDBPDatabase<MejiroDB>> | null = null;
 
@@ -44,6 +50,10 @@ export function getDB(): Promise<IDBPDatabase<MejiroDB>> {
         }
         if (!db.objectStoreNames.contains('settings')) {
           db.createObjectStore('settings', { keyPath: 'id' });
+        }
+        if (!db.objectStoreNames.contains('campaigns')) {
+          const store = db.createObjectStore('campaigns', { keyPath: 'id' });
+          store.createIndex('by-updated', 'updatedAt');
         }
         // v2: the bundled Storypath Ultra template was replaced by Curseborne;
         // characters for templates that no longer exist are unusable — drop them.

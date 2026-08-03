@@ -1560,6 +1560,24 @@ button.fav-toggle:hover:not(:disabled) {
   font-size: 0.78rem;
   margin-top: 0.15rem;
 }
+/* Adversary mini stat block card (GM page): stacked sections with breathing room. */
+.adversary-card > * + * {
+  margin-top: 0.5rem;
+}
+.adversary-label {
+  font-weight: 600;
+}
+/* Pool buttons (1-3 of them): flex-wrap instead of skill-grid's fixed 4 columns,
+   which reserves empty column width when there are fewer than 4 items. */
+.adversary-pools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.6rem;
+}
+.adversary-pools .sheet-stat {
+  width: auto;
+  flex: 1 1 90px;
+}
 .tag-chips {
   display: flex;
   flex-wrap: wrap;
