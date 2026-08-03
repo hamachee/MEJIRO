@@ -102,6 +102,11 @@ export function Settings() {
               <div className="card">
                 <strong>{t('app.title')}</strong>
                 <p className="muted">{t('app.tagline')}</p>
+                <div className="dice-tray">
+                  <span className="die mini hit">8</span>
+                  <span className="die mini curse hit">10</span>
+                  <span className="die mini">3</span>
+                </div>
                 <div className="theme-preview-row">
                   <button type="button" className="primary">
                     {t('roller.roll')}

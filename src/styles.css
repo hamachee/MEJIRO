@@ -537,6 +537,11 @@ button.danger:hover:not(:disabled) {
 .die.exploded {
   box-shadow: 0 0 0 2px rgba(255, 200, 90, 0.5);
 }
+.die.mini {
+  width: 22px;
+  height: 22px;
+  font-size: 0.7rem;
+}
 
 .result-stats {
   display: flex;
@@ -767,6 +772,10 @@ button.danger:hover:not(:disabled) {
 .theme-preview .card {
   max-width: 220px;
   margin: 0;
+}
+.theme-preview .dice-tray {
+  margin: 0.5rem 0 0;
+  gap: 0.3rem;
 }
 .theme-preview-row {
   display: flex;
