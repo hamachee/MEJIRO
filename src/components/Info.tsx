@@ -11,7 +11,7 @@ export function Info() {
         <h1>{t('info.title')}</h1>
         <p className="muted hint">{t('info.intro')}</p>
         {FAQ_KEYS.map((key) => (
-          <div key={key}>
+          <div key={key} className="info-item">
             <h2>{t(`info.${key}.q`)}</h2>
             <p>{t(`info.${key}.a`)}</p>
           </div>

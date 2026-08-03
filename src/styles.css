@@ -165,6 +165,23 @@ body {
   font-size: 1.1rem;
 }
 
+/* Repeated Q&A blocks stacked inside a single card (Info page): tighter,
+   document-like spacing instead of the .card h2 heading gap meant for a
+   one-per-card section title. */
+.info-item {
+  margin-top: 1rem;
+}
+.info-item:first-child {
+  margin-top: 0;
+}
+.info-item h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+}
+.info-item p {
+  margin: 0;
+}
+
 /* Fold-able top-level cards (Skills, Attributes): a <details>/<summary>
    styled to match .card h2, so the native disclosure triangle doubles as
    the fold toggle — same pattern as the smaller sub-section folds, just
