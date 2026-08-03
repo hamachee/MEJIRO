@@ -57,26 +57,19 @@ export function GmRollResult({ campaign }: Props) {
         </div>
       </div>
 
+      {/* The manual button stays visible even with auto-post on: the GM may
+          want to re-send, or post a roll made before the webhook was set. */}
       <div className="post-status">
-        {campaign.autoPostToDiscord ? (
-          <>
-            {postStatus === 'posting' && <span className="muted">{t('result.posting')}</span>}
-            {postStatus === 'posted' && <span className="ok">{t('result.posted')}</span>}
-            {postStatus === 'error' && (
-              <span className="danger-text"><IconWarning /> {t('result.postError', { message: postError })}</span>
-            )}
-          </>
-        ) : (
-          <>
-            <button disabled={!hasWebhook || postStatus === 'posting'} onClick={() => postToDiscord(campaign)}>
-              <IconExport /> {t('gm.postToDiscord')}
-            </button>
-            {!hasWebhook && <span className="muted"> {t('gm.noWebhook')}</span>}
-            {postStatus === 'posted' && <span className="ok"> {t('result.posted')}</span>}
-            {postStatus === 'error' && (
-              <span className="danger-text"> <IconWarning /> {t('result.postError', { message: postError })}</span>
-            )}
-          </>
+        <button disabled={!hasWebhook || postStatus === 'posting'} onClick={() => postToDiscord(campaign)}>
+          <IconExport /> {t('gm.postToDiscord')}
+        </button>
+        {!hasWebhook && (
+          <span className="danger-text"> <IconWarning /> {t('gm.noWebhook')}</span>
+        )}
+        {postStatus === 'posting' && <span className="muted"> {t('result.posting')}</span>}
+        {postStatus === 'posted' && <span className="ok"> {t('result.posted')}</span>}
+        {postStatus === 'error' && (
+          <span className="danger-text"> <IconWarning /> {t('result.postError', { message: postError })}</span>
         )}
       </div>
     </section>
