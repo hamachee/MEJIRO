@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCampaignStore } from '../store/campaignStore';
 import { uid } from '../lib/uid';
+import { parseTags } from '../lib/tags';
 import {
   blankAdversaryStats,
   desperationPool,
@@ -13,13 +14,35 @@ import { Stepper } from './Stepper';
 import { FieldLabel } from './FieldLabel';
 import { AdversaryCard } from './AdversaryCard';
 
-/** A compact "Primary 5 · Integrity 3" style summary line for a template row. */
+/** Shorten a free-text field for the summary line; full text lives in the edit form. */
+function truncate(s: string, max = 24): string {
+  const trimmed = s.trim();
+  return trimmed.length > max ? `${trimmed.slice(0, max)}…` : trimmed;
+}
+
+/** A full "Primary 5 · Integrity 3 · …" summary line — every non-zero/non-empty field. */
 function statSummary(stats: AdversaryStats, t: (key: string) => string): string {
+  const armorTags = stats.hasArmor ? parseTags(stats.armorTags) : [];
+  const armorPart =
+    stats.hasArmor && (stats.armorRating > 0 || armorTags.length > 0)
+      ? `${t('gm.armor')}${stats.armorRating > 0 ? ` ${stats.armorRating}` : ''}${
+          armorTags.length > 0 ? ` (${armorTags.join(', ')})` : ''
+        }`
+      : null;
   const parts = [
     stats.primaryPool > 0 ? `${t('gm.primaryPool')} ${stats.primaryPool}` : null,
     stats.secondaryPool > 0 ? `${t('gm.secondaryPool')} ${stats.secondaryPool}` : null,
+    desperationPool(stats.primaryPool) > 0
+      ? `${t('gm.desperationPool')} ${desperationPool(stats.primaryPool)}`
+      : null,
+    stats.enhancement > 0 ? `${t('gm.enhancement')} ${stats.enhancement}` : null,
+    stats.defense > 0 ? `${t('gm.defense')} ${stats.defense}` : null,
     stats.integrity > 0 ? `${t('gm.integrity')} ${stats.integrity}` : null,
     stats.injuryBoxes > 0 ? `${t('gm.injuryBoxes')} ${stats.injuryBoxes}` : null,
+    armorPart,
+    stats.qualities.trim() ? `${t('gm.qualities')} ${truncate(stats.qualities)}` : null,
+    stats.dreadPower.trim() ? `${t('gm.dreadPower')} ${truncate(stats.dreadPower)}` : null,
+    stats.special.trim() ? `${t('gm.special')} ${truncate(stats.special)}` : null,
   ].filter(Boolean);
   return parts.join(' · ') || '—';
 }
@@ -47,11 +70,10 @@ function AdversaryTemplateForm({
   const save = () => {
     if (!name.trim()) return;
     onSave(name.trim(), stats);
-    if (!onCancel) {
-      // Adding a new template: clear the form for the next one.
-      setName('');
-      setStats(blankAdversaryStats());
-    }
+    // Always clear: an edit form unmounts right after (its caller closes it),
+    // and clearing lets the add-template form stay open for the next entry.
+    setName('');
+    setStats(blankAdversaryStats());
   };
 
   return (
@@ -184,14 +206,17 @@ function TemplateRow({
   editing,
   onSave,
   onRemove,
+  onDuplicate,
 }: {
   template: AdversaryTemplate;
   editing: boolean;
   onSave: (template: AdversaryTemplate) => void;
   onRemove: () => void;
+  onDuplicate: () => void;
 }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const [expanded, setExpanded] = useState(true);
 
   if (editing && open) {
     return (
@@ -213,9 +238,21 @@ function TemplateRow({
   return (
     <li className="named-item">
       <div className="named-item-row">
+        <button
+          type="button"
+          className="chip ghost"
+          aria-expanded={expanded}
+          aria-label={expanded ? `collapse ${template.name}` : `expand ${template.name}`}
+          onClick={() => setExpanded((v) => !v)}
+        >
+          <span className="chevron">{expanded ? '▾' : '▸'}</span>
+        </button>
         <span className="named-name">{template.name}</span>
         {editing && (
           <div className="item-card-actions">
+            <button className="chip ghost" aria-label={`duplicate ${template.name}`} onClick={onDuplicate}>
+              📋
+            </button>
             <button className="chip ghost" aria-label={`edit ${template.name}`} onClick={() => setOpen(true)}>
               ✏️
             </button>
@@ -225,7 +262,9 @@ function TemplateRow({
           </div>
         )}
       </div>
-      <p className="muted item-card-desc named-item-note">{statSummary(template.stats, t)}</p>
+      {expanded && (
+        <p className="muted item-card-desc named-item-note">{statSummary(template.stats, t)}</p>
+      )}
     </li>
   );
 }
@@ -234,10 +273,27 @@ function AdversaryTemplatesCard({ campaign, editing }: { campaign: Campaign; edi
   const { t } = useTranslation();
   const patch = useCampaignStore((s) => s.patch);
   const { templates } = campaign;
+  const [adding, setAdding] = useState(false);
 
   return (
     <section className="card">
       <h2>{t('gm.templates')}</h2>
+      {editing && (
+        <div className="form-row">
+          <button className="primary" onClick={() => setAdding((v) => !v)}>
+            {adding ? `✕ ${t('common.cancel')}` : `+ ${t('gm.addTemplate')}`}
+          </button>
+        </div>
+      )}
+      {editing && adding && (
+        <AdversaryTemplateForm
+          saveLabel={t('gm.addTemplate')}
+          onCancel={() => setAdding(false)}
+          onSave={(name, stats) =>
+            patch({ templates: [...templates, { id: uid(), name, stats }] })
+          }
+        />
+      )}
       {templates.length === 0 && <p className="muted">{t('gm.noTemplates')}</p>}
       <ul className="named-list">
         {templates.map((tpl) => (
@@ -252,20 +308,17 @@ function AdversaryTemplatesCard({ campaign, editing }: { campaign: Campaign; edi
               if (!confirm(t('gm.confirmDeleteTemplate'))) return;
               patch({ templates: templates.filter((x) => x.id !== tpl.id) });
             }}
+            onDuplicate={() =>
+              patch({
+                templates: [
+                  ...templates,
+                  { id: uid(), name: `${tpl.name}${t('gm.copySuffix')}`, stats: { ...tpl.stats } },
+                ],
+              })
+            }
           />
         ))}
       </ul>
-      {editing && (
-        <details className="fold">
-          <summary>{t('gm.addTemplate')}</summary>
-          <AdversaryTemplateForm
-            saveLabel={t('gm.addTemplate')}
-            onSave={(name, stats) =>
-              patch({ templates: [...templates, { id: uid(), name, stats }] })
-            }
-          />
-        </details>
-      )}
     </section>
   );
 }
@@ -375,9 +428,9 @@ export function CampaignSheet({ campaign, editing }: Props) {
     <div className="stack">
       <CampaignSettingsCard campaign={campaign} editing={editing} />
       <AdversaryTemplatesCard campaign={campaign} editing={editing} />
-      <AddInstanceRow campaign={campaign} />
 
-      {/* Deployed stat-block cards clutter template authoring, so they're hidden while editing. */}
+      {/* Deploying/viewing stat-block cards clutters template authoring, so both are hidden while editing. */}
+      {!editing && <AddInstanceRow campaign={campaign} />}
       {!editing &&
         (instances.length === 0 ? (
           <p className="muted">{t('gm.noAdversaries')}</p>

@@ -149,6 +149,7 @@
     "noAdversaries": "No adversaries on the table yet — add one from a template above.",
     "templateMissing": "Template deleted — this card has no linked stats.",
     "noTricks": "No tricks in this campaign yet. Add them on the Tricks tab.",
+    "copySuffix": " (Copy)",
     "webhook": "Discord webhook URL",
     "autoPostToDiscord": "Post rolls to Discord automatically",
     "postToDiscord": "Post to Discord",

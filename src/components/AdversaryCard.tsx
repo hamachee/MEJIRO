@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useLayoutEffect, useRef, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGmRollStore, type AdversaryPool } from '../store/gmRollStore';
 import { parseTags } from '../lib/tags';
@@ -45,11 +45,21 @@ interface Props {
   onRemove: () => void;
 }
 
+/** Grow a textarea's height to fit its content, no scrollbar or manual resize needed. */
+function autoGrow(el: HTMLTextAreaElement | null) {
+  if (!el) return;
+  el.style.height = 'auto';
+  el.style.height = `${el.scrollHeight}px`;
+}
+
 export function AdversaryCard({ campaign, instance, onChange, onRemove }: Props) {
   const { t } = useTranslation();
   const selectedInstanceId = useGmRollStore((s) => s.selectedInstanceId);
   const selectedPool = useGmRollStore((s) => s.selectedPool);
   const select = useGmRollStore((s) => s.select);
+  const memoRef = useRef<HTMLTextAreaElement>(null);
+  // Size to the loaded memo on mount; typing after that is handled by onInput.
+  useLayoutEffect(() => autoGrow(memoRef.current), [instance.memo]);
 
   const template = campaign.templates.find((tpl) => tpl.id === instance.templateId);
 
@@ -157,10 +167,13 @@ export function AdversaryCard({ campaign, instance, onChange, onRemove }: Props)
         </details>
       )}
 
-      <input
-        className="grow"
+      <textarea
+        ref={memoRef}
+        className="grow adversary-memo"
+        rows={1}
         placeholder={t('gm.memoPlaceholder')}
         defaultValue={instance.memo}
+        onInput={(e) => autoGrow(e.currentTarget)}
         onBlur={(e) => onChange({ ...instance, memo: e.target.value })}
       />
 

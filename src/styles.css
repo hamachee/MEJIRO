@@ -1578,6 +1578,13 @@ button.fav-toggle:hover:not(:disabled) {
   width: auto;
   flex: 1 1 90px;
 }
+/* Memo grows to fit its content (sized in JS via scrollHeight) — no manual
+   resize handle or scrollbar needed. */
+.adversary-memo {
+  resize: none;
+  overflow: hidden;
+  min-height: 2.4rem;
+}
 .tag-chips {
   display: flex;
   flex-wrap: wrap;
