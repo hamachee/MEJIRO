@@ -1577,6 +1577,13 @@ button.fav-toggle:hover:not(:disabled) {
 .adversary-pools .sheet-stat {
   width: auto;
   flex: 1 1 90px;
+  /* A visible border/fill at rest, not just on hover/select, so these
+     clearly read as buttons rather than plain stat readouts. */
+  border-color: var(--border);
+  background: var(--card-2);
+}
+.adversary-pools button.sheet-stat:hover:not(.selected) {
+  border-color: var(--accent);
 }
 /* Memo grows to fit its content (sized in JS via scrollHeight) — no manual
    resize handle or scrollbar needed. */
@@ -1584,6 +1591,34 @@ button.fav-toggle:hover:not(:disabled) {
   resize: none;
   overflow: hidden;
   min-height: 2.4rem;
+}
+/* Free-roll pool control: same button affordance as the pool buttons above,
+   but wraps a live +/- stepper instead of a fixed rating. */
+.custom-pool {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--card-2);
+  cursor: pointer;
+}
+.custom-pool:hover {
+  border-color: var(--accent);
+}
+.custom-pool.selected {
+  background: var(--accent-2);
+  border-color: var(--accent);
+}
+.custom-pool.selected .field-label {
+  color: var(--on-accent);
+}
+.custom-pool .exp-value {
+  width: 2.6rem;
+  padding: 0.15rem 0.2rem;
+  font-size: 1rem;
 }
 .tag-chips {
   display: flex;

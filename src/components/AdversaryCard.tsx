@@ -1,8 +1,9 @@
-import { useLayoutEffect, useRef, type ReactNode } from 'react';
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGmRollStore, type AdversaryPool } from '../store/gmRollStore';
 import { parseTags } from '../lib/tags';
-import { desperationPool, type AdversaryInstance, type Campaign } from '../types/campaign';
+import { uid } from '../lib/uid';
+import { desperationPool, type AdversaryInstance } from '../types/campaign';
 import { FieldLabel } from './FieldLabel';
 import { TagChips } from './TagChips';
 
@@ -49,8 +50,101 @@ function TextLine({ label, text }: { label: ReactNode; text: string }) {
   );
 }
 
+/**
+ * An always-visible free dice pool for one-off rolls that don't fit the
+ * card's regular pools — a numeric value with +/- steppers (click) and a
+ * double-click-to-type field, same interaction as the sheet's EXP tracker.
+ * The whole control doubles as a selectable button for the roll bar; the
+ * inner stepper/value controls stop the click from also toggling selection.
+ */
+function CustomPoolControl({
+  value,
+  selected,
+  onSelect,
+  onChange,
+}: {
+  value: number;
+  selected: boolean;
+  onSelect: () => void;
+  onChange: (n: number) => void;
+}) {
+  const { t } = useTranslation();
+  const [draft, setDraft] = useState<string | null>(null);
+
+  const setValue = (n: number) => onChange(Math.max(0, n));
+  const startEditing = () => setDraft(String(value));
+  const commit = () => {
+    if (draft !== null) {
+      const n = Number(draft);
+      if (!Number.isNaN(n)) setValue(n);
+    }
+    setDraft(null);
+  };
+
+  return (
+    <div
+      className={`custom-pool ${selected ? 'selected' : ''}`}
+      role="button"
+      tabIndex={0}
+      aria-pressed={selected}
+      onClick={onSelect}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onSelect();
+        }
+      }}
+    >
+      <span className="field-label">
+        <FieldLabel i18nKey="gm.customPool" en="Free roll" />
+      </span>
+      <div className="curse-controls" onClick={(e) => e.stopPropagation()}>
+        <button aria-label={`− ${t('gm.customPool')}`} disabled={value <= 0} onClick={() => setValue(value - 1)}>
+          −
+        </button>
+        {draft !== null ? (
+          <input
+            type="number"
+            className="exp-value"
+            inputMode="numeric"
+            min={0}
+            autoFocus
+            aria-label={t('gm.customPool')}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onFocus={(e) => e.target.select()}
+            onBlur={commit}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') commit();
+              else if (e.key === 'Escape') setDraft(null);
+            }}
+          />
+        ) : (
+          <span
+            className="exp-value"
+            role="button"
+            tabIndex={0}
+            aria-label={t('gm.customPool')}
+            onDoubleClick={startEditing}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                startEditing();
+              }
+            }}
+          >
+            {value}
+          </span>
+        )}
+        <button aria-label={`+ ${t('gm.customPool')}`} onClick={() => setValue(value + 1)}>
+          +
+        </button>
+      </div>
+    </div>
+  );
+}
+
 interface Props {
-  campaign: Campaign;
   instance: AdversaryInstance;
   onChange: (updated: AdversaryInstance) => void;
   onRemove: () => void;
@@ -63,7 +157,7 @@ function autoGrow(el: HTMLTextAreaElement | null) {
   el.style.height = `${el.scrollHeight}px`;
 }
 
-export function AdversaryCard({ campaign, instance, onChange, onRemove }: Props) {
+export function AdversaryCard({ instance, onChange, onRemove }: Props) {
   const { t } = useTranslation();
   const selectedInstanceId = useGmRollStore((s) => s.selectedInstanceId);
   const selectedPool = useGmRollStore((s) => s.selectedPool);
@@ -71,24 +165,9 @@ export function AdversaryCard({ campaign, instance, onChange, onRemove }: Props)
   const memoRef = useRef<HTMLTextAreaElement>(null);
   // Size to the loaded memo on mount; typing after that is handled by onInput.
   useLayoutEffect(() => autoGrow(memoRef.current), [instance.memo]);
+  const [conditionName, setConditionName] = useState('');
 
-  const template = campaign.templates.find((tpl) => tpl.id === instance.templateId);
-
-  if (!template) {
-    return (
-      <div className="item-card">
-        <div className="item-card-head">
-          <strong className="item-card-name">{instance.label}</strong>
-          <button className="chip ghost" aria-label={`remove ${instance.label}`} onClick={onRemove}>
-            ✕
-          </button>
-        </div>
-        <p className="muted item-card-desc">{t('gm.templateMissing')}</p>
-      </div>
-    );
-  }
-
-  const { stats } = template;
+  const { stats } = instance;
   const boxes = Math.max(0, stats.injuryBoxes);
   const marked = Math.min(instance.marked, boxes);
   const armorTags = stats.hasArmor ? parseTags(stats.armorTags) : [];
@@ -105,6 +184,15 @@ export function AdversaryCard({ campaign, instance, onChange, onRemove }: Props)
     selectedInstanceId === instance.id && selectedPool === pool;
 
   const setMarked = (n: number) => onChange({ ...instance, marked: Math.max(0, Math.min(n, boxes)) });
+
+  const addCondition = () => {
+    if (!conditionName.trim()) return;
+    onChange({
+      ...instance,
+      conditions: [...instance.conditions, { id: uid(), name: conditionName.trim() }],
+    });
+    setConditionName('');
+  };
 
   const box = (absIndex: number) => {
     const isMarked = absIndex < marked;
@@ -131,6 +219,13 @@ export function AdversaryCard({ campaign, instance, onChange, onRemove }: Props)
           ✕
         </button>
       </div>
+
+      <CustomPoolControl
+        value={instance.customPool}
+        selected={isSelected('custom')}
+        onSelect={() => select(instance.id, 'custom')}
+        onChange={(n) => onChange({ ...instance, customPool: n })}
+      />
 
       <div className="adversary-pools">
         <PoolButton
@@ -177,6 +272,36 @@ export function AdversaryCard({ campaign, instance, onChange, onRemove }: Props)
           ))}
         </details>
       )}
+
+      <div>
+        <span className="field-label">{t('sheet.conditions')}</span>
+        <div className="condition-chips">
+          {instance.conditions.length === 0 && <span className="muted">—</span>}
+          {instance.conditions.map((c) => (
+            <span key={c.id} className="condition">
+              {c.name}
+              <button
+                aria-label={`remove ${c.name}`}
+                onClick={() =>
+                  onChange({ ...instance, conditions: instance.conditions.filter((x) => x.id !== c.id) })
+                }
+              >
+                ✕
+              </button>
+            </span>
+          ))}
+        </div>
+        <div className="form-row">
+          <input
+            className="grow"
+            placeholder={t('sheet.namePlaceholder')}
+            value={conditionName}
+            onChange={(e) => setConditionName(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && addCondition()}
+          />
+          <button onClick={addCondition}>{t('sheet.add')}</button>
+        </div>
+      </div>
 
       <textarea
         ref={memoRef}

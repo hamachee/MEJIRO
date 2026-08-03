@@ -22,29 +22,29 @@ export function GmRollBar({ campaign }: Props) {
   const performRoll = useGmRollStore((s) => s.performRoll);
 
   const instance = campaign.instances.find((i) => i.id === selectedInstanceId);
-  const template = instance
-    ? campaign.templates.find((tpl) => tpl.id === instance.templateId)
-    : undefined;
 
   const poolLabel = selectedPool
     ? {
         primary: t('gm.primaryPool'),
         secondary: t('gm.secondaryPool'),
         desperation: t('gm.desperationPool'),
+        custom: t('gm.customPool'),
       }[selectedPool]
     : null;
 
   const poolRating =
-    template && selectedPool
+    instance && selectedPool
       ? selectedPool === 'primary'
-        ? template.stats.primaryPool
+        ? instance.stats.primaryPool
         : selectedPool === 'secondary'
-          ? template.stats.secondaryPool
-          : desperationPool(template.stats.primaryPool)
+          ? instance.stats.secondaryPool
+          : selectedPool === 'desperation'
+            ? desperationPool(instance.stats.primaryPool)
+            : instance.customPool
       : 0;
 
   const pool = poolRating + bonusDice;
-  const canRoll = Boolean(instance && template && poolRating > 0);
+  const canRoll = Boolean(instance && poolRating > 0);
 
   return (
     <div className="roll-bar">
@@ -83,7 +83,6 @@ export function GmRollBar({ campaign }: Props) {
           disabled={!canRoll}
           onClick={() =>
             instance &&
-            template &&
             poolLabel &&
             performRoll({
               campaign,

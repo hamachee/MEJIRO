@@ -5,7 +5,7 @@
  * attribute/skill grid — Curseborne's NPC rules use a much smaller set of
  * pools and traits instead.
  */
-import type { CharacterTrick } from './character';
+import type { CharacterTrick, ConditionItem } from './character';
 
 /** A single adversary's stat block, per the Curseborne NPC rules. */
 export interface AdversaryStats {
@@ -61,17 +61,22 @@ export interface AdversaryTemplate {
 }
 
 /**
- * One adversary dropped onto the table. Stats aren't copied here — they're
- * looked up live via `templateId`, so editing a template updates every card
- * using it. Only per-instance play state (label, injuries) lives here.
+ * One adversary dropped onto the table. Its stats are copied from a template
+ * at add-time — a GM's own snapshot to fill in the fiddly numbers quickly —
+ * and independent from then on: editing the template later doesn't touch
+ * cards already on the table.
  */
 export interface AdversaryInstance {
   id: string;
-  templateId: string;
   label: string;
-  /** Small free-text note, local to this card (not shared via the template). */
+  stats: AdversaryStats;
+  /** Ad-hoc dice pool for a one-off roll that doesn't fit the template's pools. */
+  customPool: number;
+  /** Small free-text note, local to this card. */
   memo: string;
-  /** Boxes filled on the injury track; capped at the linked template's injuryBoxes. */
+  /** Status-effect tags currently affecting this adversary. */
+  conditions: ConditionItem[];
+  /** Boxes filled on the injury track; capped at this card's stats.injuryBoxes. */
   marked: number;
   takenOut: boolean;
 }

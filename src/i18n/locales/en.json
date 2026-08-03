@@ -147,6 +147,7 @@
     "memoPlaceholder": "Note (optional)",
     "pickTemplate": "Pick a template…",
     "pickAPool": "Tap a pool on a card",
+    "customPool": "Free roll",
     "noAdversaries": "No adversaries on the table yet — add one from a template above.",
     "templateMissing": "Template deleted — this card has no linked stats.",
     "noTricks": "No tricks in this campaign yet. Add them on the Tricks tab.",
