@@ -537,6 +537,12 @@ button.danger:hover:not(:disabled) {
 .die.exploded {
   box-shadow: 0 0 0 2px rgba(255, 200, 90, 0.5);
 }
+/* Per-die-type shape hook: d10 reads as a hexagon. The clip-path's widest
+   point sits at 50% height, where the centered digit already sits, so
+   two-digit values (10) aren't clipped. */
+.die.d10 {
+  clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%);
+}
 .die.mini {
   width: 22px;
   height: 22px;
