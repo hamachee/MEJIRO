@@ -5,6 +5,7 @@ import { uid } from '../lib/uid';
 import { blankAdversaryStats, type AdversaryStats, type AdversaryTemplate, type Campaign } from '../types/campaign';
 import { AdversaryStatsFields } from './AdversaryCard';
 import { statSummary } from './CampaignSheet';
+import { IconCheck, IconClose, IconCopy, IconEdit } from './icons';
 
 /** Shared form fields for creating or editing an adversary template. */
 function AdversaryTemplateForm({
@@ -99,13 +100,13 @@ function TemplateRow({
         {editing && (
           <div className="item-card-actions">
             <button className="chip ghost" aria-label={`duplicate ${template.name}`} onClick={onDuplicate}>
-              📋
+              <IconCopy />
             </button>
             <button className="chip ghost" aria-label={`edit ${template.name}`} onClick={() => setOpen(true)}>
-              ✏️
+              <IconEdit />
             </button>
             <button className="chip ghost" aria-label={`remove ${template.name}`} onClick={onRemove}>
-              ✕
+              <IconClose />
             </button>
           </div>
         )}
@@ -131,13 +132,13 @@ export function CampaignTemplatesPage({ campaign }: { campaign: Campaign }) {
         <div className="item-card-head">
           <h2 className="grow">{t('gm.templates')}</h2>
           <button className={editing ? 'primary' : ''} onClick={() => setEditing((v) => !v)}>
-            {editing ? `✓ ${t('sheet.done')}` : `✏️ ${t('sheet.edit')}`}
+            {editing ? <><IconCheck /> {t('sheet.done')}</> : <><IconEdit /> {t('sheet.edit')}</>}
           </button>
         </div>
         {editing && (
           <div className="form-row">
             <button className="primary" onClick={() => setAdding((v) => !v)}>
-              {adding ? `✕ ${t('common.cancel')}` : `+ ${t('gm.addTemplate')}`}
+              {adding ? <><IconClose /> {t('common.cancel')}</> : `+ ${t('gm.addTemplate')}`}
             </button>
           </div>
         )}

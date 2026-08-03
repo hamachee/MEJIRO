@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useGmRollStore } from '../store/gmRollStore';
 import { hasCurseHit } from '../engine/roll';
 import type { Campaign } from '../types/campaign';
+import { IconExport, IconWarning } from './icons';
 
 interface Props {
   campaign: Campaign;
@@ -62,18 +63,18 @@ export function GmRollResult({ campaign }: Props) {
             {postStatus === 'posting' && <span className="muted">{t('result.posting')}</span>}
             {postStatus === 'posted' && <span className="ok">{t('result.posted')}</span>}
             {postStatus === 'error' && (
-              <span className="danger-text">⚠ {t('result.postError', { message: postError })}</span>
+              <span className="danger-text"><IconWarning /> {t('result.postError', { message: postError })}</span>
             )}
           </>
         ) : (
           <>
             <button disabled={!hasWebhook || postStatus === 'posting'} onClick={() => postToDiscord(campaign)}>
-              📤 {t('gm.postToDiscord')}
+              <IconExport /> {t('gm.postToDiscord')}
             </button>
             {!hasWebhook && <span className="muted"> {t('gm.noWebhook')}</span>}
             {postStatus === 'posted' && <span className="ok"> {t('result.posted')}</span>}
             {postStatus === 'error' && (
-              <span className="danger-text"> ⚠ {t('result.postError', { message: postError })}</span>
+              <span className="danger-text"> <IconWarning /> {t('result.postError', { message: postError })}</span>
             )}
           </>
         )}

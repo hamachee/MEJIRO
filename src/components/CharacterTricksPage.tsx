@@ -4,6 +4,7 @@ import { useCharacterStore } from '../store/characterStore';
 import { uid } from '../lib/uid';
 import { useDragReorder } from '../lib/useDragReorder';
 import { FieldLabel } from './FieldLabel';
+import { IconClose } from './icons';
 import { TrickInfo } from './TrickInfo';
 import type { Character } from '../types/character';
 
@@ -75,7 +76,7 @@ export function CharacterTricksPage({
                       aria-label={`remove ${tr.name}`}
                       onClick={() => patch({ tricks: tricks.filter((x) => x.id !== tr.id) })}
                     >
-                      ✕
+                      <IconClose />
                     </button>
                   )}
                 </div>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCharacterStore } from '../store/characterStore';
 import { FieldLabel } from './FieldLabel';
+import { IconClose, IconEdit, IconStar } from './icons';
 import { TagChips } from './TagChips';
 import { CurseCard } from './CharacterSheet';
 import { uid } from '../lib/uid';
@@ -119,7 +120,7 @@ function SpellCard({
               aria-pressed={item.favorite}
               onClick={() => onSave({ ...item, favorite: !item.favorite })}
             >
-              {item.favorite ? '★' : '☆'}
+              <IconStar filled={item.favorite} />
             </button>
           )}
           {editing && (
@@ -129,10 +130,10 @@ function SpellCard({
                 aria-label={`edit ${item.name}`}
                 onClick={() => setOpen(true)}
               >
-                ✏️
+                <IconEdit />
               </button>
               <button className="chip ghost" aria-label={`remove ${item.name}`} onClick={onRemove}>
-                ✕
+                <IconClose />
               </button>
             </div>
           )}

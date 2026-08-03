@@ -5,6 +5,7 @@ import { useCampaignStore } from '../store/campaignStore';
 import { useGmRollStore } from '../store/gmRollStore';
 import { useWide } from '../lib/useWide';
 import { CampaignSheet } from './CampaignSheet';
+import { IconBack } from './icons';
 import { CampaignTemplatesPage } from './CampaignTemplatesPage';
 import { CampaignTricksPage } from './CampaignTricksPage';
 import { GmRollBar } from './GmRollBar';
@@ -51,7 +52,7 @@ export function CampaignView() {
     <div className="character-view">
       <div className="toolbar">
         <Link to="/gm" className="back-link">
-          ← {t('sheet.back')}
+          <IconBack /> {t('sheet.back')}
         </Link>
       </div>
 

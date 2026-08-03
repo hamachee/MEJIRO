@@ -5,6 +5,7 @@ import { parseTags } from '../lib/tags';
 import { uid } from '../lib/uid';
 import { desperationPool, type AdversaryInstance, type AdversaryStats } from '../types/campaign';
 import { FieldLabel } from './FieldLabel';
+import { IconCheck, IconClose, IconCopy, IconEdit } from './icons';
 import { Stepper } from './Stepper';
 import { TagChips } from './TagChips';
 
@@ -260,17 +261,17 @@ export function AdversaryCard({ instance, onChange, onRemove, onDuplicate }: Pro
         )}
         <div className="item-card-actions">
           <button className="chip ghost" aria-label={`duplicate ${instance.label}`} onClick={onDuplicate}>
-            📋
+            <IconCopy />
           </button>
           <button
             className="chip ghost"
             aria-label={editing ? `done editing ${instance.label}` : `edit ${instance.label}`}
             onClick={() => setEditing((v) => !v)}
           >
-            {editing ? '✓' : '✏️'}
+            {editing ? <IconCheck /> : <IconEdit />}
           </button>
           <button className="chip ghost" aria-label={`remove ${instance.label}`} onClick={onRemove}>
-            ✕
+            <IconClose />
           </button>
         </div>
       </div>
@@ -347,7 +348,7 @@ export function AdversaryCard({ instance, onChange, onRemove, onDuplicate }: Pro
                   onChange({ ...instance, conditions: instance.conditions.filter((x) => x.id !== c.id) })
                 }
               >
-                ✕
+                <IconClose />
               </button>
             </span>
           ))}

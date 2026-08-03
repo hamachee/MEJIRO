@@ -4,6 +4,7 @@ import { label } from '../lib/localize';
 import { useLang } from '../lib/useLang';
 import type { Character } from '../types/character';
 import type { ResourceDef, SystemTemplate } from '../types/template';
+import { IconUndo } from './icons';
 
 interface Props {
   character: Character;
@@ -45,7 +46,7 @@ export function ResourceTracker({ character, template }: Props) {
             disabled={!canUndo}
             onClick={() => undo(def.id)}
           >
-            ↺ {t('resource.undo')}
+            <IconUndo /> {t('resource.undo')}
           </button>
         </div>
         {canUndo && (
