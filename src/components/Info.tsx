@@ -10,14 +10,13 @@ export function Info() {
       <section className="card">
         <h1>{t('info.title')}</h1>
         <p className="muted hint">{t('info.intro')}</p>
+        {FAQ_KEYS.map((key) => (
+          <div key={key}>
+            <h2>{t(`info.${key}.q`)}</h2>
+            <p>{t(`info.${key}.a`)}</p>
+          </div>
+        ))}
       </section>
-
-      {FAQ_KEYS.map((key) => (
-        <details key={key} className="card fold-card" open>
-          <summary className="card-summary">{t(`info.${key}.q`)}</summary>
-          <p>{t(`info.${key}.a`)}</p>
-        </details>
-      ))}
     </div>
   );
 }
