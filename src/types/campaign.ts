@@ -5,6 +5,7 @@
  * attribute/skill grid — Curseborne's NPC rules use a much smaller set of
  * pools and traits instead.
  */
+import type { CharacterTrick } from './character';
 
 /** A single adversary's stat block, per the Curseborne NPC rules. */
 export interface AdversaryStats {
@@ -80,6 +81,8 @@ export interface Campaign {
   autoPostToDiscord: boolean;
   templates: AdversaryTemplate[];
   instances: AdversaryInstance[];
+  /** The GM's own trick list, purchased with extra hits after an adversary roll. */
+  tricks: CharacterTrick[];
   createdAt: number;
   updatedAt: number;
 }

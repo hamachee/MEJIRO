@@ -1,9 +1,10 @@
 import { getDB } from './db';
 import { uid } from '../lib/uid';
 import { blankAdversaryStats, type Campaign } from '../types/campaign';
+import type { CharacterTrick } from '../types/character';
 
 /** Create (but do not yet persist) a blank campaign. */
-export function newCampaign(name: string): Campaign {
+export function newCampaign(name: string, tricks: CharacterTrick[] = []): Campaign {
   const now = Date.now();
   return {
     id: uid(),
@@ -12,6 +13,7 @@ export function newCampaign(name: string): Campaign {
     autoPostToDiscord: true,
     templates: [],
     instances: [],
+    tricks,
     createdAt: now,
     updatedAt: now,
   };
@@ -36,6 +38,7 @@ export function normalizeCampaign(
       stats: { ...blankAdversaryStats(), ...tpl.stats },
     })),
     instances: (raw.instances ?? []).map((i) => ({ ...i, memo: i.memo ?? '' })),
+    tricks: raw.tricks ?? [],
   };
 }
 

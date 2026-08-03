@@ -148,6 +148,7 @@
     "pickAPool": "카드에서 풀을 선택하세요",
     "noAdversaries": "아직 테이블에 적대자가 없습니다 — 위에서 템플릿을 골라 추가하세요.",
     "templateMissing": "템플릿이 삭제됨 — 이 카드는 연동된 스탯이 없습니다.",
+    "noTricks": "아직 이 캠페인에 트릭이 없습니다. 트릭 탭에서 추가하세요.",
     "webhook": "디스코드 웹훅 URL",
     "autoPostToDiscord": "주사위 결과를 디스코드에 자동 전송",
     "postToDiscord": "디스코드로 전송",

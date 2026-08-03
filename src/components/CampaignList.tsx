@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCampaignStore } from '../store/campaignStore';
+import { defaultTricks } from '../storage/characters';
 import type { Campaign } from '../types/campaign';
 
 export function CampaignList() {
@@ -15,7 +16,14 @@ export function CampaignList() {
   const [name, setName] = useState('');
 
   const onCreate = async () => {
-    const campaign = await create(name);
+    const campaign = await create(
+      name,
+      defaultTricks([
+        t('tricks.defaultOne'),
+        t('tricks.defaultTwo'),
+        t('tricks.defaultThree'),
+      ]),
+    );
     setName('');
     navigate(`/gm/${campaign.id}`);
   };
