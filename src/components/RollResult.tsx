@@ -36,7 +36,7 @@ export function RollResult() {
         {result.dice.map((d, i) => (
           <span
             key={i}
-            className={`die ${d.successes > 0 ? 'hit' : ''} ${
+            className={`die d10 ${d.successes > 0 ? 'hit' : ''} ${
               d.exploded ? 'exploded' : ''
             } ${d.isCurse ? 'curse' : ''}`}
             title={d.isCurse ? t('roller.curseDice') : undefined}

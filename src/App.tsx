@@ -9,6 +9,7 @@ import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { CharacterList } from './components/CharacterList';
 import { CharacterView } from './components/CharacterView';
 import { Settings } from './components/Settings';
+import { Info } from './components/Info';
 
 export function App() {
   const { t } = useTranslation();
@@ -35,6 +36,7 @@ export function App() {
         <nav className="app-nav">
           <NavLink to="/">{t('nav.characters')}</NavLink>
           <NavLink to="/settings">{t('nav.settings')}</NavLink>
+          <NavLink to="/info">{t('nav.info')}</NavLink>
           <LanguageSwitcher />
         </nav>
       </header>
@@ -44,6 +46,7 @@ export function App() {
           <Route path="/" element={<CharacterList />} />
           <Route path="/character/:id" element={<CharacterView />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/info" element={<Info />} />
         </Routes>
       </main>
     </div>

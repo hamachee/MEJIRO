@@ -5,7 +5,8 @@
   },
   "nav": {
     "characters": "Characters",
-    "settings": "Settings"
+    "settings": "Settings",
+    "info": "Info"
   },
   "characters": {
     "title": "Characters",
@@ -142,6 +143,7 @@
     "ruleHint": "\"By rule\" uses the color scheme of the game system you are playing.",
     "base": "Base tone",
     "reset": "Reset colors",
+    "preview": "Preview",
     "colors": {
       "bg": "Background",
       "bg2": "Background 2",
@@ -154,7 +156,8 @@
       "accent2": "Accent 2",
       "success": "Success",
       "failure": "Failure",
-      "danger": "Danger"
+      "danger": "Danger",
+      "curse": "Curse dice"
     }
   },
   "settings": {
@@ -175,5 +178,29 @@
   "common": {
     "cancel": "Cancel",
     "close": "Close"
+  },
+  "info": {
+    "title": "Info & Help",
+    "intro": "Quick answers about how MEJIRO stores your data and where to find the things you need.",
+    "storage": {
+      "q": "Where is my character sheet saved?",
+      "a": "Everything you enter — characters, attributes, tricks, gear — is stored locally in your browser using IndexedDB. There is no account and no server: your data lives only on this device, in this specific browser, for this site."
+    },
+    "cache": {
+      "q": "Is it okay to clear my cache?",
+      "a": "Yes, in most cases. \"Clear cache\" usually only clears temporary files (like cached scripts and images) and does not touch IndexedDB, so your character sheets are safe. If MEJIRO looks outdated after an update, clearing the cache (or a hard refresh) is a normal and safe way to fetch the latest version."
+    },
+    "clearData": {
+      "q": "What happens if I clear my browsing data?",
+      "a": "Be careful here. Options broader than just \"cache\" — like \"Cookies and other site data\" (Chrome) or \"Cookies and Site Data\" (Firefox) — delete IndexedDB along with everything else stored for this site. That means all of your characters would be permanently erased, with no way to recover them, since nothing is backed up on a server."
+    },
+    "backup": {
+      "q": "Why do backups matter, and why use an external sheet too?",
+      "a": "Because your characters exist only in this one browser, they can be lost by clearing site data, switching browsers or devices, reinstalling, or the browser evicting storage under pressure. Export your characters (Characters list → Export) regularly as a JSON backup you keep somewhere safe, and consider also linking an external sheet (a copy on a VTT, doc, or wiki) via the \"External character sheet\" field — that way you're never relying on a single browser's storage alone."
+    },
+    "webhook": {
+      "q": "Where do I get a Discord webhook URL?",
+      "a": "In Discord: open Server Settings → Integrations → Webhooks → New Webhook, then Copy Webhook URL. Paste that URL into your character's Edit sheet → Discord webhook URL field. Each character has its own webhook, and it is never included when you export or share a character file."
+    }
   }
 }

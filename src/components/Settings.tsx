@@ -97,6 +97,25 @@ export function Settings() {
                 {t('theme.reset')}
               </button>
             </div>
+            <span className="field-label">{t('theme.preview')}</span>
+            <div className="theme-preview">
+              <div className="card">
+                <strong>{t('app.title')}</strong>
+                <p className="muted">{t('app.tagline')}</p>
+                <div className="dice-tray">
+                  <span className="die d10 mini hit">8</span>
+                  <span className="die d10 mini curse hit">10</span>
+                  <span className="die d10 mini">3</span>
+                </div>
+                <div className="theme-preview-row">
+                  <button type="button" className="primary">
+                    {t('roller.roll')}
+                  </button>
+                  <span className="badge success">{t('result.success')}</span>
+                  <span className="badge failure">{t('result.failure')}</span>
+                </div>
+              </div>
+            </div>
           </>
         )}
       </section>

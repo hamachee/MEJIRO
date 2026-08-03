@@ -35,6 +35,7 @@ export interface ThemePalette {
   success: string;
   failure: string;
   danger: string;
+  curse: string;
 }
 
 export const PALETTE_KEYS: (keyof ThemePalette)[] = [
@@ -50,6 +51,7 @@ export const PALETTE_KEYS: (keyof ThemePalette)[] = [
   'success',
   'failure',
   'danger',
+  'curse',
 ];
 
 /** A user-defined scheme: core colors plus the base its extras derive from. */
@@ -73,7 +75,6 @@ interface ThemeExtras {
   dangerText: string;
   failureBright: string;
   failureTerminal: string;
-  curse: string;
   curseStrong: string;
   curseHitBorder: string;
   curseText: string;
@@ -98,7 +99,6 @@ const DARK_EXTRAS: ThemeExtras = {
   dangerText: '#f0b8ac',
   failureBright: '#ff9a9a',
   failureTerminal: '#ff6b6b',
-  curse: '#b44ae0',
   curseStrong: '#7d2ea8',
   curseHitBorder: '#cf6cf2',
   curseText: '#dfa2f5',
@@ -118,7 +118,6 @@ const LIGHT_EXTRAS: ThemeExtras = {
   dangerText: '#a53c24',
   failureBright: '#c22f2f',
   failureTerminal: '#8a1a1a',
-  curse: '#a13ecf',
   curseStrong: '#7d2ea8',
   curseHitBorder: '#b44ae0',
   curseText: '#7d2ea8',
@@ -141,6 +140,7 @@ export const DARK_THEME: Theme = {
   success: '#4caf7d',
   failure: '#b05454',
   danger: '#c0563f',
+  curse: '#b44ae0',
   ...DARK_EXTRAS,
 };
 
@@ -159,6 +159,7 @@ export const LIGHT_THEME: Theme = {
   success: '#2c8a5c',
   failure: '#b04545',
   danger: '#b5482f',
+  curse: '#a13ecf',
   ...LIGHT_EXTRAS,
 };
 
@@ -177,6 +178,7 @@ export const CURSEBORNE_THEME: Theme = {
   success: '#4caf7d',
   failure: '#b05454',
   danger: '#c0563f',
+  curse: '#b44ae0',
   ...DARK_EXTRAS,
   headerBg: 'rgba(20, 20, 31, 0.9)',
   barBg: 'rgba(28, 28, 43, 0.95)',
@@ -206,6 +208,23 @@ function hexToRgba(hex: string, alpha: number): string {
   if (!m) return hex;
   const n = parseInt(m[1], 16);
   return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
+}
+
+/**
+ * "#rrggbb" mixed toward black (amount < 0) or white (amount > 0) by
+ * |amount| (0-1). Used to derive the curse-hit shades from the single
+ * user-picked curse color, the same way the built-in themes hand-pick a
+ * darker/lighter pair around their own curse hue.
+ */
+function shadeHex(hex: string, amount: number): string {
+  const m = /^#([0-9a-f]{6})$/i.exec(hex.trim());
+  if (!m) return hex;
+  const n = parseInt(m[1], 16);
+  const mix = (c: number) =>
+    Math.round(amount > 0 ? c + (255 - c) * amount : c * (1 + amount));
+  const clamp = (c: number) => Math.max(0, Math.min(255, c));
+  const toHex = (c: number) => clamp(c).toString(16).padStart(2, '0');
+  return `#${toHex(mix((n >> 16) & 255))}${toHex(mix((n >> 8) & 255))}${toHex(mix(n & 255))}`;
 }
 
 /** Whether the OS/browser is currently set to prefer a dark color scheme. */
@@ -244,6 +263,9 @@ export function resolveTheme(
         // The translucent bars must track the custom background colors.
         headerBg: hexToRgba(custom.bg, 0.9),
         barBg: hexToRgba(custom.bg2, 0.95),
+        // The curse-hit shades follow the single custom curse swatch.
+        curseStrong: shadeHex(custom.curse, -0.3),
+        curseHitBorder: shadeHex(custom.curse, 0.3),
       };
     }
     case 'dark':
