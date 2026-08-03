@@ -35,7 +35,7 @@ function statSummary(stats: AdversaryStats, t: (key: string) => string): string 
     desperationPool(stats.primaryPool) > 0
       ? `${t('gm.desperationPool')} ${desperationPool(stats.primaryPool)}`
       : null,
-    stats.enhancement > 0 ? `${t('gm.enhancement')} ${stats.enhancement}` : null,
+    stats.enhancement.trim() ? `${t('gm.enhancement')} ${truncate(stats.enhancement)}` : null,
     stats.defense > 0 ? `${t('gm.defense')} ${stats.defense}` : null,
     stats.integrity > 0 ? `${t('gm.integrity')} ${stats.integrity}` : null,
     stats.injuryBoxes > 0 ? `${t('gm.injuryBoxes')} ${stats.injuryBoxes}` : null,
@@ -108,17 +108,24 @@ function AdversaryTemplateForm({
       </div>
       <div className="form-row">
         <Stepper
-          label={<FieldLabel i18nKey="gm.enhancement" en="Enhancement" />}
-          ariaLabel={t('gm.enhancement')}
-          value={stats.enhancement}
-          onChange={(n) => set('enhancement', n)}
-        />
-        <Stepper
           label={<FieldLabel i18nKey="gm.defense" en="Defense" />}
           ariaLabel={t('gm.defense')}
           value={stats.defense}
           onChange={(n) => set('defense', n)}
         />
+      </div>
+      <div className="form-row">
+        <label className="field grow">
+          <span className="field-label">
+            <FieldLabel i18nKey="gm.enhancement" en="Enhancement" />
+          </span>
+          <input
+            className="grow"
+            placeholder={t('gm.enhancementPlaceholder')}
+            value={stats.enhancement}
+            onChange={(e) => set('enhancement', e.target.value)}
+          />
+        </label>
       </div>
       <div className="form-row">
         <Stepper

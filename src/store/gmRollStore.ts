@@ -27,9 +27,10 @@ interface GmRollStoreState {
   /** Selected trick ids for the post-roll purchase phase. */
   selectedTrickIds: string[];
   /**
-   * Extra hits bought during the purchase phase, after the dice are seen —
-   * distinct from a template's fixed Enhancement trait, which is already
-   * baked into the roll itself. Mirrors the character sheet's purchase flow.
+   * Extra hits bought during the purchase phase, after the dice are seen.
+   * A template's Enhancement is a free-text reference note only — nothing
+   * applies it automatically, so the GM adds it here by hand once the dice
+   * are visible, same as a character's purchase-phase enhancement.
    */
   enhancement: number;
   /** Complication severity chosen to buy off post-roll: 0 none, 1-3. */
@@ -48,7 +49,6 @@ interface GmRollStoreState {
     instanceLabel: string;
     poolLabel: string;
     poolRating: number;
-    enhancement: number;
   }) => void;
   /** Manual post, used when the campaign has auto-post turned off. */
   postToDiscord: (campaign: Campaign) => void;
@@ -98,14 +98,16 @@ export const useGmRollStore = create<GmRollStoreState>((set, get) => ({
     });
   },
 
-  performRoll: ({ campaign, instanceLabel, poolLabel, poolRating, enhancement }) => {
+  performRoll: ({ campaign, instanceLabel, poolLabel, poolRating }) => {
     const { difficulty, bonusDice } = get();
+    // Pure dice pool + bonus dice — Enhancement is never baked into the roll
+    // itself, it's added by hand in the purchase phase after the dice land.
     const request: RollRequest = {
       attributeId: null,
       skillId: null,
       attributeRating: 0,
       skillRating: poolRating,
-      enhancement,
+      enhancement: 0,
       bonusDice,
       difficulty,
       curseDice: 0,
