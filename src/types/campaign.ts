@@ -86,3 +86,10 @@ export interface Campaign {
   createdAt: number;
   updatedAt: number;
 }
+
+/** Envelope used for JSON export/import so files are self-describing. */
+export interface CampaignExport {
+  format: 'mejiro-campaign';
+  version: 1;
+  campaign: Campaign;
+}

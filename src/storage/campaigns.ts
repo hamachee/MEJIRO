@@ -1,6 +1,6 @@
 import { getDB } from './db';
 import { uid } from '../lib/uid';
-import { blankAdversaryStats, type Campaign } from '../types/campaign';
+import { blankAdversaryStats, type Campaign, type CampaignExport } from '../types/campaign';
 import type { CharacterTrick } from '../types/character';
 
 /** Create (but do not yet persist) a blank campaign. */
@@ -64,4 +64,36 @@ export async function saveCampaign(campaign: Campaign): Promise<Campaign> {
 export async function deleteCampaign(id: string): Promise<void> {
   const db = await getDB();
   await db.delete('campaigns', id);
+}
+
+/**
+ * Serialise a campaign to a portable JSON envelope. The webhook URL is
+ * stripped: it grants posting access to a Discord channel, so it must not
+ * leak when a campaign is shared.
+ */
+export function exportCampaign(campaign: Campaign): string {
+  const envelope: CampaignExport = {
+    format: 'mejiro-campaign',
+    version: 1,
+    campaign: { ...campaign, webhookUrl: '' },
+  };
+  return JSON.stringify(envelope, null, 2);
+}
+
+/**
+ * Parse an exported campaign JSON. Assigns a fresh id so importing never
+ * overwrites an existing campaign. Throws on an unrecognised format.
+ */
+export function parseCampaignImport(json: string): Campaign {
+  const data = JSON.parse(json) as Partial<CampaignExport>;
+  if (data.format !== 'mejiro-campaign' || !data.campaign) {
+    throw new Error('Not a MEJIRO campaign file');
+  }
+  const now = Date.now();
+  return normalizeCampaign({
+    ...data.campaign,
+    id: uid(),
+    createdAt: now,
+    updatedAt: now,
+  });
 }
