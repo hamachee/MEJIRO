@@ -156,7 +156,8 @@
       "accent2": "Accent 2",
       "success": "Success",
       "failure": "Failure",
-      "danger": "Danger"
+      "danger": "Danger",
+      "curse": "Curse dice"
     }
   },
   "settings": {
