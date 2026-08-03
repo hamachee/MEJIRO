@@ -6,6 +6,7 @@ import {
   getCampaign,
   listCampaigns,
   newCampaign,
+  parseCampaignImport,
   saveCampaign,
 } from '../storage/campaigns';
 
@@ -20,6 +21,7 @@ interface CampaignStoreState {
   /** Merge arbitrary fields (webhook, templates, instances…) into the active campaign. */
   patch: (fields: Partial<Campaign>) => void;
   remove: (id: string) => Promise<void>;
+  importFromJson: (json: string) => Promise<Campaign>;
 }
 
 /**
@@ -83,5 +85,11 @@ export const useCampaignStore = create<CampaignStoreState>((set, get) => ({
       roster: get().roster.filter((c) => c.id !== id),
       active: active?.id === id ? null : active,
     });
+  },
+
+  importFromJson: async (json) => {
+    const campaign = await saveCampaign(parseCampaignImport(json));
+    set({ roster: [campaign, ...get().roster] });
+    return campaign;
   },
 }));
