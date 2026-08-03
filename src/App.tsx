@@ -3,11 +3,14 @@ import { NavLink, Route, Routes } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSettingsStore } from './store/settingsStore';
 import { useCharacterStore } from './store/characterStore';
+import { useCampaignStore } from './store/campaignStore';
 import { useTheme } from './lib/useTheme';
 import { useHeaderHidden } from './lib/useHeaderHidden';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { CharacterList } from './components/CharacterList';
 import { CharacterView } from './components/CharacterView';
+import { CampaignList } from './components/CampaignList';
+import { CampaignView } from './components/CampaignView';
 import { Settings } from './components/Settings';
 import { Info } from './components/Info';
 
@@ -15,13 +18,15 @@ export function App() {
   const { t } = useTranslation();
   const loadSettings = useSettingsStore((s) => s.load);
   const loadRoster = useCharacterStore((s) => s.loadRoster);
+  const loadCampaignRoster = useCampaignStore((s) => s.loadRoster);
   useTheme();
   const headerHidden = useHeaderHidden();
 
   useEffect(() => {
     loadSettings();
     loadRoster();
-  }, [loadSettings, loadRoster]);
+    loadCampaignRoster();
+  }, [loadSettings, loadRoster, loadCampaignRoster]);
 
   return (
     <div className="app">
@@ -35,6 +40,7 @@ export function App() {
         </NavLink>
         <nav className="app-nav">
           <NavLink to="/">{t('nav.characters')}</NavLink>
+          <NavLink to="/gm">{t('nav.gm')}</NavLink>
           <NavLink to="/settings">{t('nav.settings')}</NavLink>
           <NavLink to="/info">{t('nav.info')}</NavLink>
           <LanguageSwitcher />
@@ -45,6 +51,8 @@ export function App() {
         <Routes>
           <Route path="/" element={<CharacterList />} />
           <Route path="/character/:id" element={<CharacterView />} />
+          <Route path="/gm" element={<CampaignList />} />
+          <Route path="/gm/:id" element={<CampaignView />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/info" element={<Info />} />
         </Routes>
