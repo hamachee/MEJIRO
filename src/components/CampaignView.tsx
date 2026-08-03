@@ -19,7 +19,6 @@ export function CampaignView() {
   const resetFor = useGmRollStore((s) => s.resetFor);
   const result = useGmRollStore((s) => s.result);
   const clearResult = useGmRollStore((s) => s.clearResult);
-  const [editing, setEditing] = useState(false);
   const [page, setPage] = useState<1 | 2 | 3>(1);
   const wide = useWide();
 
@@ -54,14 +53,6 @@ export function CampaignView() {
         <Link to="/gm" className="back-link">
           ← {t('sheet.back')}
         </Link>
-        <div className="toolbar-actions">
-          <button
-            className={editing ? 'primary' : ''}
-            onClick={() => setEditing(!editing)}
-          >
-            {editing ? `✓ ${t('sheet.done')}` : `✏️ ${t('sheet.edit')}`}
-          </button>
-        </div>
       </div>
 
       <nav className="page-tabs" aria-label="campaign pages">
@@ -86,13 +77,13 @@ export function CampaignView() {
       </nav>
 
       <div className={`play-layout ${wide && result ? 'with-result' : ''}`}>
-        {page === 1 && <CampaignSheet campaign={active} editing={editing} />}
-        {page === 2 && <CampaignTemplatesPage campaign={active} editing={editing} />}
-        {page === 3 && <CampaignTricksPage campaign={active} editing={editing} />}
+        {page === 1 && <CampaignSheet campaign={active} />}
+        {page === 2 && <CampaignTemplatesPage campaign={active} />}
+        {page === 3 && <CampaignTricksPage campaign={active} />}
         {wide && result && <aside className="result-col stack">{resultPanel}</aside>}
       </div>
 
-      {!editing && <GmRollBar campaign={active} />}
+      <GmRollBar campaign={active} />
 
       {!wide && result && (
         <div className="modal-scrim" onClick={clearResult}>

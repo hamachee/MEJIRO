@@ -29,17 +29,6 @@ function PoolButton({
   );
 }
 
-/** A simple label/value pair, hidden when the value is 0. */
-function StatLine({ label, value }: { label: ReactNode; value: number }) {
-  if (value <= 0) return null;
-  return (
-    <div className="curse-line">
-      <span className="field-label">{label}</span>
-      <span className="stat-value">{value}</span>
-    </div>
-  );
-}
-
 /**
  * Two label/value pairs on one line (e.g. Defense · Integrity); each pair
  * hidden when its value is 0, whole line hidden when both are.
@@ -194,9 +183,9 @@ export function AdversaryStatsFields({
 
 interface Props {
   instance: AdversaryInstance;
-  editing: boolean;
   onChange: (updated: AdversaryInstance) => void;
   onRemove: () => void;
+  onDuplicate: () => void;
 }
 
 /** Grow a textarea's height to fit its content, no scrollbar or manual resize needed. */
@@ -206,11 +195,12 @@ function autoGrow(el: HTMLTextAreaElement | null) {
   el.style.height = `${el.scrollHeight}px`;
 }
 
-export function AdversaryCard({ instance, editing, onChange, onRemove }: Props) {
+export function AdversaryCard({ instance, onChange, onRemove, onDuplicate }: Props) {
   const { t } = useTranslation();
   const selectedInstanceId = useGmRollStore((s) => s.selectedInstanceId);
   const selectedPool = useGmRollStore((s) => s.selectedPool);
   const select = useGmRollStore((s) => s.select);
+  const [editing, setEditing] = useState(false);
   const memoRef = useRef<HTMLTextAreaElement>(null);
   // Size to the loaded memo on mount; typing after that is handled by onInput.
   useLayoutEffect(() => autoGrow(memoRef.current), [instance.memo]);
@@ -259,14 +249,30 @@ export function AdversaryCard({ instance, editing, onChange, onRemove }: Props) 
   return (
     <div className="item-card adversary-card">
       <div className="item-card-head">
-        <input
-          className="grow named-name adversary-label"
-          defaultValue={instance.label}
-          onBlur={(e) => onChange({ ...instance, label: e.target.value.trim() || instance.label })}
-        />
-        <button className="chip ghost" aria-label={`remove ${instance.label}`} onClick={onRemove}>
-          ✕
-        </button>
+        {editing ? (
+          <input
+            className="grow named-name adversary-label"
+            defaultValue={instance.label}
+            onBlur={(e) => onChange({ ...instance, label: e.target.value.trim() || instance.label })}
+          />
+        ) : (
+          <span className="grow adversary-label">{instance.label}</span>
+        )}
+        <div className="item-card-actions">
+          <button className="chip ghost" aria-label={`duplicate ${instance.label}`} onClick={onDuplicate}>
+            📋
+          </button>
+          <button
+            className="chip ghost"
+            aria-label={editing ? `done editing ${instance.label}` : `edit ${instance.label}`}
+            onClick={() => setEditing((v) => !v)}
+          >
+            {editing ? '✓' : '✏️'}
+          </button>
+          <button className="chip ghost" aria-label={`remove ${instance.label}`} onClick={onRemove}>
+            ✕
+          </button>
+        </div>
       </div>
 
       {editing ? (
@@ -304,7 +310,6 @@ export function AdversaryCard({ instance, editing, onChange, onRemove }: Props) 
               { label: <FieldLabel i18nKey="gm.integrity" en="Integrity" />, value: stats.integrity },
             ]}
           />
-          <StatLine label={<FieldLabel i18nKey="gm.injuryBoxes" en="Injury boxes" />} value={stats.injuryBoxes} />
 
           {stats.hasArmor && (stats.armorRating > 0 || armorTags.length > 0) && (
             <div className="curse-line">
@@ -350,7 +355,7 @@ export function AdversaryCard({ instance, editing, onChange, onRemove }: Props) 
         <div className="form-row">
           <input
             className="grow"
-            placeholder={t('sheet.namePlaceholder')}
+            placeholder={t('gm.conditionPlaceholder')}
             value={conditionName}
             onChange={(e) => setConditionName(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && addCondition()}

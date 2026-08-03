@@ -117,17 +117,23 @@ function TemplateRow({
   );
 }
 
-/** Adversary templates tab: always browsable; add/edit/duplicate/remove gated by edit mode. */
-export function CampaignTemplatesPage({ campaign, editing }: { campaign: Campaign; editing: boolean }) {
+/** Adversary templates tab: always browsable; add/edit/duplicate/remove gated by its own edit toggle. */
+export function CampaignTemplatesPage({ campaign }: { campaign: Campaign }) {
   const { t } = useTranslation();
   const patch = useCampaignStore((s) => s.patch);
   const { templates } = campaign;
+  const [editing, setEditing] = useState(false);
   const [adding, setAdding] = useState(false);
 
   return (
     <div className="stack">
       <section className="card">
-        <h2>{t('gm.templates')}</h2>
+        <div className="item-card-head">
+          <h2 className="grow">{t('gm.templates')}</h2>
+          <button className={editing ? 'primary' : ''} onClick={() => setEditing((v) => !v)}>
+            {editing ? `✓ ${t('sheet.done')}` : `✏️ ${t('sheet.edit')}`}
+          </button>
+        </div>
         {editing && (
           <div className="form-row">
             <button className="primary" onClick={() => setAdding((v) => !v)}>
