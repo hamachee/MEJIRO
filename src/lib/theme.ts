@@ -204,6 +204,7 @@ export const DEFAULT_CUSTOM_THEME: CustomTheme = {
 
 /** "#rrggbb" → "rgba(r, g, b, alpha)"; returns the input if not parseable. */
 function hexToRgba(hex: string, alpha: number): string {
+  if (typeof hex !== 'string') return hex;
   const m = /^#([0-9a-f]{6})$/i.exec(hex.trim());
   if (!m) return hex;
   const n = parseInt(m[1], 16);
@@ -217,6 +218,7 @@ function hexToRgba(hex: string, alpha: number): string {
  * darker/lighter pair around their own curse hue.
  */
 function shadeHex(hex: string, amount: number): string {
+  if (typeof hex !== 'string') return hex;
   const m = /^#([0-9a-f]{6})$/i.exec(hex.trim());
   if (!m) return hex;
   const n = parseInt(m[1], 16);
@@ -257,15 +259,20 @@ export function resolveTheme(
     case 'custom': {
       const base = custom.base === 'light' ? LIGHT_THEME : DARK_THEME;
       const { base: _, ...palette } = custom;
+      // `curse` was added to CustomTheme after this feature shipped, so a
+      // theme saved before then won't have it — fall back to the base
+      // scheme's curse rather than handing an undefined hex to shadeHex().
+      const curse = palette.curse || base.curse;
       return {
         ...base,
         ...palette,
+        curse,
         // The translucent bars must track the custom background colors.
         headerBg: hexToRgba(custom.bg, 0.9),
         barBg: hexToRgba(custom.bg2, 0.95),
         // The curse-hit shades follow the single custom curse swatch.
-        curseStrong: shadeHex(custom.curse, -0.3),
-        curseHitBorder: shadeHex(custom.curse, 0.3),
+        curseStrong: shadeHex(curse, -0.3),
+        curseHitBorder: shadeHex(curse, 0.3),
       };
     }
     case 'dark':
