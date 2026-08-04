@@ -9,7 +9,11 @@ import { IconCheck, IconClose, IconCopy, IconEdit } from './icons';
 import { Stepper } from './Stepper';
 import { TagChips } from './TagChips';
 
-/** A "Primary N" style pool button, hidden when the rating is 0. */
+/**
+ * A "Primary N" style pool readout, hidden when the rating is 0. Without
+ * `onClick` (a template, not a card on the table) it's a plain static
+ * badge; with it, a selectable button — same look either way.
+ */
 function PoolButton({
   label,
   rating,
@@ -18,14 +22,22 @@ function PoolButton({
 }: {
   label: ReactNode;
   rating: number;
-  selected: boolean;
-  onClick: () => void;
+  selected?: boolean;
+  onClick?: () => void;
 }) {
   if (rating <= 0) return null;
-  return (
-    <button className={`sheet-stat ${selected ? 'selected' : ''}`} onClick={onClick} aria-pressed={selected}>
+  const content = (
+    <>
       <span className="stat-label">{label}</span>
       <span className="stat-value">{rating}</span>
+    </>
+  );
+  if (!onClick) {
+    return <span className="sheet-stat">{content}</span>;
+  }
+  return (
+    <button className={`sheet-stat ${selected ? 'selected' : ''}`} onClick={onClick} aria-pressed={selected}>
+      {content}
     </button>
   );
 }
@@ -182,6 +194,159 @@ export function AdversaryStatsFields({
   );
 }
 
+/**
+ * Armor and injury boxes on one track, armor first and split from injury by
+ * a divider — armor has no marked/unmarked state of its own, it's just a
+ * capacity readout, so its boxes are always plain. Injury boxes are static
+ * outlines for a template (nothing to mark yet); a deployed card passes
+ * `interactive` to make them click-to-mark, plus the trailing Taken Out box.
+ */
+function StatTrack({
+  armorRating,
+  injuryBoxes,
+  interactive,
+}: {
+  armorRating: number;
+  injuryBoxes: number;
+  interactive?: {
+    marked: number;
+    takenOut: boolean;
+    onToggleMarked: (n: number) => void;
+    onToggleTakenOut: () => void;
+  };
+}) {
+  const { t } = useTranslation();
+  const armorCount = Math.max(0, armorRating);
+  const injuryCount = Math.max(0, injuryBoxes);
+  if (armorCount === 0 && injuryCount === 0 && !interactive) return null;
+  const marked = interactive ? Math.min(interactive.marked, injuryCount) : 0;
+
+  return (
+    <div className="injury-track">
+      {Array.from({ length: armorCount }, (_, i) => (
+        <span key={`armor${i}`} className="armor-box" />
+      ))}
+      {armorCount > 0 && injuryCount > 0 && (
+        <span className="track-divider" aria-hidden="true">
+          |
+        </span>
+      )}
+      {Array.from({ length: injuryCount }, (_, i) => {
+        if (!interactive) return <span key={`injury${i}`} className="injury-box" />;
+        const position = i + 1;
+        const isMarked = i < marked;
+        return (
+          <button
+            key={`injury${i}`}
+            className={`injury-box ${isMarked ? 'marked' : ''}`}
+            aria-label={`${position}`}
+            onClick={() => interactive.onToggleMarked(marked === position ? position - 1 : position)}
+          />
+        );
+      })}
+      {interactive && (
+        <button
+          className={`injury-box ${interactive.takenOut ? 'marked' : ''}`}
+          aria-label={t('sheet.takenOut')}
+          onClick={interactive.onToggleTakenOut}
+        />
+      )}
+    </div>
+  );
+}
+
+/**
+ * Read-only stat block shared by a template card and a deployed card's
+ * non-editing view: pools -> Enhancement -> Defense/Integrity -> armor tags
+ * -> armor/injury track -> qualities/dread power/special. `pools` and
+ * `track` are omitted for a template (nothing to select or mark yet) and
+ * supplied for a deployed card.
+ */
+export function AdversaryStatBody({
+  stats,
+  pools,
+  track,
+}: {
+  stats: AdversaryStats;
+  pools?: { isSelected: (pool: AdversaryPool) => boolean; onSelect: (pool: AdversaryPool) => void };
+  track?: {
+    marked: number;
+    takenOut: boolean;
+    onToggleMarked: (n: number) => void;
+    onToggleTakenOut: () => void;
+  };
+}) {
+  const { t } = useTranslation();
+  const armorTags = stats.hasArmor ? parseTags(stats.armorTags) : [];
+  type DetailRow = { key: string; label: ReactNode; text: string };
+  const detailRow = (key: string, text: string, label: ReactNode): DetailRow | null =>
+    text.trim() ? { key, label, text } : null;
+  const details = [
+    detailRow('qualities', stats.qualities, <FieldLabel i18nKey="gm.qualities" en="Qualities" />),
+    detailRow('dreadPower', stats.dreadPower, <FieldLabel i18nKey="gm.dreadPower" en="Dread power" />),
+    detailRow('special', stats.special, <FieldLabel i18nKey="gm.special" en="Special" />),
+  ].filter((d): d is DetailRow => d !== null);
+
+  return (
+    <>
+      <div className="adversary-pools">
+        <PoolButton
+          label={<FieldLabel i18nKey="gm.primaryPool" en="Primary" />}
+          rating={stats.primaryPool}
+          selected={pools?.isSelected('primary')}
+          onClick={pools && (() => pools.onSelect('primary'))}
+        />
+        <PoolButton
+          label={<FieldLabel i18nKey="gm.secondaryPool" en="Secondary" />}
+          rating={stats.secondaryPool}
+          selected={pools?.isSelected('secondary')}
+          onClick={pools && (() => pools.onSelect('secondary'))}
+        />
+        <PoolButton
+          label={<FieldLabel i18nKey="gm.desperationPool" en="Desperation" />}
+          rating={desperationPool(stats.primaryPool)}
+          selected={pools?.isSelected('desperation')}
+          onClick={pools && (() => pools.onSelect('desperation'))}
+        />
+      </div>
+
+      <TextLine label={<FieldLabel i18nKey="gm.enhancement" en="Enhancement" />} text={stats.enhancement} />
+      <StatLinePair
+        items={[
+          { label: <FieldLabel i18nKey="gm.defense" en="Defense" />, value: stats.defense },
+          { label: <FieldLabel i18nKey="gm.integrity" en="Integrity" />, value: stats.integrity },
+        ]}
+      />
+
+      {stats.hasArmor && armorTags.length > 0 && (
+        <div className="curse-line">
+          <span className="field-label">
+            <FieldLabel i18nKey="gm.armor" en="Armor" />
+          </span>
+          <TagChips tags={armorTags} />
+        </div>
+      )}
+
+      {details.length > 0 && (
+        <details className="fold">
+          <summary>{t('gm.details')}</summary>
+          {details.map((d) => (
+            <p key={d.key} className="muted item-card-desc">
+              <span className="field-label">{d.label}</span> {d.text}
+            </p>
+          ))}
+        </details>
+      )}
+
+      <StatTrack
+        armorRating={stats.hasArmor ? stats.armorRating : 0}
+        injuryBoxes={stats.injuryBoxes}
+        interactive={track}
+      />
+    </>
+  );
+}
+
 interface Props {
   instance: AdversaryInstance;
   onChange: (updated: AdversaryInstance) => void;
@@ -210,15 +375,6 @@ export function AdversaryCard({ instance, onChange, onRemove, onDuplicate }: Pro
   const { stats } = instance;
   const boxes = Math.max(0, stats.injuryBoxes);
   const marked = Math.min(instance.marked, boxes);
-  const armorTags = stats.hasArmor ? parseTags(stats.armorTags) : [];
-  type DetailRow = { key: string; label: ReactNode; text: string };
-  const detailRow = (key: string, text: string, label: ReactNode): DetailRow | null =>
-    text.trim() ? { key, label, text } : null;
-  const details = [
-    detailRow('qualities', stats.qualities, <FieldLabel i18nKey="gm.qualities" en="Qualities" />),
-    detailRow('dreadPower', stats.dreadPower, <FieldLabel i18nKey="gm.dreadPower" en="Dread power" />),
-    detailRow('special', stats.special, <FieldLabel i18nKey="gm.special" en="Special" />),
-  ].filter((d): d is DetailRow => d !== null);
 
   const isSelected = (pool: AdversaryPool) =>
     selectedInstanceId === instance.id && selectedPool === pool;
@@ -232,19 +388,6 @@ export function AdversaryCard({ instance, onChange, onRemove, onDuplicate }: Pro
       conditions: [...instance.conditions, { id: uid(), name: conditionName.trim() }],
     });
     setConditionName('');
-  };
-
-  const box = (absIndex: number) => {
-    const isMarked = absIndex < marked;
-    const position = absIndex + 1;
-    return (
-      <button
-        key={absIndex}
-        className={`injury-box ${isMarked ? 'marked' : ''}`}
-        aria-label={`${position}`}
-        onClick={() => setMarked(marked === position ? position - 1 : position)}
-      />
-    );
   };
 
   return (
@@ -282,57 +425,16 @@ export function AdversaryCard({ instance, onChange, onRemove, onDuplicate }: Pro
           onChange={(key, value) => onChange({ ...instance, stats: { ...instance.stats, [key]: value } })}
         />
       ) : (
-        <>
-          <div className="adversary-pools">
-            <PoolButton
-              label={<FieldLabel i18nKey="gm.primaryPool" en="Primary" />}
-              rating={stats.primaryPool}
-              selected={isSelected('primary')}
-              onClick={() => select(instance.id, 'primary')}
-            />
-            <PoolButton
-              label={<FieldLabel i18nKey="gm.secondaryPool" en="Secondary" />}
-              rating={stats.secondaryPool}
-              selected={isSelected('secondary')}
-              onClick={() => select(instance.id, 'secondary')}
-            />
-            <PoolButton
-              label={<FieldLabel i18nKey="gm.desperationPool" en="Desperation" />}
-              rating={desperationPool(stats.primaryPool)}
-              selected={isSelected('desperation')}
-              onClick={() => select(instance.id, 'desperation')}
-            />
-          </div>
-
-          <TextLine label={<FieldLabel i18nKey="gm.enhancement" en="Enhancement" />} text={stats.enhancement} />
-          <StatLinePair
-            items={[
-              { label: <FieldLabel i18nKey="gm.defense" en="Defense" />, value: stats.defense },
-              { label: <FieldLabel i18nKey="gm.integrity" en="Integrity" />, value: stats.integrity },
-            ]}
-          />
-
-          {stats.hasArmor && (stats.armorRating > 0 || armorTags.length > 0) && (
-            <div className="curse-line">
-              <span className="field-label">
-                <FieldLabel i18nKey="gm.armor" en="Armor" />
-              </span>
-              {stats.armorRating > 0 && <span className="stat-value">{stats.armorRating}</span>}
-              <TagChips tags={armorTags} />
-            </div>
-          )}
-
-          {details.length > 0 && (
-            <details className="fold">
-              <summary>{t('gm.details')}</summary>
-              {details.map((d) => (
-                <p key={d.key} className="muted item-card-desc">
-                  <span className="field-label">{d.label}</span> {d.text}
-                </p>
-              ))}
-            </details>
-          )}
-        </>
+        <AdversaryStatBody
+          stats={stats}
+          pools={{ isSelected, onSelect: (pool) => select(instance.id, pool) }}
+          track={{
+            marked,
+            takenOut: instance.takenOut,
+            onToggleMarked: setMarked,
+            onToggleTakenOut: () => onChange({ ...instance, takenOut: !instance.takenOut }),
+          }}
+        />
       )}
 
       <div>
@@ -374,15 +476,6 @@ export function AdversaryCard({ instance, onChange, onRemove, onDuplicate }: Pro
         onInput={(e) => autoGrow(e.currentTarget)}
         onBlur={(e) => onChange({ ...instance, memo: e.target.value })}
       />
-
-      <div className="injury-track">
-        {Array.from({ length: boxes }, (_, i) => box(i))}
-        <button
-          className={`injury-box ${instance.takenOut ? 'marked' : ''}`}
-          aria-label={t('sheet.takenOut')}
-          onClick={() => onChange({ ...instance, takenOut: !instance.takenOut })}
-        />
-      </div>
     </div>
   );
 }

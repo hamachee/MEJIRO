@@ -1155,6 +1155,19 @@ span.exp-value:focus-visible {
 .injury-box.marked:hover:not(:disabled) {
   background: var(--failure);
 }
+/* Adversary armor rating, drawn as a capacity readout ahead of the injury
+   boxes on the same track — no marked/unmarked state of its own. */
+.armor-box {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1.5px solid var(--accent);
+}
+.track-divider {
+  align-self: center;
+  color: var(--divider-strong);
+}
 
 /* Shared box row, used inside injury groups, the armor row and the flat fallback track. */
 .injury-boxes {
@@ -1290,15 +1303,6 @@ span.exp-value:focus-visible {
 .named-name {
   flex: 1;
   min-width: 0;
-  overflow-wrap: anywhere;
-}
-.template-fold {
-  flex: 1;
-  min-width: 0;
-}
-.template-fold summary {
-  cursor: pointer;
-  user-select: none;
   overflow-wrap: anywhere;
 }
 .named-item-note {
