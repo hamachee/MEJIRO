@@ -187,7 +187,7 @@ body {
    the fold toggle — same pattern as the smaller sub-section folds, just
    sized for a card heading. Default open. */
 .card-summary {
-  margin: 0 0 0.5rem;
+  margin: 0 0 .2rem 0;
   font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
