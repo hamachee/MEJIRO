@@ -264,8 +264,10 @@ function StatTrack({
         </span>
       )}
       {interactive && (
-        <span className="field-label" aria-hidden="true">
-          {t('sheet.takenOut')}
+        <span className={`injury-level terminal ${interactive.takenOut ? 'lit' : ''}`}>
+          <span className="injury-level-label" aria-hidden="true">
+            <FieldLabel i18nKey="sheet.takenOut" en="Taken Out" />
+          </span>
         </span>
       )}
       {interactive && (
