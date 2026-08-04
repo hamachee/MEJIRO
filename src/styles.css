@@ -1158,7 +1158,7 @@ span.exp-value:focus-visible {
 .injury-level.taken-out-corner {
   flex-direction: row;
   align-items: center;
-  padding: 0;
+  padding: 5px 0;
   gap: 0.4rem;
   flex-shrink: 0;
 }
