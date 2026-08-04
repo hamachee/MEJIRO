@@ -100,6 +100,14 @@ export interface InjuryTrack {
   /** How many boxes are currently marked. */
   marked: number;
   takenOut: boolean;
+  /** Free-form note shown below the armor row on the Injuries card, editable only in edit mode. */
+  note: string;
+  /**
+   * Extra boxes added to the track's first (least severe) structured
+   * level — Bloodied, for a template with a grouped injury track — beyond
+   * the template's own count. Editable only in edit mode; defaults to 0.
+   */
+  extraBoxes: number;
 }
 
 /**

@@ -10,10 +10,11 @@ import {
   type Character,
   type RatedItem,
 } from '../types/character';
-import type { L10n as L10nLabel, Stat, SystemTemplate } from '../types/template';
+import type { InjuryLevel, L10n as L10nLabel, Stat, SystemTemplate } from '../types/template';
 import { ResourceTracker } from './ResourceTracker';
 import { FieldLabel } from './FieldLabel';
 import { IconClose, IconEdit, IconLink } from './icons';
+import { Stepper } from './Stepper';
 import { uid } from '../lib/uid';
 import { attributesByCategory } from '../templates';
 import { useDragReorder } from '../lib/useDragReorder';
@@ -421,10 +422,12 @@ export function InjuryCard({
   character,
   template,
   variant = 'full',
+  editing = false,
 }: {
   character: Character;
   template: SystemTemplate;
   variant?: 'full' | 'compact';
+  editing?: boolean;
 }) {
   const { t } = useTranslation();
   const patch = useCharacterStore((s) => s.patch);
@@ -436,9 +439,13 @@ export function InjuryCard({
   // filling every level before it.
   const trackLevels = levels?.filter((l) => !l.terminal) ?? [];
   const terminalLevel = levels?.find((l) => l.terminal);
+  // Extra boxes apply to the first (least severe) structured level —
+  // Bloodied, for Curseborne — on top of the template's own count.
+  const levelBoxes = (level: InjuryLevel, index: number) =>
+    index === 0 ? level.boxes + injuries.extraBoxes : level.boxes;
 
   const total = levels?.length
-    ? trackLevels.reduce((sum, l) => sum + l.boxes, 0)
+    ? trackLevels.reduce((sum, l, i) => sum + levelBoxes(l, i), 0)
     : injuries.boxes;
   const marked = Math.min(injuries.marked, total);
 
@@ -549,9 +556,10 @@ export function InjuryCard({
 
   if (levels?.length) {
     let offset = 0;
-    const groups = trackLevels.map((level) => {
+    const groups = trackLevels.map((level, i) => {
+      const boxes = levelBoxes(level, i);
       const start = offset;
-      offset += level.boxes;
+      offset += boxes;
       // Only the current severity is lit: the level holding the deepest
       // marked box. Shallower levels dim again as damage progresses.
       const lit = marked > start && marked <= offset;
@@ -561,7 +569,7 @@ export function InjuryCard({
           className={`injury-level ${lit ? 'lit' : ''} ${variant === 'compact' ? 'thin' : ''}`}
         >
           <div className="injury-boxes">
-            {Array.from({ length: level.boxes }, (_, i) => box(start + i))}
+            {Array.from({ length: boxes }, (_, j) => box(start + j))}
           </div>
           <span className="injury-level-label">
             <L l10n={level.label} />
@@ -589,6 +597,32 @@ export function InjuryCard({
           {takenOutCorner}
         </div>
         {armorRow}
+        {editing ? (
+          <div className="form-row">
+            <input
+              className="grow"
+              placeholder={t('sheet.notePlaceholder')}
+              defaultValue={injuries.note}
+              onBlur={(e) => patch({ injuries: { ...injuries, note: e.target.value } })}
+            />
+          </div>
+        ) : (
+          injuries.note.trim() && <p className="muted item-card-desc">{injuries.note}</p>
+        )}
+        {editing && trackLevels[0] && (
+          <div className="form-row">
+            <Stepper
+              label={
+                <>
+                  <L l10n={trackLevels[0].label} /> {t('sheet.extraBoxes')}
+                </>
+              }
+              ariaLabel={t('sheet.extraBoxes')}
+              value={injuries.extraBoxes}
+              onChange={(n) => patch({ injuries: { ...injuries, extraBoxes: Math.max(0, n) } })}
+            />
+          </div>
+        )}
         <div className="injury-track grouped">{groups}</div>
       </section>
     );
@@ -888,7 +922,7 @@ export function CharacterSheet({ character, template, editing }: Props) {
       </details>
 
       <div className="two-col">
-        <InjuryCard character={character} template={template} />
+        <InjuryCard character={character} template={template} editing={editing} />
         <ConditionsCard character={character} />
       </div>
 
