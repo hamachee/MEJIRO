@@ -1133,7 +1133,7 @@ span.exp-value:focus-visible {
    Out label, minus its standalone group's horizontal padding — this is a
    flat single-row track, not a column of level groups. */
 .injury-track .injury-level {
-  padding: 0;
+  padding: 0 10px;
 }
 /* Taken Out reads as a terminal state, not a regular injury — same red
    family as the injury boxes but the brighter "terminal" shade. */
@@ -1235,6 +1235,7 @@ button.armor-box.marked:hover:not(:disabled) {
 .injury-track.grouped {
   align-items: stretch;
   gap: 0;
+  justify-content: center;
 }
 .injury-level {
   display: flex;
