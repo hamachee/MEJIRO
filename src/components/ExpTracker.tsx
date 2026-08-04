@@ -100,7 +100,7 @@ export function ExpTracker({ character }: Props) {
         </button>
       </div>
       {exp > DOT_DISPLAY_LIMIT ? (
-        <span className="muted exp-overflow">{t('sheet.expOverflow')}</span>
+        <span className="muted italic">{t('sheet.expOverflow')}</span>
       ) : (
         <span className="dots exp-dots">
           {expGroups(exp).map((n, i) => (

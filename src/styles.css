@@ -1118,7 +1118,7 @@ span.exp-value:focus-visible {
   color: var(--divider-strong);
   margin: 0 0.1rem;
 }
-.exp-overflow {
+.italic {
   font-style: italic;
 }
 
