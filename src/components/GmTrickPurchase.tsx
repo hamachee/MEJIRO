@@ -117,6 +117,18 @@ export function GmTrickPurchase({ campaign }: Props) {
         </div>
       </div>
 
+      <div className="form-row">
+        <button
+          className="primary"
+          onClick={onPost}
+          disabled={postState === 'posting' || nothingToPost}
+        >
+          {t('tricks.postTricks')} ({totalCost})
+        </button>
+        {postState === 'done' && <span className="ok">{t('result.posted')}</span>}
+        {postState === 'error' && <span className="danger-text">{error}</span>}
+      </div>
+
       {tricks.length === 0 ? (
         <p className="muted">{t('gm.noTricks')}</p>
       ) : (
@@ -143,18 +155,6 @@ export function GmTrickPurchase({ campaign }: Props) {
           })}
         </ul>
       )}
-
-      <div className="form-row">
-        <button
-          className="primary"
-          onClick={onPost}
-          disabled={postState === 'posting' || nothingToPost}
-        >
-          {t('tricks.postTricks')} ({totalCost})
-        </button>
-        {postState === 'done' && <span className="ok">{t('result.posted')}</span>}
-        {postState === 'error' && <span className="danger-text">{error}</span>}
-      </div>
     </section>
   );
 }
