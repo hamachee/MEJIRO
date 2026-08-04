@@ -4,11 +4,16 @@ import { useTranslation } from 'react-i18next';
 import { useCampaignStore } from '../store/campaignStore';
 import { defaultTricks } from '../storage/characters';
 import { exportCampaignFile } from '../lib/exportCampaignFile';
+import { DEFAULT_TEMPLATE_ID, getTemplate } from '../templates';
+import { label } from '../lib/localize';
+import { useLang } from '../lib/useLang';
 import type { Campaign } from '../types/campaign';
 
 export function CampaignList() {
   const { t } = useTranslation();
+  const lang = useLang();
   const navigate = useNavigate();
+  const systemLabel = label(getTemplate(DEFAULT_TEMPLATE_ID)!.name, lang);
 
   const roster = useCampaignStore((s) => s.roster);
   const create = useCampaignStore((s) => s.create);
@@ -94,6 +99,7 @@ export function CampaignList() {
               <li key={c.id} className="roster-item">
                 <button className="roster-open" onClick={() => navigate(`/gm/${c.id}`)}>
                   <strong>{c.name}</strong>
+                  <small className="muted">{systemLabel}</small>
                 </button>
                 <div className="roster-actions">
                   <button onClick={() => onExport(c)}>
