@@ -7,7 +7,8 @@ import { FieldLabel } from './FieldLabel';
 import { IconClose } from './icons';
 import { ListImportExport } from './ListImportExport';
 import { TrickInfo } from './TrickInfo';
-import type { Character } from '../types/character';
+import { formatTrickCost } from '../lib/trickCost';
+import type { Character, CharacterTrick } from '../types/character';
 
 /** Tricks tab: the character's own trick list, editable in edit mode. */
 export function CharacterTricksPage({
@@ -20,9 +21,7 @@ export function CharacterTricksPage({
   const { t } = useTranslation();
   const patch = useCharacterStore((s) => s.patch);
   const [name, setName] = useState('');
-  // Held as a string so clearing the field doesn't snap to a sticky "0"
-  // (the "01" problem); parsed and clamped only when the trick is added.
-  const [cost, setCost] = useState('1');
+  const [cost, setCost] = useState<CharacterTrick['cost']>(1);
   const [desc, setDesc] = useState('');
   const { tricks } = character;
   const { handleProps, itemProps } = useDragReorder(tricks, (next) =>
@@ -37,13 +36,13 @@ export function CharacterTricksPage({
         {
           id: uid(),
           name: name.trim(),
-          cost: Math.max(1, Number(cost) || 1),
+          cost,
           description: desc.trim() || undefined,
         },
       ],
     });
     setName('');
-    setCost('1');
+    setCost(1);
     setDesc('');
   };
 
@@ -68,7 +67,7 @@ export function CharacterTricksPage({
                   <span className="trick-name-cost">
                     <TrickInfo trick={tr} />
                     <span className="trick-cost">
-                      · {t('tricks.cost')} {tr.cost}
+                      · {t('tricks.cost')} {formatTrickCost(tr.cost)}
                     </span>
                   </span>
                   {editing && (
@@ -97,12 +96,15 @@ export function CharacterTricksPage({
               />
               <label className="field">
                 <span className="field-label">{t('tricks.cost')}</span>
-                <input
-                  type="number"
-                  min={1}
+                <select
                   value={cost}
-                  onChange={(e) => setCost(e.target.value)}
-                />
+                  onChange={(e) => setCost(e.target.value === 'variable' ? 'variable' : Number(e.target.value))}
+                >
+                  <option value={1}>1</option>
+                  <option value={2}>2</option>
+                  <option value={3}>3</option>
+                  <option value="variable">1~3</option>
+                </select>
               </label>
               <button onClick={add}>{t('tricks.add')}</button>
             </div>

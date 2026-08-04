@@ -483,7 +483,7 @@ export function InjuryCard({
   const armorMarked = Math.min(armor.marked, armor.rating);
   const setArmorRating = (n: number) => {
     const rating = Math.max(0, n);
-    patch({ armor: { rating, marked: Math.min(armorMarked, rating) } });
+    patch({ armor: { ...armor, rating, marked: Math.min(armorMarked, rating) } });
   };
   const armorBox = (absIndex: number) => {
     const isMarked = absIndex < armorMarked;
@@ -508,24 +508,37 @@ export function InjuryCard({
 
   const armorRow = (
     <div className={compact ? 'stat-track-row thin' : 'stat-track-row'}>
-      <span className="field-label">
-        <FieldLabel i18nKey="sheet.armor" en="Armor" />
-      </span>
-      <div className="curse-controls">
-        <button
-          aria-label={`− ${t('sheet.armor')}`}
-          disabled={armor.rating <= 0}
-          onClick={() => setArmorRating(armor.rating - 1)}
-        >
-          −
-        </button>
-        <div className="injury-boxes">
-          {Array.from({ length: armor.rating }, (_, i) => armorBox(i))}
+      <div className="stat-track-row-head">
+        <span className="field-label">
+          <FieldLabel i18nKey="sheet.armor" en="Armor" />
+        </span>
+        <div className="curse-controls">
+          <button
+            aria-label={`− ${t('sheet.armor')}`}
+            disabled={armor.rating <= 0}
+            onClick={() => setArmorRating(armor.rating - 1)}
+          >
+            −
+          </button>
+          <div className="injury-boxes">
+            {Array.from({ length: armor.rating }, (_, i) => armorBox(i))}
+          </div>
+          <button aria-label={`+ ${t('sheet.armor')}`} onClick={() => setArmorRating(armor.rating + 1)}>
+            +
+          </button>
         </div>
-        <button aria-label={`+ ${t('sheet.armor')}`} onClick={() => setArmorRating(armor.rating + 1)}>
-          +
-        </button>
       </div>
+      {!compact &&
+        (editing ? (
+          <input
+            className="grow"
+            placeholder={t('sheet.notePlaceholder')}
+            defaultValue={armor.note}
+            onBlur={(e) => patch({ armor: { ...armor, note: e.target.value } })}
+          />
+        ) : (
+          armor.note.trim() && <p className="muted item-card-desc">{armor.note}</p>
+        ))}
     </div>
   );
 
@@ -597,18 +610,6 @@ export function InjuryCard({
           {takenOutCorner}
         </div>
         {armorRow}
-        {editing ? (
-          <div className="form-row">
-            <input
-              className="grow"
-              placeholder={t('sheet.notePlaceholder')}
-              defaultValue={injuries.note}
-              onBlur={(e) => patch({ injuries: { ...injuries, note: e.target.value } })}
-            />
-          </div>
-        ) : (
-          injuries.note.trim() && <p className="muted item-card-desc">{injuries.note}</p>
-        )}
         {editing && trackLevels[0] && (
           <div className="form-row">
             <Stepper

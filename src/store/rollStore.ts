@@ -20,6 +20,8 @@ interface RollStoreState {
   result: RollResult | null;
   request: RollRequest | null;
   selectedTrickIds: string[];
+  /** Chosen 1-3 cost per variable-cost trick id, picked at purchase time. */
+  variableCosts: Record<string, number>;
   /**
    * Enhancement added during the purchase phase, after the dice are seen.
    * By the book it needs at least one dice hit; the app deliberately does
@@ -51,6 +53,8 @@ interface RollStoreState {
   /** Roll and immediately post the result to the sheet's webhook. */
   performRoll: (template: SystemTemplate, character: Character) => void;
   toggleTrick: (trickId: string) => void;
+  /** Set a variable-cost trick's chosen 1-3 cost for this purchase. */
+  setVariableCost: (trickId: string, n: number) => void;
   clearResult: () => void;
   resetFor: (template: SystemTemplate) => void;
   postStatus: PostStatus;
@@ -67,6 +71,7 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
   result: null,
   request: null,
   selectedTrickIds: [],
+  variableCosts: {},
   enhancement: 0,
   complicationSeverity: 0,
   bonusDice: 0,
@@ -115,6 +120,7 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
       result,
       request,
       selectedTrickIds: [],
+      variableCosts: {},
       enhancement: 0,
       complicationSeverity: 0,
       bonusDice: 0,
@@ -150,11 +156,16 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
     });
   },
 
+  setVariableCost: (trickId, n) => {
+    set({ variableCosts: { ...get().variableCosts, [trickId]: Math.max(1, Math.min(3, n)) } });
+  },
+
   clearResult: () =>
     set({
       result: null,
       request: null,
       selectedTrickIds: [],
+      variableCosts: {},
       enhancement: 0,
       complicationSeverity: 0,
       postStatus: 'idle',
@@ -169,6 +180,7 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
       result: null,
       request: null,
       selectedTrickIds: [],
+      variableCosts: {},
       enhancement: 0,
       complicationSeverity: 0,
       bonusDice: 0,

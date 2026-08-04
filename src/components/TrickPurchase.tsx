@@ -4,6 +4,7 @@ import { useRollStore, effectiveTotals } from '../store/rollStore';
 import { useSettingsStore } from '../store/settingsStore';
 import { validatePurchase } from '../engine/tricks';
 import { postTricks } from '../engine/discord';
+import { VARIABLE_COST_OPTIONS, formatTrickCost, resolveTrickCost } from '../lib/trickCost';
 import type { Character } from '../types/character';
 import { Stepper } from './Stepper';
 import { TrickInfo } from './TrickInfo';
@@ -23,6 +24,8 @@ export function TrickPurchase({ character }: Props) {
   const result = useRollStore((s) => s.result);
   const selectedTrickIds = useRollStore((s) => s.selectedTrickIds);
   const toggleTrick = useRollStore((s) => s.toggleTrick);
+  const variableCosts = useRollStore((s) => s.variableCosts);
+  const setVariableCost = useRollStore((s) => s.setVariableCost);
   const enhancement = useRollStore((s) => s.enhancement);
   const setEnhancement = useRollStore((s) => s.setEnhancement);
   const severity = useRollStore((s) => s.complicationSeverity);
@@ -37,10 +40,14 @@ export function TrickPurchase({ character }: Props) {
   const { budget } = effectiveTotals(result, enhancement);
   const tricks = character.tricks;
   const selected = tricks.filter((tr) => selectedTrickIds.includes(tr.id));
+  const resolved = selected.map((tr) => ({
+    name: tr.name,
+    cost: resolveTrickCost(tr, variableCosts),
+  }));
   // Buying off the complication spends extra hits like any other purchase.
   // Overspending is allowed on purpose (a forgotten difficulty is fixable at
   // the table); the remaining count just goes red and negative.
-  const purchases = severity > 0 ? [...selected, { cost: severity }] : selected;
+  const purchases = severity > 0 ? [...resolved, { cost: severity }] : resolved;
   const { totalCost, remaining, valid } = validatePurchase(purchases, budget);
 
   const onPost = async () => {
@@ -54,7 +61,7 @@ export function TrickPurchase({ character }: Props) {
     try {
       await postTricks(
         {
-          tricks: selected,
+          tricks: resolved,
           budget,
           enhancement,
           complication: severity > 0 ? severity : undefined,
@@ -147,7 +154,24 @@ export function TrickPurchase({ character }: Props) {
                     <TrickInfo trick={tr} />
                   </span>
                   <span className="trick-cost">
-                    {t('tricks.cost')} {tr.cost}
+                    {t('tricks.cost')}{' '}
+                    {tr.cost === 'variable' && isSelected ? (
+                      <select
+                        className="variable-cost-select"
+                        aria-label={`${tr.name} ${t('tricks.cost')}`}
+                        value={variableCosts[tr.id] ?? 1}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) => setVariableCost(tr.id, Number(e.target.value))}
+                      >
+                        {VARIABLE_COST_OPTIONS.map((n) => (
+                          <option key={n} value={n}>
+                            {n}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      formatTrickCost(tr.cost)
+                    )}
                   </span>
                 </label>
               </li>

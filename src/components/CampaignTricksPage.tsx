@@ -7,7 +7,9 @@ import { FieldLabel } from './FieldLabel';
 import { IconCheck, IconClose, IconEdit } from './icons';
 import { ListImportExport } from './ListImportExport';
 import { TrickInfo } from './TrickInfo';
+import { formatTrickCost } from '../lib/trickCost';
 import type { Campaign } from '../types/campaign';
+import type { CharacterTrick } from '../types/character';
 
 /** Tricks tab: the GM's own trick list, editable via its own edit toggle. */
 export function CampaignTricksPage({ campaign }: { campaign: Campaign }) {
@@ -15,8 +17,7 @@ export function CampaignTricksPage({ campaign }: { campaign: Campaign }) {
   const patch = useCampaignStore((s) => s.patch);
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState('');
-  // Held as a string so clearing the field doesn't snap to a sticky "0".
-  const [cost, setCost] = useState('1');
+  const [cost, setCost] = useState<CharacterTrick['cost']>(1);
   const [desc, setDesc] = useState('');
   const { tricks } = campaign;
   const { handleProps, itemProps } = useDragReorder(tricks, (next) =>
@@ -31,13 +32,13 @@ export function CampaignTricksPage({ campaign }: { campaign: Campaign }) {
         {
           id: uid(),
           name: name.trim(),
-          cost: Math.max(1, Number(cost) || 1),
+          cost,
           description: desc.trim() || undefined,
         },
       ],
     });
     setName('');
-    setCost('1');
+    setCost(1);
     setDesc('');
   };
 
@@ -67,7 +68,7 @@ export function CampaignTricksPage({ campaign }: { campaign: Campaign }) {
                   <span className="trick-name-cost">
                     <TrickInfo trick={tr} />
                     <span className="trick-cost">
-                      · {t('tricks.cost')} {tr.cost}
+                      · {t('tricks.cost')} {formatTrickCost(tr.cost)}
                     </span>
                   </span>
                   {editing && (
@@ -96,12 +97,15 @@ export function CampaignTricksPage({ campaign }: { campaign: Campaign }) {
               />
               <label className="field">
                 <span className="field-label">{t('tricks.cost')}</span>
-                <input
-                  type="number"
-                  min={1}
+                <select
                   value={cost}
-                  onChange={(e) => setCost(e.target.value)}
-                />
+                  onChange={(e) => setCost(e.target.value === 'variable' ? 'variable' : Number(e.target.value))}
+                >
+                  <option value={1}>1</option>
+                  <option value={2}>2</option>
+                  <option value={3}>3</option>
+                  <option value="variable">1~3</option>
+                </select>
               </label>
               <button onClick={add}>{t('tricks.add')}</button>
             </div>

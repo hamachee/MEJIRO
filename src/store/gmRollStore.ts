@@ -26,6 +26,8 @@ interface GmRollStoreState {
   postError: string;
   /** Selected trick ids for the post-roll purchase phase. */
   selectedTrickIds: string[];
+  /** Chosen 1-3 cost per variable-cost trick id, picked at purchase time. */
+  variableCosts: Record<string, number>;
   /**
    * Extra hits bought during the purchase phase, after the dice are seen.
    * A template's Enhancement is a free-text reference note only — nothing
@@ -48,6 +50,8 @@ interface GmRollStoreState {
   /** Set severity; picking the current one again clears back to none. */
   setComplicationSeverity: (n: number) => void;
   toggleTrick: (trickId: string) => void;
+  /** Set a variable-cost trick's chosen 1-3 cost for this purchase. */
+  setVariableCost: (trickId: string, n: number) => void;
   performRoll: (params: {
     campaign: Campaign;
     instanceLabel: string;
@@ -75,6 +79,7 @@ export const useGmRollStore = create<GmRollStoreState>((set, get) => ({
   postStatus: 'idle',
   postError: '',
   selectedTrickIds: [],
+  variableCosts: {},
   enhancement: 0,
   complicationSeverity: 0,
 
@@ -100,6 +105,10 @@ export const useGmRollStore = create<GmRollStoreState>((set, get) => ({
         ? selectedTrickIds.filter((id) => id !== trickId)
         : [...selectedTrickIds, trickId],
     });
+  },
+
+  setVariableCost: (trickId, n) => {
+    set({ variableCosts: { ...get().variableCosts, [trickId]: Math.max(1, Math.min(3, n)) } });
   },
 
   performRoll: ({ campaign, instanceLabel, poolLabel, poolRating }) => {
@@ -128,6 +137,7 @@ export const useGmRollStore = create<GmRollStoreState>((set, get) => ({
       selectedPool: null,
       bonusDice: 0,
       selectedTrickIds: [],
+      variableCosts: {},
       enhancement: 0,
       complicationSeverity: 0,
     };
@@ -182,6 +192,7 @@ export const useGmRollStore = create<GmRollStoreState>((set, get) => ({
       postStatus: 'idle',
       postError: '',
       selectedTrickIds: [],
+      variableCosts: {},
       enhancement: 0,
       complicationSeverity: 0,
     }),
@@ -197,6 +208,7 @@ export const useGmRollStore = create<GmRollStoreState>((set, get) => ({
       instanceLabel: '',
       poolLabel: '',
       selectedTrickIds: [],
+      variableCosts: {},
       enhancement: 0,
       complicationSeverity: 0,
       postStatus: 'idle',
