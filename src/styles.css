@@ -1144,6 +1144,22 @@ span.exp-value:focus-visible {
 .taken-out-box.marked:hover:not(:disabled) {
   background: var(--failure-terminal);
 }
+/* Taken out: the whole card's border flags it, not just its box track —
+   shared by the GM adversary card and the character sheet's Injuries card. */
+.taken-out {
+  border-color: var(--failure-terminal);
+  box-shadow: 0 0 6px rgba(255, 60, 60, 0.5);
+}
+/* Taken Out moved into the Injuries card's header corner: same terminal
+   label/box styling as the grouped track, just laid out as a row instead
+   of .injury-level's column, and without that group's side padding. */
+.taken-out-corner {
+  flex-direction: row;
+  align-items: center;
+  padding: 0;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
 /* Injury boxes: square dots with a clean two-state look — the global
    button hover/focus styling is suppressed so there is no in-between state. */
 .injury-box {
@@ -1222,13 +1238,6 @@ button.armor-box.marked:hover:not(:disabled) {
   margin-bottom: 0.6rem;
   padding-bottom: 0.6rem;
   border-bottom: 1px dashed var(--divider-strong);
-}
-
-/* Taken Out: its own line below the injury groups. */
-.injury-standalone {
-  margin-top: 0.6rem;
-  padding-top: 0.6rem;
-  border-top: 1px dashed var(--divider-strong);
 }
 
 /* Grouped injury track — severity levels split by dividers, labels light up */
@@ -1622,11 +1631,6 @@ button.fav-toggle:hover:not(:disabled) {
 /* Adversary mini stat block card (GM page): stacked sections with breathing room. */
 .adversary-card > * + * {
   margin-top: 0.5rem;
-}
-/* Taken out: the whole card's border flags it, not just its box track. */
-.adversary-card.taken-out {
-  border-color: var(--failure-terminal);
-  box-shadow: 0 0 6px rgba(255, 60, 60, 0.5);
 }
 .adversary-label {
   font-weight: 600;
