@@ -85,6 +85,8 @@ export interface AdversaryInstance {
 export interface Campaign {
   id: string;
   name: string;
+  /** Which {@link SystemTemplate} (by id) this campaign's adversary rules follow. */
+  templateId: string;
   /** Discord webhook this campaign posts adversary rolls to. */
   webhookUrl: string;
   /** If false, rolls wait for the GM to press "post" instead of posting immediately. */
