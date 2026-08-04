@@ -1122,209 +1122,6 @@ span.exp-value:focus-visible {
   font-style: italic;
 }
 
-/* Injury track */
-.injury-track {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.35rem;
-}
-/* Reuse the character sheet's severity-level label styling for the Taken
-   Out label, minus its standalone group's horizontal padding — this is a
-   flat single-row track, not a column of level groups. */
-.injury-track .injury-level {
-  padding: 0 10px;
-}
-/* Taken Out reads as a terminal state, not a regular injury — same red
-   family as the injury boxes but the brighter "terminal" shade. */
-.taken-out-box.marked {
-  background: var(--failure-terminal);
-  border-color: var(--failure-terminal);
-}
-.taken-out-box.marked:hover:not(:disabled) {
-  background: var(--failure-terminal);
-}
-/* Taken out: the whole card's border flags it, not just its box track —
-   shared by the GM adversary card and the character sheet's Injuries card. */
-.taken-out {
-  border-color: var(--failure-terminal);
-  box-shadow: 0 0 6px rgba(255, 60, 60, 0.5);
-}
-/* Taken Out moved into the Injuries card's header corner: same terminal
-   label/box styling as the grouped track, just laid out as a row (label,
-   then box) instead of .injury-level's column, and without that group's
-   side padding. Compound selector so it reliably beats .injury-level's
-   column layout regardless of stylesheet order. */
-.injury-level.taken-out-corner {
-  flex-direction: row;
-  align-items: center;
-  padding: 5px 0;
-  gap: 0.4rem;
-  flex-shrink: 0;
-}
-/* Injury boxes: square dots with a clean two-state look — the global
-   button hover/focus styling is suppressed so there is no in-between state. */
-.injury-box {
-  width: 16px;
-  height: 16px;
-  padding: 0;
-  border-radius: 3px;
-  border: 1.5px solid var(--failure);
-  background: transparent;
-  transition: transform 0.05s ease;
-}
-.injury-box:hover:not(:disabled) {
-  background: transparent;
-  transform: scale(1.2);
-}
-.injury-box:focus {
-  outline: none;
-}
-.injury-box:focus-visible {
-  outline: 2px solid var(--accent);
-}
-.injury-box.marked {
-  background: var(--failure);
-}
-.injury-box.marked:hover:not(:disabled) {
-  background: var(--failure);
-}
-/* Adversary armor rating, drawn as its own fillable track ahead of the
-   injury boxes — same two-state look as .injury-box, just in the accent
-   color so it reads as a different track at a glance. A template's static
-   outlines (no onClick) get the plain span layout instead of the button
-   reset below. */
-.armor-box {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  padding: 0;
-  border-radius: 3px;
-  border: 1.5px solid var(--accent);
-  background: transparent;
-  transition: transform 0.05s ease;
-}
-button.armor-box:hover:not(:disabled) {
-  background: transparent;
-  transform: scale(1.2);
-}
-.armor-box:focus {
-  outline: none;
-}
-.armor-box:focus-visible {
-  outline: 2px solid var(--accent);
-}
-.armor-box.marked {
-  background: var(--accent);
-}
-button.armor-box.marked:hover:not(:disabled) {
-  background: var(--accent);
-}
-.track-divider {
-  color: var(--divider-strong);
-}
-
-/* Shared box row, used inside injury groups, the armor row and the flat fallback track. */
-.injury-boxes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-}
-
-/* Armor row: label + -/boxes/+, its own line above the injury groups. */
-.stat-track-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 0.6rem;
-  padding-bottom: 0.6rem;
-  border-bottom: 1px dashed var(--divider-strong);
-}
-
-/* Grouped injury track — severity levels split by dividers, labels light up */
-.injury-track.grouped {
-  align-items: stretch;
-  gap: 0;
-  justify-content: center;
-}
-.injury-level {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0 0.7rem;
-}
-.injury-level + .injury-level {
-  border-left: 1px solid var(--border);
-}
-.injury-level-label {
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--muted);
-  opacity: 0.5;
-  text-align: center;
-  transition: opacity 0.15s ease, color 0.15s ease;
-}
-.injury-level.lit .injury-level-label {
-  opacity: 1;
-  color: var(--failure-bright);
-  font-weight: 700;
-}
-.injury-level.terminal.lit .injury-level-label {
-  color: var(--failure-terminal);
-  text-shadow: 0 0 6px rgba(255, 60, 60, 0.5);
-}
-.injury-level.terminal .injury-level-label {
-  font-style: italic;
-}
-/* The Taken-Out box reads as the gravest mark. */
-.injury-level.terminal .injury-box.marked,
-.injury-level.terminal .injury-box.marked:hover:not(:disabled) {
-  background: var(--failure-terminal);
-  border-color: var(--failure-bright);
-}
-
-/* Compact injury tracker (Gear tab): armor, track and taken-out on one
-   thin, wrapping line — no card title. */
-.card.compact-tracker {
-  padding: 0.5rem 0.8rem;
-}
-.tracker-line {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-.stat-track-row.thin {
-  margin: 0;
-  padding: 0;
-  border-bottom: none;
-  gap: 0.5rem;
-}
-.injury-track.compact {
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  gap: 0.25rem;
-}
-.injury-track.compact .injury-box {
-  width: 12px;
-  height: 12px;
-}
-.injury-level.thin {
-  flex-direction: row;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0 0.5rem;
-}
-.injury-level.thin .injury-boxes {
-  gap: 0.2rem;
-}
-.injury-level.thin .injury-level-label {
-  font-size: 0.62rem;
-}
-
 /* Named lists (edges, paths, tricks) */
 .named-list {
   list-style: none;
@@ -1661,6 +1458,212 @@ button.fav-toggle:hover:not(:disabled) {
   background: var(--accent-2);
   border-color: var(--accent);
 }
+
+
+/* Injury track */
+.injury-track {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+/* Reuse the character sheet's severity-level label styling for the Taken
+   Out label, minus its standalone group's horizontal padding — this is a
+   flat single-row track, not a column of level groups. */
+.injury-track .injury-level {
+  padding: 0 10px;
+}
+/* Taken Out reads as a terminal state, not a regular injury — same red
+   family as the injury boxes but the brighter "terminal" shade. */
+.taken-out-box.marked {
+  background: var(--failure-terminal);
+  border-color: var(--failure-terminal);
+}
+.taken-out-box.marked:hover:not(:disabled) {
+  background: var(--failure-terminal);
+}
+/* Taken out: the whole card's border flags it, not just its box track —
+   shared by the GM adversary card and the character sheet's Injuries card. */
+.taken-out {
+  border-color: var(--failure-terminal);
+  box-shadow: 0 0 6px rgba(255, 60, 60, 0.5);
+}
+/* Taken Out moved into the Injuries card's header corner: same terminal
+   label/box styling as the grouped track, just laid out as a row (label,
+   then box) instead of .injury-level's column, and without that group's
+   side padding. Compound selector so it reliably beats .injury-level's
+   column layout regardless of stylesheet order. */
+.injury-level.taken-out-corner {
+  flex-direction: row;
+  align-items: center;
+  padding: 5px 0;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+/* Injury boxes: square dots with a clean two-state look — the global
+   button hover/focus styling is suppressed so there is no in-between state. */
+.injury-box {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border-radius: 3px;
+  border: 1.5px solid var(--failure);
+  background: transparent;
+  transition: transform 0.05s ease;
+}
+.injury-box:hover:not(:disabled) {
+  background: transparent;
+  transform: scale(1.2);
+}
+.injury-box:focus {
+  outline: none;
+}
+.injury-box:focus-visible {
+  outline: 2px solid var(--accent);
+}
+.injury-box.marked {
+  background: var(--failure);
+}
+.injury-box.marked:hover:not(:disabled) {
+  background: var(--failure);
+}
+/* Adversary armor rating, drawn as its own fillable track ahead of the
+   injury boxes — same two-state look as .injury-box, just in the accent
+   color so it reads as a different track at a glance. A template's static
+   outlines (no onClick) get the plain span layout instead of the button
+   reset below. */
+.armor-box {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border-radius: 3px;
+  border: 1.5px solid var(--accent);
+  background: transparent;
+  transition: transform 0.05s ease;
+}
+button.armor-box:hover:not(:disabled) {
+  background: transparent;
+  transform: scale(1.2);
+}
+.armor-box:focus {
+  outline: none;
+}
+.armor-box:focus-visible {
+  outline: 2px solid var(--accent);
+}
+.armor-box.marked {
+  background: var(--accent);
+}
+button.armor-box.marked:hover:not(:disabled) {
+  background: var(--accent);
+}
+.track-divider {
+  color: var(--divider-strong);
+}
+
+/* Shared box row, used inside injury groups, the armor row and the flat fallback track. */
+.injury-boxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+/* Armor row: label + -/boxes/+, its own line above the injury groups. */
+.stat-track-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px dashed var(--divider-strong);
+}
+
+/* Grouped injury track — severity levels split by dividers, labels light up */
+.injury-track.grouped {
+  align-items: stretch;
+  gap: 0;
+  justify-content: center;
+}
+.injury-level {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0 0.7rem;
+}
+.injury-level + .injury-level {
+  border-left: 1px solid var(--border);
+}
+.injury-level-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  opacity: 0.5;
+  text-align: center;
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+.injury-level.lit .injury-level-label {
+  opacity: 1;
+  color: var(--failure-bright);
+  font-weight: 700;
+}
+.injury-level.terminal.lit .injury-level-label {
+  color: var(--failure-terminal);
+  text-shadow: 0 0 6px rgba(255, 60, 60, 0.5);
+}
+.injury-level.terminal .injury-level-label {
+  font-style: italic;
+}
+/* The Taken-Out box reads as the gravest mark. */
+.injury-level.terminal .injury-box.marked,
+.injury-level.terminal .injury-box.marked:hover:not(:disabled) {
+  background: var(--failure-terminal);
+  border-color: var(--failure-bright);
+}
+
+/* Compact injury tracker (Gear tab): armor, track and taken-out on one
+   thin, wrapping line — no card title. */
+.card.compact-tracker {
+  padding: 0.5rem 0.8rem;
+}
+.tracker-line {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.stat-track-row.thin {
+  margin: 0;
+  padding: 0;
+  border-bottom: none;
+  gap: 0.5rem;
+}
+.injury-track.compact {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 0.25rem;
+}
+.injury-track.compact .injury-box {
+  width: 12px;
+  height: 12px;
+}
+.injury-level.thin {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0 0.5rem;
+}
+.injury-level.thin .injury-boxes {
+  gap: 0.2rem;
+}
+.injury-level.thin .injury-level-label {
+  font-size: 0.62rem;
+}
+
+
 /* Memo grows to fit its content (sized in JS via scrollHeight) — no manual
    resize handle or scrollbar needed. */
 .adversary-memo {
