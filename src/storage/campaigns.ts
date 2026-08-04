@@ -44,6 +44,7 @@ export function normalizeCampaign(
       memo: i.memo ?? '',
       stats: { ...blankAdversaryStats(), ...i.stats },
       conditions: i.conditions ?? [],
+      armorMarked: i.armorMarked ?? 0,
     })),
     tricks: raw.tricks ?? [],
   };
