@@ -9,6 +9,9 @@ import type { Campaign } from '../types/campaign';
 import { FieldLabel } from './FieldLabel';
 import { IconCheck, IconEdit } from './icons';
 import { AdversaryCard } from './AdversaryCard';
+import { DEFAULT_TEMPLATE_ID, getTemplate } from '../templates';
+import { label } from '../lib/localize';
+import { useLang } from '../lib/useLang';
 
 /** Shorten a free-text field for the summary line; full text lives in the edit form. */
 function truncate(s: string, max = 24): string {
@@ -239,12 +242,14 @@ function AddInstanceRow({ campaign }: { campaign: Campaign }) {
 /** Campaign name + free-roll pool + Discord webhook. Manages its own edit toggle, since the name may only be changed while it's open. */
 function CampaignSettingsCard({ campaign }: { campaign: Campaign }) {
   const { t } = useTranslation();
+  const lang = useLang();
   const rename = useCampaignStore((s) => s.rename);
   const patch = useCampaignStore((s) => s.patch);
   const selectedInstanceId = useGmRollStore((s) => s.selectedInstanceId);
   const selectedPool = useGmRollStore((s) => s.selectedPool);
   const select = useGmRollStore((s) => s.select);
   const [editing, setEditing] = useState(false);
+  const systemLabel = label(getTemplate(DEFAULT_TEMPLATE_ID)!.name, lang);
 
   const customPoolControl = (
     <CustomPoolControl
@@ -264,6 +269,7 @@ function CampaignSettingsCard({ campaign }: { campaign: Campaign }) {
             <IconEdit />
           </button>
         </div>
+        <div className="identity-row muted">{systemLabel}</div>
         {customPoolControl}
       </section>
     );
@@ -280,6 +286,7 @@ function CampaignSettingsCard({ campaign }: { campaign: Campaign }) {
           <IconCheck />
         </button>
       </div>
+      <div className="identity-row muted">{systemLabel}</div>
       {customPoolControl}
       <div className="form-row">
         <label className="field grow">
