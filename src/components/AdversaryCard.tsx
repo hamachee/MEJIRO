@@ -195,11 +195,12 @@ export function AdversaryStatsFields({
 }
 
 /**
- * Armor and injury boxes on one track, armor first and split from injury by
- * a divider — armor has no marked/unmarked state of its own, it's just a
- * capacity readout, so its boxes are always plain. Injury boxes are static
+ * Armor and injury boxes on one track, armor first and split from injury —
+ * and injury split again from the trailing Taken Out box — by a divider, so
+ * it doesn't read as a stray extra injury box. Both box groups are static
  * outlines for a template (nothing to mark yet); a deployed card passes
- * `interactive` to make them click-to-mark, plus the trailing Taken Out box.
+ * `interactive` to make armor and injury independently click-to-mark, plus
+ * the Taken Out toggle.
  */
 function StatTrack({
   armorRating,
@@ -210,8 +211,10 @@ function StatTrack({
   injuryBoxes: number;
   interactive?: {
     marked: number;
+    armorMarked: number;
     takenOut: boolean;
     onToggleMarked: (n: number) => void;
+    onToggleArmorMarked: (n: number) => void;
     onToggleTakenOut: () => void;
   };
 }) {
@@ -220,12 +223,23 @@ function StatTrack({
   const injuryCount = Math.max(0, injuryBoxes);
   if (armorCount === 0 && injuryCount === 0 && !interactive) return null;
   const marked = interactive ? Math.min(interactive.marked, injuryCount) : 0;
+  const armorMarked = interactive ? Math.min(interactive.armorMarked, armorCount) : 0;
 
   return (
     <div className="injury-track">
-      {Array.from({ length: armorCount }, (_, i) => (
-        <span key={`armor${i}`} className="armor-box" />
-      ))}
+      {Array.from({ length: armorCount }, (_, i) => {
+        if (!interactive) return <span key={`armor${i}`} className="armor-box" />;
+        const position = i + 1;
+        const isMarked = i < armorMarked;
+        return (
+          <button
+            key={`armor${i}`}
+            className={`armor-box ${isMarked ? 'marked' : ''}`}
+            aria-label={`${t('gm.armor')} ${position}`}
+            onClick={() => interactive.onToggleArmorMarked(armorMarked === position ? position - 1 : position)}
+          />
+        );
+      })}
       {armorCount > 0 && injuryCount > 0 && (
         <span className="track-divider" aria-hidden="true">
           |
@@ -244,6 +258,11 @@ function StatTrack({
           />
         );
       })}
+      {interactive && (armorCount > 0 || injuryCount > 0) && (
+        <span className="track-divider" aria-hidden="true">
+          |
+        </span>
+      )}
       {interactive && (
         <button
           className={`injury-box ${interactive.takenOut ? 'marked' : ''}`}
@@ -271,8 +290,10 @@ export function AdversaryStatBody({
   pools?: { isSelected: (pool: AdversaryPool) => boolean; onSelect: (pool: AdversaryPool) => void };
   track?: {
     marked: number;
+    armorMarked: number;
     takenOut: boolean;
     onToggleMarked: (n: number) => void;
+    onToggleArmorMarked: (n: number) => void;
     onToggleTakenOut: () => void;
   };
 }) {
@@ -375,11 +396,15 @@ export function AdversaryCard({ instance, onChange, onRemove, onDuplicate }: Pro
   const { stats } = instance;
   const boxes = Math.max(0, stats.injuryBoxes);
   const marked = Math.min(instance.marked, boxes);
+  const armorBoxes = stats.hasArmor ? Math.max(0, stats.armorRating) : 0;
+  const armorMarked = Math.min(instance.armorMarked, armorBoxes);
 
   const isSelected = (pool: AdversaryPool) =>
     selectedInstanceId === instance.id && selectedPool === pool;
 
   const setMarked = (n: number) => onChange({ ...instance, marked: Math.max(0, Math.min(n, boxes)) });
+  const setArmorMarked = (n: number) =>
+    onChange({ ...instance, armorMarked: Math.max(0, Math.min(n, armorBoxes)) });
 
   const addCondition = () => {
     if (!conditionName.trim()) return;
@@ -430,8 +455,10 @@ export function AdversaryCard({ instance, onChange, onRemove, onDuplicate }: Pro
           pools={{ isSelected, onSelect: (pool) => select(instance.id, pool) }}
           track={{
             marked,
+            armorMarked,
             takenOut: instance.takenOut,
             onToggleMarked: setMarked,
+            onToggleArmorMarked: setArmorMarked,
             onToggleTakenOut: () => onChange({ ...instance, takenOut: !instance.takenOut }),
           }}
         />

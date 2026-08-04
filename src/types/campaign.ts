@@ -76,6 +76,8 @@ export interface AdversaryInstance {
   conditions: ConditionItem[];
   /** Boxes filled on the injury track; capped at this card's stats.injuryBoxes. */
   marked: number;
+  /** Boxes filled on the armor track; capped at this card's stats.armorRating. */
+  armorMarked: number;
   takenOut: boolean;
 }
 

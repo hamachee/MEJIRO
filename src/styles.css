@@ -1155,14 +1155,36 @@ span.exp-value:focus-visible {
 .injury-box.marked:hover:not(:disabled) {
   background: var(--failure);
 }
-/* Adversary armor rating, drawn as a capacity readout ahead of the injury
-   boxes on the same track — no marked/unmarked state of its own. */
+/* Adversary armor rating, drawn as its own fillable track ahead of the
+   injury boxes — same two-state look as .injury-box, just in the accent
+   color so it reads as a different track at a glance. A template's static
+   outlines (no onClick) get the plain span layout instead of the button
+   reset below. */
 .armor-box {
   display: inline-block;
   width: 16px;
   height: 16px;
+  padding: 0;
   border-radius: 3px;
   border: 1.5px solid var(--accent);
+  background: transparent;
+  transition: transform 0.05s ease;
+}
+button.armor-box:hover:not(:disabled) {
+  background: transparent;
+  transform: scale(1.2);
+}
+.armor-box:focus {
+  outline: none;
+}
+.armor-box:focus-visible {
+  outline: 2px solid var(--accent);
+}
+.armor-box.marked {
+  background: var(--accent);
+}
+button.armor-box.marked:hover:not(:disabled) {
+  background: var(--accent);
 }
 .track-divider {
   align-self: center;
