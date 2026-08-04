@@ -1624,6 +1624,7 @@ button.fav-toggle:hover:not(:disabled) {
 /* Taken out: the whole card's border flags it, not just its box track. */
 .adversary-card.taken-out {
   border-color: var(--failure-terminal);
+  box-shadow: 0 0 6px rgba(255, 60, 60, 0.5);
 }
 .adversary-label {
   font-weight: 600;
