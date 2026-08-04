@@ -264,8 +264,13 @@ function StatTrack({
         </span>
       )}
       {interactive && (
+        <span className="field-label" aria-hidden="true">
+          {t('sheet.takenOut')}
+        </span>
+      )}
+      {interactive && (
         <button
-          className={`injury-box ${interactive.takenOut ? 'marked' : ''}`}
+          className={`injury-box taken-out-box ${interactive.takenOut ? 'marked' : ''}`}
           aria-label={t('sheet.takenOut')}
           onClick={interactive.onToggleTakenOut}
         />
@@ -416,7 +421,7 @@ export function AdversaryCard({ instance, onChange, onRemove, onDuplicate }: Pro
   };
 
   return (
-    <div className="item-card adversary-card">
+    <div className={`item-card adversary-card ${instance.takenOut ? 'taken-out' : ''}`}>
       <div className="item-card-head">
         {editing ? (
           <input
