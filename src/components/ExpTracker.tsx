@@ -5,6 +5,8 @@ import { FieldLabel } from './FieldLabel';
 import type { Character } from '../types/character';
 
 const DOTS_PER_GROUP = 5;
+/** Past this many dots, the tracker swaps the dot groups for a nudge — a wall of dots stops being useful and just eats the sticky bar's height. */
+const DOT_DISPLAY_LIMIT = 50;
 
 /** Split a dot count into groups of five, e.g. 12 -> [5, 5, 2]. */
 function expGroups(value: number): number[] {
@@ -97,20 +99,24 @@ export function ExpTracker({ character }: Props) {
           +
         </button>
       </div>
-      <span className="dots exp-dots">
-        {expGroups(exp).map((n, i) => (
-          <Fragment key={i}>
-            {i > 0 && (
-              <span className="exp-divider" aria-hidden="true">
-                |
-              </span>
-            )}
-            {Array.from({ length: n }, (_, j) => (
-              <span key={j} className="dot filled" />
-            ))}
-          </Fragment>
-        ))}
-      </span>
+      {exp > DOT_DISPLAY_LIMIT ? (
+        <span className="muted exp-overflow">{t('sheet.expOverflow')}</span>
+      ) : (
+        <span className="dots exp-dots">
+          {expGroups(exp).map((n, i) => (
+            <Fragment key={i}>
+              {i > 0 && (
+                <span className="exp-divider" aria-hidden="true">
+                  |
+                </span>
+              )}
+              {Array.from({ length: n }, (_, j) => (
+                <span key={j} className="dot filled" />
+              ))}
+            </Fragment>
+          ))}
+        </span>
+      )}
     </div>
   );
 }

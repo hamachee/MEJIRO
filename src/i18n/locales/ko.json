@@ -36,6 +36,7 @@
     "family": "가문",
     "entanglement": "얽힘",
     "exp": "경험점",
+    "expOverflow": "경험점 좀 쓰세요. 스토리가이드가 웁니다.",
     "injuries": "부상",
     "armor": "장갑",
     "takenOut": "탈락",

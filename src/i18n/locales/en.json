@@ -36,6 +36,7 @@
     "family": "Family",
     "entanglement": "Entanglement",
     "exp": "EXP",
+    "expOverflow": "Please spend some EXP. The Storyguide is weeping.",
     "injuries": "Injuries",
     "armor": "Armor",
     "takenOut": "Taken Out",
