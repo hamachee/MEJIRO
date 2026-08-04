@@ -1,5 +1,4 @@
 import type { SystemTemplate } from '../types/template';
-import type { CharacterTrick } from '../types/character';
 import type { RollRequest, RollResult } from '../types/roll';
 import { hasCurseHit } from './roll';
 import { label } from '../lib/localize';
@@ -177,9 +176,15 @@ export function postAdversaryRoll(
   return post(ctx.webhookUrl, buildAdversaryRollEmbed(request, result, ctx));
 }
 
+/** A trick purchase line: its resolved (already-numeric) hit cost, not the trick's own definition. */
+export interface PurchasedTrick {
+  name: string;
+  cost: number;
+}
+
 /** What the player did with their extra hits after the roll. */
 export interface PurchaseSummary {
-  tricks: CharacterTrick[];
+  tricks: PurchasedTrick[];
   /** Extra-hit budget after post-roll enhancement. */
   budget: number;
   /** Enhancement added during the purchase phase (already in `budget`). */

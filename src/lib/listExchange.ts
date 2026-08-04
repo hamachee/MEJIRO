@@ -68,7 +68,7 @@ export const normalizeEntry = {
     return {
       id: uid(),
       name: entryName(raw),
-      cost: Math.max(1, Number(r.cost) || 1),
+      cost: r.cost === 'variable' ? 'variable' : Math.max(1, Number(r.cost) || 1),
       description: optionalText(r.description),
     };
   },

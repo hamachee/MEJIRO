@@ -88,7 +88,8 @@ export interface SpellItem {
 export interface CharacterTrick {
   id: string;
   name: string;
-  cost: number;
+  /** A fixed hit cost, or 'variable' for a 1-3 cost chosen at purchase time. */
+  cost: number | 'variable';
   /** Optional user-written note, shown folded under the trick name. */
   description?: string;
 }
@@ -100,8 +101,6 @@ export interface InjuryTrack {
   /** How many boxes are currently marked. */
   marked: number;
   takenOut: boolean;
-  /** Free-form note shown below the armor row on the Injuries card, editable only in edit mode. */
-  note: string;
   /**
    * Extra boxes added to the track's first (least severe) structured
    * level — Bloodied, for a template with a grouped injury track — beyond
@@ -119,6 +118,8 @@ export interface InjuryTrack {
 export interface ArmorTrack {
   rating: number;
   marked: number;
+  /** Free-form note (armor type, source, etc.), editable only in edit mode. */
+  note: string;
 }
 
 /**

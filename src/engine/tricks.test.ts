@@ -1,12 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { validatePurchase, canAfford } from './tricks';
-import type { CharacterTrick } from '../types/character';
 
-const t = (name: string, cost: number): CharacterTrick => ({
-  id: name,
-  name,
-  cost,
-});
+const t = (name: string, cost: number) => ({ id: name, name, cost });
 
 describe('validatePurchase — trick budget', () => {
   it('is valid when total cost is under budget', () => {

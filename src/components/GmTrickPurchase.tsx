@@ -5,6 +5,7 @@ import { effectiveTotals } from '../store/rollStore';
 import { useSettingsStore } from '../store/settingsStore';
 import { validatePurchase } from '../engine/tricks';
 import { postTricks } from '../engine/discord';
+import { VARIABLE_COST_OPTIONS, formatTrickCost, resolveTrickCost } from '../lib/trickCost';
 import type { Campaign } from '../types/campaign';
 import { Stepper } from './Stepper';
 import { TrickInfo } from './TrickInfo';
@@ -26,6 +27,8 @@ export function GmTrickPurchase({ campaign }: Props) {
   const instanceLabel = useGmRollStore((s) => s.instanceLabel);
   const selectedTrickIds = useGmRollStore((s) => s.selectedTrickIds);
   const toggleTrick = useGmRollStore((s) => s.toggleTrick);
+  const variableCosts = useGmRollStore((s) => s.variableCosts);
+  const setVariableCost = useGmRollStore((s) => s.setVariableCost);
   const enhancement = useGmRollStore((s) => s.enhancement);
   const setEnhancement = useGmRollStore((s) => s.setEnhancement);
   const severity = useGmRollStore((s) => s.complicationSeverity);
@@ -40,7 +43,11 @@ export function GmTrickPurchase({ campaign }: Props) {
   const { budget } = effectiveTotals(result, enhancement);
   const tricks = campaign.tricks;
   const selected = tricks.filter((tr) => selectedTrickIds.includes(tr.id));
-  const purchases = severity > 0 ? [...selected, { cost: severity }] : selected;
+  const resolved = selected.map((tr) => ({
+    name: tr.name,
+    cost: resolveTrickCost(tr, variableCosts),
+  }));
+  const purchases = severity > 0 ? [...resolved, { cost: severity }] : resolved;
   const { totalCost, remaining, valid } = validatePurchase(purchases, budget);
 
   const onPost = async () => {
@@ -54,7 +61,7 @@ export function GmTrickPurchase({ campaign }: Props) {
     try {
       await postTricks(
         {
-          tricks: selected,
+          tricks: resolved,
           budget,
           enhancement,
           complication: severity > 0 ? severity : undefined,
@@ -147,7 +154,24 @@ export function GmTrickPurchase({ campaign }: Props) {
                     <TrickInfo trick={tr} />
                   </span>
                   <span className="trick-cost">
-                    {t('tricks.cost')} {tr.cost}
+                    {t('tricks.cost')}{' '}
+                    {tr.cost === 'variable' && isSelected ? (
+                      <select
+                        className="variable-cost-select"
+                        aria-label={`${tr.name} ${t('tricks.cost')}`}
+                        value={variableCosts[tr.id] ?? 1}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) => setVariableCost(tr.id, Number(e.target.value))}
+                      >
+                        {VARIABLE_COST_OPTIONS.map((n) => (
+                          <option key={n} value={n}>
+                            {n}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      formatTrickCost(tr.cost)
+                    )}
                   </span>
                 </label>
               </li>
