@@ -538,12 +538,12 @@ export function InjuryCard({
   // track, so it reads as this card's own status flag, not another group.
   const takenOutCorner = terminalLevel && (
     <div className={`injury-level terminal taken-out-corner ${injuries.takenOut ? 'lit' : ''}`}>
-      <div className="injury-boxes">
-        {Array.from({ length: terminalLevel.boxes }, (_, i) => takenOutBox(i))}
-      </div>
       <span className="injury-level-label">
         <L l10n={terminalLevel.label} />
       </span>
+      <div className="injury-boxes">
+        {Array.from({ length: terminalLevel.boxes }, (_, i) => takenOutBox(i))}
+      </div>
     </div>
   );
 

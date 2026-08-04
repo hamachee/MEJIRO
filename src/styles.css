@@ -1151,9 +1151,11 @@ span.exp-value:focus-visible {
   box-shadow: 0 0 6px rgba(255, 60, 60, 0.5);
 }
 /* Taken Out moved into the Injuries card's header corner: same terminal
-   label/box styling as the grouped track, just laid out as a row instead
-   of .injury-level's column, and without that group's side padding. */
-.taken-out-corner {
+   label/box styling as the grouped track, just laid out as a row (label,
+   then box) instead of .injury-level's column, and without that group's
+   side padding. Compound selector so it reliably beats .injury-level's
+   column layout regardless of stylesheet order. */
+.injury-level.taken-out-corner {
   flex-direction: row;
   align-items: center;
   padding: 0;
