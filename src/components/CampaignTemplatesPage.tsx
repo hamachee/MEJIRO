@@ -3,9 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useCampaignStore } from '../store/campaignStore';
 import { uid } from '../lib/uid';
 import { blankAdversaryStats, type AdversaryStats, type AdversaryTemplate, type Campaign } from '../types/campaign';
-import { AdversaryStatsFields } from './AdversaryCard';
-import { statSummary } from './CampaignSheet';
-import { IconCheck, IconClose, IconCopy, IconEdit } from './icons';
+import { AdversaryStatBody, AdversaryStatsFields } from './AdversaryCard';
+import { IconClose, IconCopy, IconEdit } from './icons';
 import { ListImportExport } from './ListImportExport';
 
 /** Shared form fields for creating or editing an adversary template. */
@@ -58,26 +57,28 @@ function AdversaryTemplateForm({
   );
 }
 
+/**
+ * A template, card-style like a deployed adversary — same stat block, same
+ * duplicate/edit/remove affordance, always visible (no page-level edit
+ * gate). Editing swaps the whole card for the add/edit form.
+ */
 function TemplateRow({
   template,
-  editing,
   onSave,
   onRemove,
   onDuplicate,
 }: {
   template: AdversaryTemplate;
-  editing: boolean;
   onSave: (template: AdversaryTemplate) => void;
   onRemove: () => void;
   onDuplicate: () => void;
 }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
-  const [expanded, setExpanded] = useState(true);
 
-  if (editing && open) {
+  if (open) {
     return (
-      <li className="named-item named-item-editing">
+      <div className="item-card adversary-card editing">
         <AdversaryTemplateForm
           initialName={template.name}
           initialStats={template.stats}
@@ -88,70 +89,54 @@ function TemplateRow({
             setOpen(false);
           }}
         />
-      </li>
+      </div>
     );
   }
 
   return (
-    <li className="named-item">
-      <div className="named-item-row">
-        <details className="template-fold" open={expanded} onToggle={(e) => setExpanded(e.currentTarget.open)}>
-          <summary>{template.name}</summary>
-        </details>
-        {editing && (
-          <div className="item-card-actions">
-            <button className="chip ghost" aria-label={`duplicate ${template.name}`} onClick={onDuplicate}>
-              <IconCopy />
-            </button>
-            <button className="chip ghost" aria-label={`edit ${template.name}`} onClick={() => setOpen(true)}>
-              <IconEdit />
-            </button>
-            <button className="chip ghost" aria-label={`remove ${template.name}`} onClick={onRemove}>
-              <IconClose />
-            </button>
-          </div>
-        )}
+    <div className="item-card adversary-card">
+      <div className="item-card-head">
+        <span className="grow adversary-label">{template.name}</span>
+        <div className="item-card-actions">
+          <button className="chip ghost" aria-label={`duplicate ${template.name}`} onClick={onDuplicate}>
+            <IconCopy />
+          </button>
+          <button className="chip ghost" aria-label={`edit ${template.name}`} onClick={() => setOpen(true)}>
+            <IconEdit />
+          </button>
+          <button className="chip ghost" aria-label={`remove ${template.name}`} onClick={onRemove}>
+            <IconClose />
+          </button>
+        </div>
       </div>
-      {expanded && (
-        <p className="muted item-card-desc named-item-note">{statSummary(template.stats, t)}</p>
-      )}
-    </li>
+      <AdversaryStatBody stats={template.stats} />
+    </div>
   );
 }
 
-/** Adversary templates tab: always browsable; add/edit/duplicate/remove gated by its own edit toggle. */
+/** Adversary templates tab: browsable and fully editable, no page-level edit gate. */
 export function CampaignTemplatesPage({ campaign }: { campaign: Campaign }) {
   const { t } = useTranslation();
   const patch = useCampaignStore((s) => s.patch);
   const { templates } = campaign;
-  const [editing, setEditing] = useState(false);
   const [adding, setAdding] = useState(false);
 
   return (
     <div className="stack">
       <section className="card">
-        <div className="item-card-head">
-          <h2 className="grow">{t('gm.templates')}</h2>
-          <button className={editing ? 'primary' : ''} onClick={() => setEditing((v) => !v)}>
-            {editing ? <><IconCheck /> {t('sheet.done')}</> : <><IconEdit /> {t('sheet.edit')}</>}
+        <h2>{t('gm.templates')}</h2>
+        <div className="form-row">
+          <button className="primary" onClick={() => setAdding((v) => !v)}>
+            {adding ? <><IconClose /> {t('common.cancel')}</> : `+ ${t('gm.addTemplate')}`}
           </button>
         </div>
-        {editing && (
-          <div className="form-row">
-            <button className="primary" onClick={() => setAdding((v) => !v)}>
-              {adding ? <><IconClose /> {t('common.cancel')}</> : `+ ${t('gm.addTemplate')}`}
-            </button>
-          </div>
-        )}
-        {editing && (
-          <ListImportExport
-            kind="adversaries"
-            items={templates}
-            ownerName={campaign.name}
-            onChange={(next) => patch({ templates: next })}
-          />
-        )}
-        {editing && adding && (
+        <ListImportExport
+          kind="adversaries"
+          items={templates}
+          ownerName={campaign.name}
+          onChange={(next) => patch({ templates: next })}
+        />
+        {adding && (
           <AdversaryTemplateForm
             saveLabel={t('gm.addTemplate')}
             onCancel={() => setAdding(false)}
@@ -161,12 +146,13 @@ export function CampaignTemplatesPage({ campaign }: { campaign: Campaign }) {
           />
         )}
         {templates.length === 0 && <p className="muted">{t('gm.noTemplates')}</p>}
-        <ul className="named-list">
+      </section>
+      {templates.length > 0 && (
+        <div className="card-grid">
           {templates.map((tpl) => (
             <TemplateRow
               key={tpl.id}
               template={tpl}
-              editing={editing}
               onSave={(updated) =>
                 patch({ templates: templates.map((x) => (x.id === tpl.id ? updated : x)) })
               }
@@ -184,8 +170,8 @@ export function CampaignTemplatesPage({ campaign }: { campaign: Campaign }) {
               }
             />
           ))}
-        </ul>
-      </section>
+        </div>
+      )}
     </div>
   );
 }
