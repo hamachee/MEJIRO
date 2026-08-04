@@ -1128,6 +1128,20 @@ span.exp-value:focus-visible {
   flex-wrap: wrap;
   gap: 0.35rem;
 }
+/* The Taken Out box's visible label — align-self, since the track's
+   default (stretch) would otherwise stretch this text to box height. */
+.injury-track .field-label {
+  align-self: center;
+}
+/* Taken Out reads as a terminal state, not a regular injury — same red
+   family as the injury boxes but the brighter "terminal" shade. */
+.taken-out-box.marked {
+  background: var(--failure-terminal);
+  border-color: var(--failure-terminal);
+}
+.taken-out-box.marked:hover:not(:disabled) {
+  background: var(--failure-terminal);
+}
 /* Injury boxes: square dots with a clean two-state look — the global
    button hover/focus styling is suppressed so there is no in-between state. */
 .injury-box {
@@ -1606,6 +1620,10 @@ button.fav-toggle:hover:not(:disabled) {
 /* Adversary mini stat block card (GM page): stacked sections with breathing room. */
 .adversary-card > * + * {
   margin-top: 0.5rem;
+}
+/* Taken out: the whole card's border flags it, not just its box track. */
+.adversary-card.taken-out {
+  border-color: var(--failure-terminal);
 }
 .adversary-label {
   font-weight: 600;
