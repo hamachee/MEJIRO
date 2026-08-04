@@ -1126,12 +1126,14 @@ span.exp-value:focus-visible {
 .injury-track {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 0.35rem;
 }
-/* The Taken Out box's visible label — align-self, since the track's
-   default (stretch) would otherwise stretch this text to box height. */
-.injury-track .field-label {
-  align-self: center;
+/* Reuse the character sheet's severity-level label styling for the Taken
+   Out label, minus its standalone group's horizontal padding — this is a
+   flat single-row track, not a column of level groups. */
+.injury-track .injury-level {
+  padding: 0;
 }
 /* Taken Out reads as a terminal state, not a regular injury — same red
    family as the injury boxes but the brighter "terminal" shade. */
@@ -1201,7 +1203,6 @@ button.armor-box.marked:hover:not(:disabled) {
   background: var(--accent);
 }
 .track-divider {
-  align-self: center;
   color: var(--divider-strong);
 }
 
