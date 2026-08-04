@@ -522,16 +522,28 @@ export function InjuryCard({
     </div>
   );
 
+  // Compact (Gear tab): inline in the tracker line, same as the fill groups.
   const takenOutRow = terminalLevel && (
-    <div className={compact ? undefined : 'injury-standalone'}>
-      <div className={`injury-level terminal ${injuries.takenOut ? 'lit' : ''} ${compact ? 'thin' : ''}`}>
-        <div className="injury-boxes">
-          {Array.from({ length: terminalLevel.boxes }, (_, i) => takenOutBox(i))}
-        </div>
-        <span className="injury-level-label">
-          <L l10n={terminalLevel.label} />
-        </span>
+    <div className={`injury-level terminal thin ${injuries.takenOut ? 'lit' : ''}`}>
+      <div className="injury-boxes">
+        {Array.from({ length: terminalLevel.boxes }, (_, i) => takenOutBox(i))}
       </div>
+      <span className="injury-level-label">
+        <L l10n={terminalLevel.label} />
+      </span>
+    </div>
+  );
+
+  // Full: in the card's header corner instead of its own line below the
+  // track, so it reads as this card's own status flag, not another group.
+  const takenOutCorner = terminalLevel && (
+    <div className={`injury-level terminal taken-out-corner ${injuries.takenOut ? 'lit' : ''}`}>
+      <div className="injury-boxes">
+        {Array.from({ length: terminalLevel.boxes }, (_, i) => takenOutBox(i))}
+      </div>
+      <span className="injury-level-label">
+        <L l10n={terminalLevel.label} />
+      </span>
     </div>
   );
 
@@ -569,13 +581,15 @@ export function InjuryCard({
       );
     }
     return (
-      <section className="card">
-        <h2>
-        <FieldLabel i18nKey="sheet.injuries" en="Injuries" />
-      </h2>
+      <section className={`card ${injuries.takenOut ? 'taken-out' : ''}`}>
+        <div className="item-card-head">
+          <h2>
+            <FieldLabel i18nKey="sheet.injuries" en="Injuries" />
+          </h2>
+          {takenOutCorner}
+        </div>
         {armorRow}
         <div className="injury-track grouped">{groups}</div>
-        {takenOutRow}
       </section>
     );
   }
