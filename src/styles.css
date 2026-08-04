@@ -63,6 +63,29 @@ body {
   flex-direction: column;
   background: linear-gradient(180deg, var(--bg), var(--bg-2));
 }
+/* Edit mode: a faint graph-paper grid across the whole app background
+   (including the margins outside .app-main's max-width), not just behind
+   the sheet itself — decorative only, using the border color at low
+   opacity so it tracks the active theme instead of a fixed color. Layered
+   above the app's own gradient rather than replacing it. */
+.app.editing {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--border) 18%, transparent) 0,
+      color-mix(in srgb, var(--border) 18%, transparent) 1px,
+      transparent 1px,
+      transparent 24px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--border) 18%, transparent) 0,
+      color-mix(in srgb, var(--border) 18%, transparent) 1px,
+      transparent 1px,
+      transparent 24px
+    ),
+    linear-gradient(180deg, var(--bg), var(--bg-2));
+}
 
 /* Header — slides fully off-screen while scrolling down, back in on scroll up. */
 .app-header {
@@ -853,26 +876,6 @@ button.danger:hover:not(:disabled) {
 .character-view {
   /* keep the sticky roll bar from covering the last cards */
   padding-bottom: 7rem;
-}
-/* Edit mode: a faint graph-paper grid behind the page — decorative only,
-   using the border color at low opacity so it tracks the active theme
-   instead of a fixed color. */
-.character-view.editing {
-  background-image:
-    repeating-linear-gradient(
-      0deg,
-      color-mix(in srgb, var(--border) 18%, transparent) 0,
-      color-mix(in srgb, var(--border) 18%, transparent) 1px,
-      transparent 1px,
-      transparent 24px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--border) 18%, transparent) 0,
-      color-mix(in srgb, var(--border) 18%, transparent) 1px,
-      transparent 1px,
-      transparent 24px
-    );
 }
 
 /* Identity */

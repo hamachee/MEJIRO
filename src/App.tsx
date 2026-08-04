@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useSettingsStore } from './store/settingsStore';
 import { useCharacterStore } from './store/characterStore';
 import { useCampaignStore } from './store/campaignStore';
+import { useUiStore } from './store/uiStore';
 import { useTheme } from './lib/useTheme';
 import { useHeaderHidden } from './lib/useHeaderHidden';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
@@ -21,6 +22,7 @@ export function App() {
   const loadCampaignRoster = useCampaignStore((s) => s.loadRoster);
   useTheme();
   const headerHidden = useHeaderHidden();
+  const editingActive = useUiStore((s) => s.editingActive);
 
   useEffect(() => {
     loadSettings();
@@ -29,7 +31,7 @@ export function App() {
   }, [loadSettings, loadRoster, loadCampaignRoster]);
 
   return (
-    <div className="app">
+    <div className={`app ${editingActive ? 'editing' : ''}`}>
       <header className={`app-header ${headerHidden ? 'hidden' : ''}`}>
         <NavLink to="/" className="brand">
           <span className="brand-mark">目</span>

@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCharacterStore } from '../store/characterStore';
 import { useRollStore } from '../store/rollStore';
+import { useUiStore } from '../store/uiStore';
 import { getTemplate } from '../templates';
 import { useWide } from '../lib/useWide';
 import { useLang } from '../lib/useLang';
@@ -29,10 +30,19 @@ export function CharacterView() {
   const [editing, setEditing] = useState(false);
   const [page, setPage] = useState<1 | 2 | 3 | 4>(1);
   const wide = useWide();
+  const setEditingActive = useUiStore((s) => s.setEditingActive);
 
   useEffect(() => {
     if (id) open(id);
   }, [id, open]);
+
+  // Mirror this page's own edit toggle into the shared UI store so the
+  // app-wide background (outside the sheet's own width) can react to it —
+  // and clear it on unmount so leaving mid-edit doesn't leave it stuck on.
+  useEffect(() => {
+    setEditingActive(editing);
+    return () => setEditingActive(false);
+  }, [editing, setEditingActive]);
 
   const template = active ? getTemplate(active.templateId) : undefined;
 
