@@ -491,7 +491,7 @@ export function InjuryCard({
     return (
       <button
         key={absIndex}
-        className={`injury-box ${isMarked ? 'marked' : ''}`}
+        className={`armor-box ${isMarked ? 'marked' : ''}`}
         aria-label={`${position}`}
         onClick={() =>
           patch({
