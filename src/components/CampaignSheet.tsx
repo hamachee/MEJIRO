@@ -9,7 +9,7 @@ import type { Campaign } from '../types/campaign';
 import { FieldLabel } from './FieldLabel';
 import { IconCheck, IconEdit } from './icons';
 import { AdversaryCard } from './AdversaryCard';
-import { DEFAULT_TEMPLATE_ID, getTemplate } from '../templates';
+import { getTemplate } from '../templates';
 import { label } from '../lib/localize';
 import { useLang } from '../lib/useLang';
 
@@ -249,7 +249,8 @@ function CampaignSettingsCard({ campaign }: { campaign: Campaign }) {
   const selectedPool = useGmRollStore((s) => s.selectedPool);
   const select = useGmRollStore((s) => s.select);
   const [editing, setEditing] = useState(false);
-  const systemLabel = label(getTemplate(DEFAULT_TEMPLATE_ID)!.name, lang);
+  const template = getTemplate(campaign.templateId);
+  const systemLabel = template ? label(template.name, lang) : campaign.templateId;
 
   const customPoolControl = (
     <CustomPoolControl

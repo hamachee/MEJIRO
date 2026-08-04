@@ -2,13 +2,19 @@ import { getDB } from './db';
 import { uid } from '../lib/uid';
 import { blankAdversaryStats, type Campaign, type CampaignExport } from '../types/campaign';
 import type { CharacterTrick } from '../types/character';
+import { DEFAULT_TEMPLATE_ID } from '../templates';
 
 /** Create (but do not yet persist) a blank campaign. */
-export function newCampaign(name: string, tricks: CharacterTrick[] = []): Campaign {
+export function newCampaign(
+  name: string,
+  tricks: CharacterTrick[] = [],
+  templateId: string = DEFAULT_TEMPLATE_ID,
+): Campaign {
   const now = Date.now();
   return {
     id: uid(),
     name: name.trim() || 'Unnamed',
+    templateId,
     webhookUrl: '',
     autoPostToDiscord: true,
     customPool: 0,
@@ -32,6 +38,7 @@ export function normalizeCampaign(
     createdAt: now,
     updatedAt: now,
     ...raw,
+    templateId: raw.templateId ?? DEFAULT_TEMPLATE_ID,
     webhookUrl: raw.webhookUrl ?? '',
     autoPostToDiscord: raw.autoPostToDiscord ?? true,
     customPool: raw.customPool ?? 0,

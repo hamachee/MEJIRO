@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useCampaignStore } from '../store/campaignStore';
 import { defaultTricks } from '../storage/characters';
 import { exportCampaignFile } from '../lib/exportCampaignFile';
-import { DEFAULT_TEMPLATE_ID, getTemplate } from '../templates';
+import { DEFAULT_TEMPLATE_ID, TEMPLATE_LIST, getTemplate } from '../templates';
 import { label } from '../lib/localize';
 import { useLang } from '../lib/useLang';
 import type { Campaign } from '../types/campaign';
@@ -13,7 +13,6 @@ export function CampaignList() {
   const { t } = useTranslation();
   const lang = useLang();
   const navigate = useNavigate();
-  const systemLabel = label(getTemplate(DEFAULT_TEMPLATE_ID)!.name, lang);
 
   const roster = useCampaignStore((s) => s.roster);
   const create = useCampaignStore((s) => s.create);
@@ -21,6 +20,7 @@ export function CampaignList() {
   const importFromJson = useCampaignStore((s) => s.importFromJson);
 
   const [name, setName] = useState('');
+  const [templateId, setTemplateId] = useState(DEFAULT_TEMPLATE_ID);
   const fileInput = useRef<HTMLInputElement>(null);
 
   const onCreate = async () => {
@@ -31,6 +31,7 @@ export function CampaignList() {
         t('tricks.defaultTwo'),
         t('tricks.defaultThree'),
       ]),
+      templateId,
     );
     setName('');
     navigate(`/gm/${campaign.id}`);
@@ -71,6 +72,17 @@ export function CampaignList() {
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && onCreate()}
           />
+          <select
+            value={templateId}
+            onChange={(e) => setTemplateId(e.target.value)}
+            aria-label={t('characters.system')}
+          >
+            {TEMPLATE_LIST.map((tpl) => (
+              <option key={tpl.id} value={tpl.id}>
+                {label(tpl.name, lang)}
+              </option>
+            ))}
+          </select>
           <button className="primary" onClick={onCreate}>
             {t('gm.create')}
           </button>
@@ -95,22 +107,27 @@ export function CampaignList() {
           <p className="muted">{t('gm.empty')}</p>
         ) : (
           <ul className="roster">
-            {roster.map((c) => (
-              <li key={c.id} className="roster-item">
-                <button className="roster-open" onClick={() => navigate(`/gm/${c.id}`)}>
-                  <strong>{c.name}</strong>
-                  <small className="muted">{systemLabel}</small>
-                </button>
-                <div className="roster-actions">
-                  <button onClick={() => onExport(c)}>
-                    {t('characters.export')}
+            {roster.map((c) => {
+              const tpl = getTemplate(c.templateId);
+              return (
+                <li key={c.id} className="roster-item">
+                  <button className="roster-open" onClick={() => navigate(`/gm/${c.id}`)}>
+                    <strong>{c.name}</strong>
+                    <small className="muted">
+                      {tpl ? label(tpl.name, lang) : c.templateId}
+                    </small>
                   </button>
-                  <button className="danger" onClick={() => onDelete(c)}>
-                    {t('characters.delete')}
-                  </button>
-                </div>
-              </li>
-            ))}
+                  <div className="roster-actions">
+                    <button onClick={() => onExport(c)}>
+                      {t('characters.export')}
+                    </button>
+                    <button className="danger" onClick={() => onDelete(c)}>
+                      {t('characters.delete')}
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         )}
       </section>
