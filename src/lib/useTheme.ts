@@ -11,17 +11,17 @@ import { applyTheme, resolveTheme } from './theme';
  */
 export function useTheme(): void {
   const mode = useSettingsStore((s) => s.settings.themeMode);
-  const custom = useSettingsStore((s) => s.settings.customTheme);
+  const curseColor = useSettingsStore((s) => s.settings.curseColor);
   const templateId = useCharacterStore(
     (s) => s.active?.templateId ?? DEFAULT_TEMPLATE_ID,
   );
 
   useEffect(() => {
-    applyTheme(resolveTheme(mode, custom, templateId));
+    applyTheme(resolveTheme(mode, curseColor, templateId));
     if (mode !== 'system') return;
     const media = matchMedia('(prefers-color-scheme: dark)');
-    const onChange = () => applyTheme(resolveTheme(mode, custom, templateId));
+    const onChange = () => applyTheme(resolveTheme(mode, curseColor, templateId));
     media.addEventListener('change', onChange);
     return () => media.removeEventListener('change', onChange);
-  }, [mode, custom, templateId]);
+  }, [mode, curseColor, templateId]);
 }

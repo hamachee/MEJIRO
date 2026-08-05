@@ -1,28 +1,29 @@
 /**
- * Color scheme system. Five modes:
+ * Color scheme system. Four modes:
  *  - system: follows the OS/browser's prefers-color-scheme
  *  - dark / light: neutral built-in schemes
  *  - rule: the scheme of the game system (template) being played —
  *    e.g. the violet Curseborne palette
- *  - custom: user-picked core colors on top of a dark or light base
+ *
+ * On top of whichever mode is active, the user can independently recolor
+ * the curse dice (and their hit/border shades) via a single hex value that
+ * persists across every mode — it isn't a "theme" of its own.
  *
  * A theme is a flat map of CSS custom properties applied to <html>, so
  * styles.css only ever reads variables. The `:root` block in styles.css
  * keeps the Curseborne values as the pre-JS fallback.
  */
+import { cssHex } from './color';
 
-export type ThemeMode = 'system' | 'dark' | 'light' | 'rule' | 'custom';
+export type ThemeMode = 'system' | 'dark' | 'light' | 'rule';
 
-export const THEME_MODES: ThemeMode[] = [
-  'system',
-  'dark',
-  'light',
-  'rule',
-  'custom',
-];
+export const THEME_MODES: ThemeMode[] = ['system', 'dark', 'light', 'rule'];
 
-/** The core palette a custom theme lets the user edit (hex values). */
-export interface ThemePalette {
+/**
+ * Tokens that make up a color scheme (translucent bars, dividers, readable
+ * text tints, curse violet — everything styles.css reads as a CSS var).
+ */
+export interface Theme {
   bg: string;
   bg2: string;
   card: string;
@@ -36,34 +37,6 @@ export interface ThemePalette {
   failure: string;
   danger: string;
   curse: string;
-}
-
-export const PALETTE_KEYS: (keyof ThemePalette)[] = [
-  'bg',
-  'bg2',
-  'card',
-  'card2',
-  'border',
-  'text',
-  'muted',
-  'accent',
-  'accent2',
-  'success',
-  'failure',
-  'danger',
-  'curse',
-];
-
-/** A user-defined scheme: core colors plus the base its extras derive from. */
-export interface CustomTheme extends ThemePalette {
-  base: 'dark' | 'light';
-}
-
-/**
- * Secondary tokens that follow from the core palette but need per-scheme
- * tuning (translucent bars, dividers, readable text tints, curse violet).
- */
-interface ThemeExtras {
   headerBg: string;
   barBg: string;
   scrim: string;
@@ -80,14 +53,11 @@ interface ThemeExtras {
   curseText: string;
   wickedText: string;
   cruelText: string;
-}
-
-export interface Theme extends ThemePalette, ThemeExtras {
   /** Value for the CSS `color-scheme` property (native widgets, scrollbars). */
   scheme: 'dark' | 'light';
 }
 
-const DARK_EXTRAS: ThemeExtras = {
+const DARK_EXTRAS = {
   headerBg: 'rgba(22, 24, 29, 0.9)',
   barBg: 'rgba(28, 31, 38, 0.95)',
   scrim: 'rgba(10, 10, 18, 0.65)',
@@ -106,7 +76,7 @@ const DARK_EXTRAS: ThemeExtras = {
   cruelText: '#f08cc0',
 };
 
-const LIGHT_EXTRAS: ThemeExtras = {
+const LIGHT_EXTRAS = {
   headerBg: 'rgba(242, 241, 247, 0.9)',
   barBg: 'rgba(231, 229, 240, 0.95)',
   scrim: 'rgba(40, 38, 60, 0.45)',
@@ -189,28 +159,6 @@ export const RULE_THEMES: Record<string, Theme> = {
   curseborne: CURSEBORNE_THEME,
 };
 
-/** A theme's core palette (the user-editable keys), without the extras. */
-function corePalette(theme: Theme): ThemePalette {
-  return Object.fromEntries(
-    PALETTE_KEYS.map((key) => [key, theme[key]]),
-  ) as Record<keyof ThemePalette, string>;
-}
-
-/** Starting point for the custom editor: the Curseborne core palette. */
-export const DEFAULT_CUSTOM_THEME: CustomTheme = {
-  base: 'dark',
-  ...corePalette(CURSEBORNE_THEME),
-};
-
-/** "#rrggbb" → "rgba(r, g, b, alpha)"; returns the input if not parseable. */
-function hexToRgba(hex: string, alpha: number): string {
-  if (typeof hex !== 'string') return hex;
-  const m = /^#([0-9a-f]{6})$/i.exec(hex.trim());
-  if (!m) return hex;
-  const n = parseInt(m[1], 16);
-  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
-}
-
 /**
  * "#rrggbb" mixed toward black (amount < 0) or white (amount > 0) by
  * |amount| (0-1). Used to derive the curse-hit shades from the single
@@ -218,7 +166,6 @@ function hexToRgba(hex: string, alpha: number): string {
  * darker/lighter pair around their own curse hue.
  */
 function shadeHex(hex: string, amount: number): string {
-  if (typeof hex !== 'string') return hex;
   const m = /^#([0-9a-f]{6})$/i.exec(hex.trim());
   if (!m) return hex;
   const n = parseInt(m[1], 16);
@@ -238,47 +185,40 @@ function systemPrefersDark(): boolean {
 }
 
 /**
- * Resolve the theme to render.
- * In rule mode the game system decides: the active character's template picks
- * its scheme (falling back to dark for systems without one).
+ * Resolve the theme to render. In rule mode the game system decides: the
+ * active character's template picks its scheme (falling back to dark for
+ * systems without one). A valid `curseColor` then overrides the curse die
+ * and its derived hit/border shades on top of whichever base was picked —
+ * it applies the same way in every mode, dark/light/rule/system alike.
  */
 export function resolveTheme(
   mode: ThemeMode,
-  custom: CustomTheme,
+  curseColor: string,
   ruleTemplateId?: string,
 ): Theme {
-  switch (mode) {
-    case 'system':
-      return systemPrefersDark() ? DARK_THEME : LIGHT_THEME;
-    case 'light':
-      return LIGHT_THEME;
-    case 'rule':
-      return (
-        (ruleTemplateId && RULE_THEMES[ruleTemplateId]) || CURSEBORNE_THEME
-      );
-    case 'custom': {
-      const base = custom.base === 'light' ? LIGHT_THEME : DARK_THEME;
-      const { base: _, ...palette } = custom;
-      // `curse` was added to CustomTheme after this feature shipped, so a
-      // theme saved before then won't have it — fall back to the base
-      // scheme's curse rather than handing an undefined hex to shadeHex().
-      const curse = palette.curse || base.curse;
-      return {
-        ...base,
-        ...palette,
-        curse,
-        // The translucent bars must track the custom background colors.
-        headerBg: hexToRgba(custom.bg, 0.9),
-        barBg: hexToRgba(custom.bg2, 0.95),
-        // The curse-hit shades follow the single custom curse swatch.
-        curseStrong: shadeHex(curse, -0.3),
-        curseHitBorder: shadeHex(curse, 0.3),
-      };
+  const base = (() => {
+    switch (mode) {
+      case 'light':
+        return LIGHT_THEME;
+      case 'rule':
+        return (ruleTemplateId && RULE_THEMES[ruleTemplateId]) || CURSEBORNE_THEME;
+      case 'system':
+        return systemPrefersDark() ? DARK_THEME : LIGHT_THEME;
+      case 'dark':
+      default:
+        return DARK_THEME;
     }
-    case 'dark':
-    default:
-      return DARK_THEME;
-  }
+  })();
+
+  const curse = cssHex(curseColor);
+  if (!curse) return base;
+
+  return {
+    ...base,
+    curse,
+    curseStrong: shadeHex(curse, -0.3),
+    curseHitBorder: shadeHex(curse, 0.3),
+  };
 }
 
 const CSS_VARS: Record<Exclude<keyof Theme, 'scheme'>, string> = {

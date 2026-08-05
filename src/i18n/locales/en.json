@@ -200,27 +200,12 @@
     "system": "System settings",
     "dark": "Dark",
     "light": "Light",
-    "rule": "By rule",
-    "custom": "Custom",
-    "ruleHint": "\"By rule\" uses the color scheme of the game system you are playing.",
-    "base": "Base tone",
-    "reset": "Reset colors",
-    "preview": "Preview",
-    "colors": {
-      "bg": "Background",
-      "bg2": "Background 2",
-      "card": "Card",
-      "card2": "Card 2",
-      "border": "Border",
-      "text": "Text",
-      "muted": "Muted text",
-      "accent": "Accent",
-      "accent2": "Accent 2",
-      "success": "Success",
-      "failure": "Failure",
-      "danger": "Danger",
-      "curse": "Curse dice"
-    }
+    "rule": "Curseborne",
+    "ruleHint": "Curseborne uses the game's own violet color scheme.",
+    "curseColor": "Curse dice color",
+    "curseColorHint": "Applies no matter which color scheme is active — dark, light, system, or Curseborne.",
+    "reset": "Reset",
+    "preview": "Preview"
   },
   "settings": {
     "title": "Settings",
