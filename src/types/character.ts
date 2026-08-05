@@ -18,6 +18,8 @@ export interface ResourceState {
 export interface Identity {
   lineage: string;
   family: string;
+  /** Which of Lineage/Family the character's supernatural nature mainly draws from; '' if unset. */
+  majorPath: 'lineage' | 'family' | '';
   concept: string;
   /** Entanglement rating (dots). */
   entanglement: number;

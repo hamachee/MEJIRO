@@ -24,6 +24,7 @@ const DEFAULT_INJURY_BOXES = 8;
 const DEFAULT_IDENTITY: Character['identity'] = {
   lineage: '',
   family: '',
+  majorPath: '',
   concept: '',
   entanglement: 1,
   rolePath: '',
