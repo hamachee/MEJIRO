@@ -1,6 +1,7 @@
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
 import type { Character } from '../types/character';
 import type { Campaign } from '../types/campaign';
+import type { MessageTemplate } from '../types/messageTemplate';
 import {
   DEFAULT_CUSTOM_THEME,
   type CustomTheme,
@@ -16,6 +17,8 @@ export interface AppSettings {
   themeMode: ThemeMode;
   /** Colors used when {@link themeMode} is "custom". */
   customTheme: CustomTheme;
+  /** Saved messages for the webhook message panel — per device, not synced with a character/campaign. */
+  messageTemplates: MessageTemplate[];
 }
 
 interface MejiroDB extends DBSchema {
@@ -75,4 +78,5 @@ export const DEFAULT_SETTINGS: AppSettings = {
   uiLang: 'ko',
   themeMode: 'system',
   customTheme: DEFAULT_CUSTOM_THEME,
+  messageTemplates: [],
 };

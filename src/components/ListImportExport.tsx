@@ -20,12 +20,15 @@ export function ListImportExport<K extends ListKind>({
   items,
   ownerName,
   onChange,
+  compact = false,
 }: {
   kind: K;
   items: EntryOf<K>[];
   /** Character/campaign name, used in the exported filename. */
   ownerName: string;
   onChange: (items: EntryOf<K>[]) => void;
+  /** Icon-only export/clear, short add/replace labels — for a narrow toolbar. */
+  compact?: boolean;
 }) {
   const { t } = useTranslation();
   const fileInput = useRef<HTMLInputElement>(null);
@@ -66,17 +69,26 @@ export function ListImportExport<K extends ListKind>({
 
   return (
     <div className="form-row list-io">
-      <button onClick={() => exportListFile(kind, items, ownerName)} disabled={items.length === 0}>
-        <IconExport /> {t('listIO.export')}
+      <button
+        title={t('listIO.export')}
+        onClick={() => exportListFile(kind, items, ownerName)}
+        disabled={items.length === 0}
+      >
+        <IconExport /> {!compact && t('listIO.export')}
       </button>
-      <button onClick={() => pick('add')}>
-        <IconImport /> {t('listIO.importAdd')}
+      <button title={t('listIO.importAdd')} onClick={() => pick('add')}>
+        <IconImport /> {compact ? t('listIO.add') : t('listIO.importAdd')}
       </button>
-      <button onClick={() => pick('replace')}>
-        <IconImport /> {t('listIO.importReplace')}
+      <button title={t('listIO.importReplace')} onClick={() => pick('replace')}>
+        <IconImport /> {compact ? t('listIO.replace') : t('listIO.importReplace')}
       </button>
-      <button className="danger" onClick={onClear} disabled={items.length === 0}>
-        <IconTrash /> {t('listIO.clear')}
+      <button
+        title={t('listIO.clear')}
+        className="danger"
+        onClick={onClear}
+        disabled={items.length === 0}
+      >
+        <IconTrash /> {!compact && t('listIO.clear')}
       </button>
       <input
         ref={fileInput}

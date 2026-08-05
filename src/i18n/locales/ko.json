@@ -239,10 +239,26 @@
     "export": "내보내기",
     "importAdd": "가져오기 (추가)",
     "importReplace": "가져오기 (교체)",
+    "add": "추가",
+    "replace": "대체",
     "clear": "비우기",
     "confirmReplace": "이 목록을 가져온 항목 {{count}}개로 교체할까요? 기존 항목은 삭제됩니다.",
     "confirmClear": "이 목록의 항목을 모두 삭제할까요? 되돌릴 수 없습니다.",
     "importError": "파일을 가져올 수 없습니다: {{message}}"
+  },
+  "message": {
+    "title": "메시지",
+    "placeholder": "디스코드로 보낼 메시지를 입력하세요…",
+    "send": "보내기",
+    "saveTemplate": "템플릿으로 저장",
+    "clear": "지우기",
+    "templates": "템플릿",
+    "noTemplates": "저장된 템플릿이 없습니다.",
+    "confirmDeleteTemplate": "이 템플릿을 삭제할까요?",
+    "posting": "전송 중…",
+    "sent": "전송 완료.",
+    "postError": "전송 실패: {{message}}",
+    "noWebhook": "이 페이지에 설정된 웹훅 URL이 없습니다."
   },
   "common": {
     "cancel": "취소",

@@ -260,3 +260,8 @@ export function postTricks(
 ): Promise<void> {
   return post(ctx.webhookUrl, buildTricksEmbed(purchase, ctx));
 }
+
+/** Post free-form text to a webhook — Discord renders its own markdown. */
+export function postPlainMessage(webhookUrl: string, content: string): Promise<void> {
+  return post(webhookUrl, { content });
+}

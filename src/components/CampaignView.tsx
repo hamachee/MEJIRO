@@ -5,6 +5,7 @@ import { useCampaignStore } from '../store/campaignStore';
 import { useGmRollStore } from '../store/gmRollStore';
 import { useWide } from '../lib/useWide';
 import { CampaignSheet } from './CampaignSheet';
+import { MessagePanel } from './MessagePanel';
 import { IconBack } from './icons';
 import { CampaignPcsPage } from './CampaignPcsPage';
 import { CampaignTemplatesPage } from './CampaignTemplatesPage';
@@ -51,6 +52,7 @@ export function CampaignView() {
 
   return (
     <div className="character-view">
+      <MessagePanel webhookUrl={active.webhookUrl} />
       <div className="toolbar">
         <Link to="/gm" className="back-link">
           <IconBack /> {t('sheet.back')}

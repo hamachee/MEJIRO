@@ -185,3 +185,14 @@ export function IconGeoAltFill(props: SVGProps<SVGSVGElement>) {
     </Icon>
   );
 }
+
+/** lll — three vertical bars, a docked tab handle (message panel toggle). */
+export function IconTabHandle(props: SVGProps<SVGSVGElement>) {
+  return (
+    <Icon {...props}>
+      <path d="M8 5v14" />
+      <path d="M12 5v14" />
+      <path d="M16 5v14" />
+    </Icon>
+  );
+}

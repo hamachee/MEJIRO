@@ -7,8 +7,9 @@
 import { uid } from './uid';
 import type { CharacterTrick, GearItem, SpellItem } from '../types/character';
 import { blankAdversaryStats, type AdversaryTemplate } from '../types/campaign';
+import type { MessageTemplate } from '../types/messageTemplate';
 
-export type ListKind = 'tricks' | 'gear' | 'spells' | 'adversaries';
+export type ListKind = 'tricks' | 'gear' | 'spells' | 'adversaries' | 'messageTemplates';
 
 /** Envelope used for JSON list export/import so files are self-describing. */
 export interface ListExport {
@@ -102,6 +103,13 @@ export const normalizeEntry = {
       name: entryName(raw),
       stats: { ...blankAdversaryStats(), ...(typeof r.stats === 'object' ? r.stats : {}) },
     };
+  },
+  messageTemplates(raw: unknown): MessageTemplate {
+    const r = raw as Partial<MessageTemplate>;
+    if (typeof r.content !== 'string' || !r.content.trim()) {
+      throw new Error('Every entry needs content');
+    }
+    return { id: uid(), content: r.content };
   },
 } as const;
 

@@ -239,10 +239,26 @@
     "export": "Export",
     "importAdd": "Import (add)",
     "importReplace": "Import (replace)",
+    "add": "Add",
+    "replace": "Replace",
     "clear": "Clear",
     "confirmReplace": "Replace this list with the {{count}} imported entries? The current entries will be removed.",
     "confirmClear": "Remove all entries from this list? This cannot be undone.",
     "importError": "Could not import file: {{message}}"
+  },
+  "message": {
+    "title": "Message",
+    "placeholder": "Type a message to send to Discord…",
+    "send": "Send",
+    "saveTemplate": "Save as template",
+    "clear": "Clear",
+    "templates": "Templates",
+    "noTemplates": "No saved templates yet.",
+    "confirmDeleteTemplate": "Delete this template?",
+    "posting": "Sending…",
+    "sent": "Sent.",
+    "postError": "Could not send: {{message}}",
+    "noWebhook": "No webhook URL set for this page yet."
   },
   "common": {
     "cancel": "Cancel",

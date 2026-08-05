@@ -9,6 +9,7 @@ import { useWide } from '../lib/useWide';
 import { useLang } from '../lib/useLang';
 import { exportCharacterFile } from '../lib/exportCharacterFile';
 import { CharacterSheet } from './CharacterSheet';
+import { MessagePanel } from './MessagePanel';
 import { IconBack, IconCheck, IconEdit, IconExport } from './icons';
 import { CharacterGearPage } from './CharacterGearPage';
 import { CharacterSpellsPage } from './CharacterSpellsPage';
@@ -69,6 +70,7 @@ export function CharacterView() {
 
   return (
     <div className={`character-view ${editing ? 'editing' : ''}`}>
+      <MessagePanel webhookUrl={active.webhookUrl} />
       <div className="toolbar">
         <Link to="/" className="back-link">
           <IconBack /> {t('sheet.back')}

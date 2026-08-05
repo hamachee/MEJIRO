@@ -2037,3 +2037,96 @@ button.armor-box.marked:hover:not(:disabled) {
   max-height: 85vh;
   overflow-y: auto;
 }
+
+/* Webhook message panel: a slide-out drawer floating above the page (no
+   scrim — it doesn't block the rest of the UI), with a tab handle attached
+   to its left edge. `.message-panel` is just a positioning/transform shell
+   — the tab (`position: absolute; left` a negative offset equal to its own
+   width, i.e. outside the shell's box) rides the same transform as the
+   drawer body. That's what makes it work as a handle: translateX(100%)
+   shifts the shell by exactly its own width, so at rest the tab — sitting
+   just outside the shell's left edge — lands flush with the viewport's
+   edge (always visible); once open it protrudes from the drawer's left
+   edge like a physical pull handle. The shell can't itself clip overflow
+   (that's on `.message-panel-body` instead) or the tab would be cut off. */
+.message-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 42;
+  width: min(360px, 100vw);
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+}
+.message-panel.open {
+  transform: translateX(0);
+}
+.message-tab {
+  position: absolute;
+  top: 9.5rem;
+  left: -1.6rem;
+  width: 1.6rem;
+  height: 3.2rem;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  border-right: none;
+  background: var(--card);
+}
+.message-tab .icon {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+.message-panel-body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.9rem;
+  background: var(--card);
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.35);
+  overflow-y: auto;
+}
+.message-panel-body textarea {
+  min-height: 7rem;
+}
+/* The template import/export toolbar is always visible (not folded away
+   with the list): export/clear stay icon-only (their icons already read as
+   distinct), but add/replace share one icon, so `compact` keeps a short
+   label on those two — otherwise they'd be indistinguishable. Shrunk to
+   fit all four on one line; a native title tooltip fills in the full label
+   the icon-only buttons no longer show. */
+.message-panel-body .list-io {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+  gap: 0.35rem;
+  flex-wrap: nowrap;
+}
+.message-panel-body .list-io button {
+  padding: 0.35rem 0.5rem;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+.message-panel-body .list-io .icon {
+  width: 0.85em;
+  height: 0.85em;
+}
+.message-template-content {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  padding: 0.2rem 0;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text);
+}
+.message-template-content:hover:not(:disabled) {
+  background: none;
+  text-decoration: underline;
+}
