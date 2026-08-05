@@ -2038,25 +2038,31 @@ button.armor-box.marked:hover:not(:disabled) {
   overflow-y: auto;
 }
 
-/* Webhook message panel: an always-visible toggle and a slide-out drawer
-   floating above the page (no scrim — it doesn't block the rest of the UI). */
-.message-toggle {
+/* Webhook message panel: an always-visible tab docked to the right edge
+   (roughly level with the toolbar's edit button) and a slide-out drawer
+   floating above the page (no scrim — it doesn't block the rest of the UI).
+   The tab stays on top of the drawer (higher z-index) so the same click
+   that opens it also closes it — no separate close button needed. It's
+   narrow enough to clip a sliver of the drawer's edge when open; that's an
+   accepted tradeoff, not a bug (this app isn't optimizing for mobile). */
+.message-tab {
   position: fixed;
-  top: 0.7rem;
-  right: 0.7rem;
+  top: 9.5rem;
+  right: 0;
   z-index: 43;
-  width: 2.6rem;
-  height: 2.6rem;
+  width: 1.6rem;
+  height: 3.2rem;
   padding: 0;
   display: grid;
   place-items: center;
-  border-radius: 50%;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  border-right: none;
   background: var(--card);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  box-shadow: -2px 2px 10px rgba(0, 0, 0, 0.35);
 }
-.message-toggle .icon {
-  width: 1.3rem;
-  height: 1.3rem;
+.message-tab .icon {
+  width: 0.9rem;
+  height: 0.9rem;
 }
 .message-panel {
   position: fixed;
@@ -2068,7 +2074,7 @@ button.armor-box.marked:hover:not(:disabled) {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-  padding: 3.6rem 0.9rem 0.9rem;
+  padding: 0.9rem;
   background: var(--card);
   border-left: 1px solid var(--border);
   box-shadow: -4px 0 16px rgba(0, 0, 0, 0.35);

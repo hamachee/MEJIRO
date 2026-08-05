@@ -5,17 +5,18 @@ import { useDragReorder } from '../lib/useDragReorder';
 import { postPlainMessage } from '../engine/discord';
 import { uid } from '../lib/uid';
 import type { MessageTemplate } from '../types/messageTemplate';
-import { IconChat, IconClose, IconWarning } from './icons';
+import { IconClose, IconTabHandle, IconWarning } from './icons';
 import { ListImportExport } from './ListImportExport';
 
 type PostStatus = 'idle' | 'posting' | 'sent' | 'error';
 
 /**
- * Foldable webhook message panel: an always-visible toggle (top right) that
- * slides a drawer in over the page. Free-form text posts as-is to Discord,
- * which renders its own markdown — this app does none. Saved templates are
- * per-device (not part of the character/campaign data) since the same
- * device is often used for different characters or campaigns.
+ * Foldable webhook message panel: an always-visible tab docked to the right
+ * edge that slides a drawer out over the page — clicking the tab again (it
+ * stays on top of the drawer) slides it back in. Free-form text posts as-is
+ * to Discord, which renders its own markdown — this app does none. Saved
+ * templates are per-device (not part of the character/campaign data) since
+ * the same device is often used for different characters or campaigns.
  */
 export function MessagePanel({ webhookUrl }: { webhookUrl?: string }) {
   const { t } = useTranslation();
@@ -56,20 +57,15 @@ export function MessagePanel({ webhookUrl }: { webhookUrl?: string }) {
   return (
     <>
       <button
-        className="message-toggle"
+        className="message-tab"
         aria-label={t('message.title')}
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
       >
-        <IconChat />
+        <IconTabHandle />
       </button>
       <div className={`message-panel stack ${open ? 'open' : ''}`}>
-        <div className="item-card-head">
-          <h2>{t('message.title')}</h2>
-          <button className="chip ghost" aria-label={t('common.close')} onClick={() => setOpen(false)}>
-            <IconClose />
-          </button>
-        </div>
+        <h2>{t('message.title')}</h2>
 
         <textarea
           value={content}
