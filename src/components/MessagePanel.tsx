@@ -112,7 +112,14 @@ export function MessagePanel({ webhookUrl }: { webhookUrl?: string }) {
           )}
         </div>
 
-        <div className="list-io">
+        <ListImportExport
+          kind="messageTemplates"
+          items={templates}
+          ownerName={t('message.templates')}
+          onChange={(next) => update({ messageTemplates: next })}
+        />
+
+        <div className="form-row">
           <button className="grow" onClick={() => setTemplatesOpen((v) => !v)}>
             {t('message.templates')} ({templates.length})
           </button>
@@ -120,12 +127,6 @@ export function MessagePanel({ webhookUrl }: { webhookUrl?: string }) {
 
         {templatesOpen && (
           <div className="stack">
-            <ListImportExport
-              kind="messageTemplates"
-              items={templates}
-              ownerName={t('message.templates')}
-              onChange={(next) => update({ messageTemplates: next })}
-            />
             {templates.length === 0 && <p className="muted">{t('message.noTemplates')}</p>}
             {templates.map((tpl, i) => {
               const drag = itemProps(i);

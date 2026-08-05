@@ -2074,7 +2074,6 @@ button.armor-box.marked:hover:not(:disabled) {
   border-radius: var(--radius-md) 0 0 var(--radius-md);
   border-right: none;
   background: var(--card);
-  box-shadow: -2px 2px 10px rgba(0, 0, 0, 0.35);
 }
 .message-tab .icon {
   width: 0.9rem;
@@ -2087,12 +2086,31 @@ button.armor-box.marked:hover:not(:disabled) {
   gap: 0.6rem;
   padding: 0.9rem;
   background: var(--card);
-  border-left: 1px solid var(--border);
   box-shadow: -4px 0 16px rgba(0, 0, 0, 0.35);
   overflow-y: auto;
 }
 .message-panel-body textarea {
   min-height: 7rem;
+}
+/* The template import/export toolbar is always visible (not folded away
+   with the list), so its four buttons are shrunk to icon-only — collapsing
+   the label via font-size rather than removing it keeps it in the
+   accessible name; a native title tooltip stands in for the visible label. */
+.message-panel-body .list-io {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+  gap: 0.35rem;
+  flex-wrap: nowrap;
+}
+.message-panel-body .list-io button {
+  padding: 0.4rem;
+  font-size: 0;
+  flex-shrink: 0;
+}
+.message-panel-body .list-io .icon {
+  width: 1rem;
+  height: 1rem;
 }
 .message-template-content {
   flex: 1;

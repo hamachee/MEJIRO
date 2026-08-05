@@ -66,16 +66,25 @@ export function ListImportExport<K extends ListKind>({
 
   return (
     <div className="form-row list-io">
-      <button onClick={() => exportListFile(kind, items, ownerName)} disabled={items.length === 0}>
+      <button
+        title={t('listIO.export')}
+        onClick={() => exportListFile(kind, items, ownerName)}
+        disabled={items.length === 0}
+      >
         <IconExport /> {t('listIO.export')}
       </button>
-      <button onClick={() => pick('add')}>
+      <button title={t('listIO.importAdd')} onClick={() => pick('add')}>
         <IconImport /> {t('listIO.importAdd')}
       </button>
-      <button onClick={() => pick('replace')}>
+      <button title={t('listIO.importReplace')} onClick={() => pick('replace')}>
         <IconImport /> {t('listIO.importReplace')}
       </button>
-      <button className="danger" onClick={onClear} disabled={items.length === 0}>
+      <button
+        title={t('listIO.clear')}
+        className="danger"
+        onClick={onClear}
+        disabled={items.length === 0}
+      >
         <IconTrash /> {t('listIO.clear')}
       </button>
       <input
