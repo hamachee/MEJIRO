@@ -2,21 +2,17 @@ import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
 import type { Character } from '../types/character';
 import type { Campaign } from '../types/campaign';
 import type { MessageTemplate } from '../types/messageTemplate';
-import {
-  DEFAULT_CUSTOM_THEME,
-  type CustomTheme,
-  type ThemeMode,
-} from '../lib/theme';
+import type { ThemeMode } from '../lib/theme';
 
 /** Persisted app settings (single record, keyed by a fixed id). */
 export interface AppSettings {
   id: 'app';
   /** UI language code, e.g. "en" | "ko". Also used for Discord output. */
   uiLang: string;
-  /** Color scheme mode: dark, light, by game rule, or user-defined. */
+  /** Color scheme mode: dark, light, system, or by game rule. */
   themeMode: ThemeMode;
-  /** Colors used when {@link themeMode} is "custom". */
-  customTheme: CustomTheme;
+  /** Hex color for the curse dice, overriding the active scheme's own — applies in every mode. Empty uses the scheme default. */
+  curseColor: string;
   /** Saved messages for the webhook message panel — per device, not synced with a character/campaign. */
   messageTemplates: MessageTemplate[];
 }
@@ -77,6 +73,6 @@ export const DEFAULT_SETTINGS: AppSettings = {
   id: 'app',
   uiLang: 'ko',
   themeMode: 'system',
-  customTheme: DEFAULT_CUSTOM_THEME,
+  curseColor: '',
   messageTemplates: [],
 };

@@ -1,21 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { useSettingsStore } from '../store/settingsStore';
 import { SUPPORTED_LANGUAGES } from '../i18n';
-import {
-  DEFAULT_CUSTOM_THEME,
-  PALETTE_KEYS,
-  THEME_MODES,
-  type CustomTheme,
-  type ThemeMode,
-} from '../lib/theme';
+import { THEME_MODES, type ThemeMode } from '../lib/theme';
+import { pickerValue } from '../lib/color';
 
 export function Settings() {
   const { t } = useTranslation();
   const settings = useSettingsStore((s) => s.settings);
   const update = useSettingsStore((s) => s.update);
-
-  const patchCustom = (patch: Partial<CustomTheme>) =>
-    update({ customTheme: { ...settings.customTheme, ...patch } });
 
   return (
     <div className="stack">
@@ -57,67 +49,47 @@ export function Settings() {
               ))}
             </select>
           </label>
-          {settings.themeMode === 'custom' && (
-            <label className="field">
-              <span className="field-label">{t('theme.base')}</span>
-              <select
-                value={settings.customTheme.base}
-                onChange={(e) =>
-                  patchCustom({ base: e.target.value as 'dark' | 'light' })
-                }
-              >
-                <option value="dark">{t('theme.dark')}</option>
-                <option value="light">{t('theme.light')}</option>
-              </select>
-            </label>
-          )}
         </div>
-        {settings.themeMode === 'rule' && (
-          <p className="muted hint">{t('theme.ruleHint')}</p>
+        {settings.themeMode === 'curseborne' && (
+          <p className="muted hint">{t('theme.curseborneHint')}</p>
         )}
-        {settings.themeMode === 'custom' && (
-          <>
-            <div className="swatch-grid">
-              {PALETTE_KEYS.map((key) => (
-                <label key={key} className="swatch">
-                  <input
-                    type="color"
-                    value={settings.customTheme[key]}
-                    onChange={(e) => patchCustom({ [key]: e.target.value })}
-                  />
-                  <span>{t(`theme.colors.${key}`)}</span>
-                </label>
-              ))}
-            </div>
-            <div className="form-row">
+
+        <div className="form-row">
+          <label className="field grow">
+            <span className="field-label">{t('theme.curseColor')}</span>
+            <span className="color-field-row">
+              <input
+                type="color"
+                value={pickerValue(settings.curseColor)}
+                onChange={(e) => update({ curseColor: e.target.value })}
+              />
+              <input
+                key={settings.curseColor}
+                className="color-input"
+                placeholder="#B44AE0"
+                defaultValue={settings.curseColor}
+                onBlur={(e) => update({ curseColor: e.target.value.trim() })}
+              />
               <button
                 type="button"
-                onClick={() => update({ customTheme: DEFAULT_CUSTOM_THEME })}
+                disabled={!settings.curseColor}
+                onClick={() => update({ curseColor: '' })}
               >
                 {t('theme.reset')}
               </button>
-            </div>
-            <span className="field-label">{t('theme.preview')}</span>
-            <div className="theme-preview">
-              <div className="card">
-                <strong>{t('app.title')}</strong>
-                <p className="muted">{t('app.tagline')}</p>
-                <div className="dice-tray">
-                  <span className="die d10 mini hit">8</span>
-                  <span className="die d10 mini curse hit">10</span>
-                  <span className="die d10 mini">3</span>
-                </div>
-                <div className="theme-preview-row">
-                  <button type="button" className="primary">
-                    {t('roller.roll')}
-                  </button>
-                  <span className="badge success">{t('result.success')}</span>
-                  <span className="badge failure">{t('result.failure')}</span>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
+            </span>
+          </label>
+        </div>
+        <p className="muted hint">{t('theme.curseColorHint')}</p>
+
+        <span className="field-label">{t('theme.preview')}</span>
+        <div className="theme-preview">
+          <div className="dice-tray">
+            <span className="die d10 mini hit">8</span>
+            <span className="die d10 mini curse hit">10</span>
+            <span className="die d10 mini">3</span>
+          </div>
+        </div>
       </section>
 
       <p className="muted disclaimer">{t('settings.fanDisclaimer')}</p>

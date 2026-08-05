@@ -839,33 +839,8 @@ button.danger:hover:not(:disabled) {
   padding: 0.35rem 0.5rem;
 }
 
-/* Custom scheme editor (settings) */
-.swatch-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 0.4rem;
-  margin-top: 0.75rem;
-}
-.swatch {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.35rem 0.5rem;
-  background: var(--bg-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 0.85rem;
-}
-.swatch input[type='color'] {
-  width: 34px;
-  height: 26px;
-  padding: 0.1rem;
-  flex-shrink: 0;
-  cursor: pointer;
-}
-
-/* Tiny live sample of the custom palette, sat on the page background so
-   bg vs. card contrast is visible without scrolling the whole app. */
+/* Tiny live sample of the curse dice color, sat on the page background so
+   it reads against both dark and light schemes without scrolling. */
 .theme-preview {
   margin-top: 0.35rem;
   padding: 0.6rem;
@@ -873,24 +848,9 @@ button.danger:hover:not(:disabled) {
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
-.theme-preview .card {
-  max-width: 220px;
-  margin: 0;
-}
 .theme-preview .dice-tray {
-  margin: 0.5rem 0 0;
+  margin: 0;
   gap: 0.3rem;
-}
-.theme-preview-row {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin-top: 0.5rem;
-  flex-wrap: wrap;
-}
-.theme-preview-row button {
-  padding: 0.3rem 0.6rem;
-  font-size: 0.85rem;
 }
 
 /* Character view toolbar */

@@ -2,6 +2,7 @@ import type { SystemTemplate } from '../types/template';
 import type { RollRequest, RollResult } from '../types/roll';
 import { hasCurseHit } from './roll';
 import { label } from '../lib/localize';
+import { parseHexColor } from '../lib/color';
 
 /** Localised strings for Discord embeds, independent of the UI language. */
 const STRINGS: Record<string, Record<string, string>> = {
@@ -51,27 +52,6 @@ function hitsLabel(lang: string, n: number): string {
 }
 
 const THEME_COLOR = 0x5b4b8a;
-
-/**
- * Parse a hex color like "#5B4B8A" or "5b4b8a" (3- or 6-digit) into a
- * Discord embed color integer. Returns undefined for empty/invalid input,
- * so callers can fall back to their own default with `??`.
- */
-export function parseHexColor(hex: string | undefined): number | undefined {
-  const stripped = hex?.trim().replace(/^#/, '');
-  if (!stripped) return undefined;
-  if (/^[0-9a-fA-F]{3}$/.test(stripped)) {
-    return parseInt(
-      stripped
-        .split('')
-        .map((c) => c + c)
-        .join(''),
-      16,
-    );
-  }
-  if (/^[0-9a-fA-F]{6}$/.test(stripped)) return parseInt(stripped, 16);
-  return undefined;
-}
 
 export interface DiscordContext {
   webhookUrl: string;
