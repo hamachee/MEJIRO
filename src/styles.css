@@ -1289,6 +1289,12 @@ p.fold-readonly {
 .fold-readonly .field-label {
   margin-right: 0.4rem;
 }
+/* Motifs is supporting free text, not the card's usual body copy — its
+   edit-mode textarea is kept in sync with .fold-readonly's font-size so it
+   doesn't visually grow between play and edit mode. */
+.motifs-card textarea {
+  font-size: 0.92rem;
+}
 .curse-controls {
   display: flex;
   align-items: center;
