@@ -1,11 +1,14 @@
 /**
- * Color scheme system. Four modes:
+ * Color scheme system. Six modes:
  *  - system: follows the OS/browser's prefers-color-scheme
  *  - dark / light: neutral built-in schemes
  *  - curseborne: the app's original violet scheme, fixed — not derived from
  *    whatever character/campaign happens to be open. MEJIRO only ever
  *    bundles the one game system, so there's nothing for this mode to vary
  *    by; it's just a named palette, same as dark/light.
+ *  - newspaper / pineapple: additional fixed palettes, light-based like the
+ *    neutral light scheme but built around a small given set of accent
+ *    colors instead of the app's own purple.
  *
  * On top of whichever mode is active, the user can independently recolor
  * the curse dice (and their hit/border shades) via a single hex value that
@@ -17,9 +20,22 @@
  */
 import { cssHex } from './color';
 
-export type ThemeMode = 'system' | 'dark' | 'light' | 'curseborne';
+export type ThemeMode =
+  | 'system'
+  | 'dark'
+  | 'light'
+  | 'curseborne'
+  | 'newspaper'
+  | 'pineapple';
 
-export const THEME_MODES: ThemeMode[] = ['system', 'dark', 'light', 'curseborne'];
+export const THEME_MODES: ThemeMode[] = [
+  'system',
+  'dark',
+  'light',
+  'curseborne',
+  'newspaper',
+  'pineapple',
+];
 
 /**
  * Tokens that make up a color scheme (translucent bars, dividers, readable
@@ -157,6 +173,87 @@ export const CURSEBORNE_THEME: Theme = {
 };
 
 /**
+ * Newsprint — light base, but every accent (buttons, badges, curse dice)
+ * stays within the four grays supplied for the theme rather than reaching
+ * for hue: 252525 (ink), 545454, 7d7d7d, cfcfcf (paper shadow). The extra
+ * in-between shades below (454545, 6a6a6a, 3a3a3a, 2f2f2f, 5a5a5a) are
+ * hand-picked mixes of those four, not new hues — every value here has
+ * R = G = B.
+ */
+export const NEWSPAPER_THEME: Theme = {
+  scheme: 'light',
+  bg: '#f7f7f7',
+  bg2: '#ececec',
+  card: '#ffffff',
+  card2: '#f0f0f0',
+  border: '#cfcfcf',
+  text: '#252525',
+  muted: '#7d7d7d',
+  accent: '#252525',
+  accent2: '#545454',
+  success: '#545454',
+  failure: '#7d7d7d',
+  danger: '#252525',
+  curse: '#545454',
+  headerBg: 'rgba(255, 255, 255, 0.9)',
+  barBg: 'rgba(240, 240, 240, 0.95)',
+  scrim: 'rgba(37, 37, 37, 0.45)',
+  divider: 'rgba(0, 0, 0, 0.08)',
+  dividerStrong: 'rgba(0, 0, 0, 0.12)',
+  onAccent: '#ffffff',
+  successText: '#454545',
+  failureText: '#6a6a6a',
+  dangerText: '#252525',
+  failureBright: '#5a5a5a',
+  failureTerminal: '#2f2f2f',
+  curseStrong: '#3a3a3a',
+  curseHitBorder: '#7d7d7d',
+  curseText: '#454545',
+  wickedText: '#3a3a3a',
+  cruelText: '#6a6a6a',
+};
+
+/**
+ * Pineapple — light base, warmed toward cream/gold, with the given yellows
+ * and greens carrying every accent (FFD500/FDC500 for the bright highlights,
+ * 3A7D44/1E4F2A/01200F for success/failure/danger). Bright yellow reads
+ * poorly as text on white, so `onAccent` and the curse text/strength shades
+ * lean on the darker greens instead of the usual white-on-accent pattern.
+ */
+export const PINEAPPLE_THEME: Theme = {
+  scheme: 'light',
+  bg: '#fffdf5',
+  bg2: '#fff6dc',
+  card: '#ffffff',
+  card2: '#fef6d8',
+  border: '#e0d29a',
+  text: '#01200f',
+  muted: '#75816b',
+  accent: '#ffd500',
+  accent2: '#fdc500',
+  success: '#3a7d44',
+  failure: '#1e4f2a',
+  danger: '#01200f',
+  curse: '#ffd500',
+  headerBg: 'rgba(255, 253, 245, 0.9)',
+  barBg: 'rgba(255, 246, 220, 0.95)',
+  scrim: 'rgba(30, 79, 42, 0.45)',
+  divider: 'rgba(30, 79, 42, 0.08)',
+  dividerStrong: 'rgba(30, 79, 42, 0.12)',
+  onAccent: '#01200f',
+  successText: '#2f6636',
+  failureText: '#17381f',
+  dangerText: '#01200f',
+  failureBright: '#4f8f57',
+  failureTerminal: '#0f2e18',
+  curseStrong: '#fdc500',
+  curseHitBorder: '#ffe066',
+  curseText: '#8a6f00',
+  wickedText: '#8a6f00',
+  cruelText: '#2f6636',
+};
+
+/**
  * "#rrggbb" mixed toward black (amount < 0) or white (amount > 0) by
  * |amount| (0-1). Used to derive the curse-hit shades from the single
  * user-picked curse color, the same way the built-in themes hand-pick a
@@ -193,6 +290,10 @@ export function resolveTheme(mode: ThemeMode, curseColor: string): Theme {
         return LIGHT_THEME;
       case 'curseborne':
         return CURSEBORNE_THEME;
+      case 'newspaper':
+        return NEWSPAPER_THEME;
+      case 'pineapple':
+        return PINEAPPLE_THEME;
       case 'system':
         return systemPrefersDark() ? DARK_THEME : LIGHT_THEME;
       case 'dark':
