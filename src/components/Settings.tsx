@@ -50,8 +50,8 @@ export function Settings() {
             </select>
           </label>
         </div>
-        {settings.themeMode === 'rule' && (
-          <p className="muted hint">{t('theme.ruleHint')}</p>
+        {settings.themeMode === 'curseborne' && (
+          <p className="muted hint">{t('theme.curseborneHint')}</p>
         )}
 
         <div className="form-row">

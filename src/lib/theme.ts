@@ -2,8 +2,10 @@
  * Color scheme system. Four modes:
  *  - system: follows the OS/browser's prefers-color-scheme
  *  - dark / light: neutral built-in schemes
- *  - rule: the scheme of the game system (template) being played —
- *    e.g. the violet Curseborne palette
+ *  - curseborne: the app's original violet scheme, fixed — not derived from
+ *    whatever character/campaign happens to be open. MEJIRO only ever
+ *    bundles the one game system, so there's nothing for this mode to vary
+ *    by; it's just a named palette, same as dark/light.
  *
  * On top of whichever mode is active, the user can independently recolor
  * the curse dice (and their hit/border shades) via a single hex value that
@@ -15,9 +17,9 @@
  */
 import { cssHex } from './color';
 
-export type ThemeMode = 'system' | 'dark' | 'light' | 'rule';
+export type ThemeMode = 'system' | 'dark' | 'light' | 'curseborne';
 
-export const THEME_MODES: ThemeMode[] = ['system', 'dark', 'light', 'rule'];
+export const THEME_MODES: ThemeMode[] = ['system', 'dark', 'light', 'curseborne'];
 
 /**
  * Tokens that make up a color scheme (translucent bars, dividers, readable
@@ -154,11 +156,6 @@ export const CURSEBORNE_THEME: Theme = {
   barBg: 'rgba(28, 28, 43, 0.95)',
 };
 
-/** Per-game-system schemes used by the "by rule" mode, keyed by template id. */
-export const RULE_THEMES: Record<string, Theme> = {
-  curseborne: CURSEBORNE_THEME,
-};
-
 /**
  * "#rrggbb" mixed toward black (amount < 0) or white (amount > 0) by
  * |amount| (0-1). Used to derive the curse-hit shades from the single
@@ -185,23 +182,17 @@ function systemPrefersDark(): boolean {
 }
 
 /**
- * Resolve the theme to render. In rule mode the game system decides: the
- * active character's template picks its scheme (falling back to dark for
- * systems without one). A valid `curseColor` then overrides the curse die
+ * Resolve the theme to render. A valid `curseColor` overrides the curse die
  * and its derived hit/border shades on top of whichever base was picked —
- * it applies the same way in every mode, dark/light/rule/system alike.
+ * it applies the same way in every mode, dark/light/curseborne/system alike.
  */
-export function resolveTheme(
-  mode: ThemeMode,
-  curseColor: string,
-  ruleTemplateId?: string,
-): Theme {
+export function resolveTheme(mode: ThemeMode, curseColor: string): Theme {
   const base = (() => {
     switch (mode) {
       case 'light':
         return LIGHT_THEME;
-      case 'rule':
-        return (ruleTemplateId && RULE_THEMES[ruleTemplateId]) || CURSEBORNE_THEME;
+      case 'curseborne':
+        return CURSEBORNE_THEME;
       case 'system':
         return systemPrefersDark() ? DARK_THEME : LIGHT_THEME;
       case 'dark':

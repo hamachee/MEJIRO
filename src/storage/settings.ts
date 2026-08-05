@@ -25,6 +25,10 @@ export async function loadSettings(): Promise<AppSettings> {
   if ((merged.themeMode as string) === 'custom') {
     merged.themeMode = customTheme?.base === 'light' ? 'light' : 'dark';
   }
+  // "rule" was renamed to "curseborne" — same fixed theme, honest name.
+  if ((merged.themeMode as string) === 'rule') {
+    merged.themeMode = 'curseborne';
+  }
   return merged;
 }
 
