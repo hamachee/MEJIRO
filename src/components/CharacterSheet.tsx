@@ -175,7 +175,7 @@ function MotifsCard({ character, editing }: { character: Character; editing: boo
   const patch = useCharacterStore((s) => s.patch);
   const { identity } = character;
   return (
-    <section className="card">
+    <section className="card motifs-card">
       <h2>
         <FieldLabel i18nKey="sheet.motifs" en="Motifs" />
       </h2>
@@ -187,7 +187,7 @@ function MotifsCard({ character, editing }: { character: Character; editing: boo
           onBlur={(e) => patch({ identity: { ...identity, motifs: e.target.value } })}
         />
       ) : (
-        <p className="muted item-card-desc">{identity.motifs || '—'}</p>
+        <p className="muted fold-readonly">{identity.motifs || '—'}</p>
       )}
     </section>
   );
@@ -278,7 +278,7 @@ function IdentityCard({
             .filter(Boolean)
             .join(' · ') || '—'}
         </div>
-        <div className="identity-row muted">{identity.concept || '—'}</div>
+        {identity.concept && <div className="identity-row muted">{identity.concept}</div>}
         {goalsFold}
       </section>
     );
