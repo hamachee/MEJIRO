@@ -42,7 +42,7 @@ export function curseDiceCap(entanglement: number): number {
   return 5;
 }
 
-/** A user-entered named entry with a dot rating (edges, paths, contacts, bonds). */
+/** A user-entered named entry with a dot rating (edges, contacts, bonds). */
 export interface RatedItem {
   id: string;
   name: string;
@@ -153,7 +153,6 @@ export interface Character {
   /** Which skills (by id) are marked as this character's Path Skills. */
   pathSkills: Record<string, boolean>;
   edges: RatedItem[];
-  paths: RatedItem[];
   contacts: RatedItem[];
   bonds: RatedItem[];
   conditions: ConditionItem[];
