@@ -1,72 +1,147 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCampaignStore } from '../store/campaignStore';
 import { uid } from '../lib/uid';
+import { label } from '../lib/localize';
+import { useLang } from '../lib/useLang';
 import { useDragReorder } from '../lib/useDragReorder';
+import { getTemplate } from '../templates';
 import {
   blankAccursedPC,
   isPcInstance,
   type AccursedPC,
   type Campaign,
 } from '../types/campaign';
-import { StatTrack } from './AdversaryCard';
+import type { InjuryLevel } from '../types/template';
 import { ConditionEditor } from './ConditionEditor';
 import { FieldLabel } from './FieldLabel';
 import { IconCheck, IconClose, IconEdit } from './icons';
 import { Stepper } from './Stepper';
 import { TurnMarker } from './TurnMarker';
 
+/** A PC's Bloodied extension can add at most this many boxes. */
+const MAX_EXTRA_BOXES = 2;
+
 /**
- * A PC's armor/injury track: armor boxes | injury boxes (Bloodied extension
- * included, at the front) | Taken Out — the same unlabeled compact strip as
- * an adversary card, always markable.
+ * The non-terminal injury levels of the campaign's system template — the
+ * same structure a real character sheet uses — with a single flat 8-box
+ * level as the fallback for templates without a structured track.
+ */
+export function pcInjuryLevels(campaign: Campaign): InjuryLevel[] {
+  const levels = getTemplate(campaign.templateId)?.injuryTrack?.levels;
+  const track = levels?.filter((l) => !l.terminal) ?? [];
+  return track.length > 0 ? track : [{ boxes: 8, label: { en: '', ko: '' } }];
+}
+
+/**
+ * A PC's armor/injury track: armor boxes, then the injury levels from the
+ * system template (Bloodied extension boxes at the front), then Taken Out —
+ * the character sheet's grouped track with a `|` divider standing in for
+ * each level label.
  */
 function PcTrack({
   pc,
+  levels,
   onPatch,
 }: {
   pc: AccursedPC;
+  levels: InjuryLevel[];
   onPatch: (patch: Partial<AccursedPC>) => void;
 }) {
-  const injuryCount = Math.max(0, pc.injuryBoxes + pc.extraBoxes);
+  const { t } = useTranslation();
+  const groups = levels.map((l, i) => (i === 0 ? l.boxes + pc.extraBoxes : l.boxes));
+  const total = groups.reduce((sum, n) => sum + n, 0);
   const armorCount = Math.max(0, pc.armorRating);
+  const marked = Math.min(pc.marked, total);
+  const armorMarked = Math.min(pc.armorMarked, armorCount);
+
+  const setMarked = (n: number) => onPatch({ marked: Math.max(0, Math.min(n, total)) });
+  const setArmorMarked = (n: number) =>
+    onPatch({ armorMarked: Math.max(0, Math.min(n, armorCount)) });
+
+  const injuryBox = (absIndex: number) => {
+    const position = absIndex + 1;
+    const isMarked = absIndex < marked;
+    return (
+      <button
+        key={absIndex}
+        className={`injury-box ${isMarked ? 'marked' : ''}`}
+        aria-label={`${position}`}
+        onClick={() => setMarked(marked === position ? position - 1 : position)}
+      />
+    );
+  };
+
+  let offset = 0;
   return (
-    <StatTrack
-      armorRating={armorCount}
-      injuryBoxes={injuryCount}
-      interactive={{
-        marked: Math.min(pc.marked, injuryCount),
-        armorMarked: Math.min(pc.armorMarked, armorCount),
-        takenOut: pc.takenOut,
-        onToggleMarked: (n) => onPatch({ marked: Math.max(0, Math.min(n, injuryCount)) }),
-        onToggleArmorMarked: (n) =>
-          onPatch({ armorMarked: Math.max(0, Math.min(n, armorCount)) }),
-        onToggleTakenOut: () => onPatch({ takenOut: !pc.takenOut }),
-      }}
-    />
+    <div className="injury-track">
+      {Array.from({ length: armorCount }, (_, i) => {
+        const position = i + 1;
+        const isMarked = i < armorMarked;
+        return (
+          <button
+            key={`armor${i}`}
+            className={`armor-box ${isMarked ? 'marked' : ''}`}
+            aria-label={`${t('gm.armor')} ${position}`}
+            onClick={() => setArmorMarked(armorMarked === position ? position - 1 : position)}
+          />
+        );
+      })}
+      {groups.map((count, gi) => {
+        const start = offset;
+        offset += count;
+        return (
+          <Fragment key={gi}>
+            {(gi > 0 || armorCount > 0) && (
+              <span className="track-divider" aria-hidden="true">
+                |
+              </span>
+            )}
+            {Array.from({ length: count }, (_, j) => injuryBox(start + j))}
+          </Fragment>
+        );
+      })}
+      <span className="track-divider" aria-hidden="true">
+        |
+      </span>
+      <span className={`injury-level terminal ${pc.takenOut ? 'lit' : ''}`}>
+        <span className="injury-level-label" aria-hidden="true">
+          <FieldLabel i18nKey="sheet.takenOut" en="Taken Out" />
+        </span>
+      </span>
+      <button
+        className={`injury-box taken-out-box ${pc.takenOut ? 'marked' : ''}`}
+        aria-label={t('sheet.takenOut')}
+        onClick={() => onPatch({ takenOut: !pc.takenOut })}
+      />
+    </div>
   );
 }
 
 /**
  * One roster entry on the Accursed tab: a full-width card split into two
  * columns — identity/track/conditions/note on the left, a large free-notes
- * area on the right. Structural stats (lineage, armor, box counts) sit
- * behind the card's edit toggle; the track, conditions and notes stay live.
+ * area on the right. Structural stats (lineage, armor, the Bloodied
+ * extension) sit behind the card's edit toggle; the track, conditions and
+ * notes stay live.
  */
 function PcRosterCard({
   pc,
+  levels,
   deployed,
   onPatch,
   onDeployToggle,
   onRemove,
 }: {
   pc: AccursedPC;
+  levels: InjuryLevel[];
   deployed: boolean;
   onPatch: (patch: Partial<AccursedPC>) => void;
   onDeployToggle: () => void;
   onRemove: () => void;
 }) {
   const { t } = useTranslation();
+  const lang = useLang();
   const [editing, setEditing] = useState(false);
 
   return (
@@ -127,15 +202,10 @@ function PcRosterCard({
                   }
                 />
                 <Stepper
-                  label={t('gm.injuryBoxes')}
-                  ariaLabel={t('gm.injuryBoxes')}
-                  value={pc.injuryBoxes}
-                  onChange={(n) => onPatch({ injuryBoxes: n })}
-                />
-                <Stepper
-                  label={t('sheet.extraBoxes')}
+                  label={`${label(levels[0].label, lang)} ${t('sheet.extraBoxes')}`.trim()}
                   ariaLabel={t('sheet.extraBoxes')}
                   value={pc.extraBoxes}
+                  max={MAX_EXTRA_BOXES}
                   onChange={(n) => onPatch({ extraBoxes: n })}
                 />
               </div>
@@ -145,7 +215,7 @@ function PcRosterCard({
               {[pc.lineage, pc.family].filter(Boolean).join(' / ') || '—'}
             </div>
           )}
-          <PcTrack pc={pc} onPatch={onPatch} />
+          <PcTrack pc={pc} levels={levels} onPatch={onPatch} />
           <ConditionEditor
             conditions={pc.conditions}
             onChange={(next) => onPatch({ conditions: next })}
@@ -179,6 +249,7 @@ function PcRosterCard({
  */
 export function PcTableCard({
   pc,
+  levels,
   index,
   onPatch,
   onRemove,
@@ -187,6 +258,7 @@ export function PcTableCard({
   turn,
 }: {
   pc: AccursedPC;
+  levels: InjuryLevel[];
   index: number;
   onPatch: (patch: Partial<AccursedPC>) => void;
   onRemove: () => void;
@@ -222,7 +294,7 @@ export function PcTableCard({
           onChange={(n) => onPatch({ initiative: n })}
         />
       </div>
-      <PcTrack pc={pc} onPatch={onPatch} />
+      <PcTrack pc={pc} levels={levels} onPatch={onPatch} />
       <ConditionEditor
         conditions={pc.conditions}
         onChange={(next) => onPatch({ conditions: next })}
@@ -243,6 +315,7 @@ export function CampaignPcsPage({ campaign }: { campaign: Campaign }) {
   const patch = useCampaignStore((s) => s.patch);
   const [name, setName] = useState('');
   const { pcs, instances } = campaign;
+  const levels = pcInjuryLevels(campaign);
 
   const patchPc = (id: string, p: Partial<AccursedPC>) =>
     patch({ pcs: pcs.map((x) => (x.id === id ? { ...x, ...p } : x)) });
@@ -294,6 +367,7 @@ export function CampaignPcsPage({ campaign }: { campaign: Campaign }) {
         <PcRosterCard
           key={pc.id}
           pc={pc}
+          levels={levels}
           deployed={instances.some((i) => isPcInstance(i) && i.pcId === pc.id)}
           onPatch={(p) => patchPc(pc.id, p)}
           onDeployToggle={() => toggleDeploy(pc)}

@@ -94,9 +94,11 @@ export interface AccursedPC {
   family: string;
   armorRating: number;
   armorMarked: number;
-  /** Base injury box count (before the Bloodied extension). */
-  injuryBoxes: number;
-  /** Bloodied extension boxes added at the front of the injury track. */
+  /**
+   * Bloodied extension boxes (0-2) added at the front of the injury track.
+   * The track's base shape isn't stored: it always follows the campaign
+   * system template's injury levels, same as a real character sheet.
+   */
   extraBoxes: number;
   /** Boxes filled on the injury track (extension included). */
   marked: number;
@@ -136,7 +138,6 @@ export function blankAccursedPC(id: string, name: string): AccursedPC {
     family: '',
     armorRating: 0,
     armorMarked: 0,
-    injuryBoxes: 8,
     extraBoxes: 0,
     marked: 0,
     takenOut: false,

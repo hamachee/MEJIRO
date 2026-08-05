@@ -1,8 +1,9 @@
 /**
  * Inline SVG icons, replacing the emoji glyphs the UI used before so icons
  * render identically on every platform and follow the theme via currentColor.
- * Stroke shapes adapted from Lucide (lucide.dev, ISC license); the diamond
- * fill shape below is Bootstrap Icons' "suit-diamond-fill" (MIT license).
+ * Stroke shapes adapted from Lucide (lucide.dev, ISC license); the diamond,
+ * geo-alt and geo-alt-fill shapes below are Bootstrap Icons' "suit-diamond-
+ * fill", "geo-alt" and "geo-alt-fill" (MIT license).
  *
  * All icons are decorative (aria-hidden): buttons that show only an icon
  * carry their own aria-label.
@@ -162,6 +163,25 @@ export function IconDiamond(props: SVGProps<SVGSVGElement>) {
   return (
     <Icon viewBox="0 0 16 16" fill="currentColor" stroke="none" {...props}>
       <path d="M2.45 7.4 7.2 1.067a1 1 0 0 1 1.6 0L13.55 7.4a1 1 0 0 1 0 1.2L8.8 14.933a1 1 0 0 1-1.6 0L2.45 8.6a1 1 0 0 1 0-1.2" />
+    </Icon>
+  );
+}
+
+/** Map pin outline (Bootstrap Icons "geo-alt") — not this card's turn. */
+export function IconGeoAlt(props: SVGProps<SVGSVGElement>) {
+  return (
+    <Icon viewBox="0 0 16 16" fill="currentColor" stroke="none" {...props}>
+      <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10" />
+      <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+    </Icon>
+  );
+}
+
+/** Map pin filled (Bootstrap Icons "geo-alt-fill") — this card's current turn. */
+export function IconGeoAltFill(props: SVGProps<SVGSVGElement>) {
+  return (
+    <Icon viewBox="0 0 16 16" fill="currentColor" stroke="none" {...props}>
+      <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6" />
     </Icon>
   );
 }

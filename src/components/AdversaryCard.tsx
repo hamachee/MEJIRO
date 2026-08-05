@@ -204,7 +204,7 @@ export function AdversaryStatsFields({
  * `interactive` to make armor and injury independently click-to-mark, plus
  * the Taken Out toggle.
  */
-export function StatTrack({
+function StatTrack({
   armorRating,
   injuryBoxes,
   interactive,

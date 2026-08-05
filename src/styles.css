@@ -1527,26 +1527,37 @@ button.fav-toggle:hover:not(:disabled) {
 .adversary-card > * + * {
   margin-top: 0.5rem;
 }
-/* ◤ turn marker in a table card's top-left corner; quiet until hovered or
-   current. Sits on the card edge itself (the card is position: relative). */
-.turn-marker {
+/* Turn marker: a round pin-icon button pinned to the card's top-left
+   corner, overlapping the border. Outline pin/muted when idle, filled
+   pin/accent once it marks the current turn. Selector carries the
+   .item-card prefix so these outweigh the global
+   `button:hover:not(:disabled):not(.selected)` background. */
+.item-card button.turn-marker {
   position: absolute;
-  top: -1px;
-  left: -1px;
-  padding: 0 5px 5px 3px;
-  border: none;
-  background: transparent;
-  color: var(--border);
-  font-size: 0.8rem;
-  line-height: 1;
+  top: -8px;
+  left: -8px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--muted);
+  font-size: 0.85rem;
 }
-.turn-marker:hover,
-.turn-marker:focus-visible {
-  background: transparent;
+.item-card button.turn-marker:hover,
+.item-card button.turn-marker:focus-visible {
+  background: var(--card);
+  border-color: var(--accent);
   color: var(--accent);
 }
-.turn-marker.current {
-  color: var(--accent);
+.item-card button.turn-marker.current,
+.item-card button.turn-marker.current:hover {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
 }
 /* The marker sits above .adversary-card's stacked-section margins. */
 .adversary-card > .turn-marker + * {
