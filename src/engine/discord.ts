@@ -52,10 +52,33 @@ function hitsLabel(lang: string, n: number): string {
 
 const THEME_COLOR = 0x5b4b8a;
 
+/**
+ * Parse a hex color like "#5B4B8A" or "5b4b8a" (3- or 6-digit) into a
+ * Discord embed color integer. Returns undefined for empty/invalid input,
+ * so callers can fall back to their own default with `??`.
+ */
+export function parseHexColor(hex: string | undefined): number | undefined {
+  const stripped = hex?.trim().replace(/^#/, '');
+  if (!stripped) return undefined;
+  if (/^[0-9a-fA-F]{3}$/.test(stripped)) {
+    return parseInt(
+      stripped
+        .split('')
+        .map((c) => c + c)
+        .join(''),
+      16,
+    );
+  }
+  if (/^[0-9a-fA-F]{6}$/.test(stripped)) return parseInt(stripped, 16);
+  return undefined;
+}
+
 export interface DiscordContext {
   webhookUrl: string;
   lang: string;
   characterName: string;
+  /** Identity color override, e.g. "#5B4B8A" — falls back to the outcome-based color when unset/invalid. */
+  color?: string;
 }
 
 /**
@@ -117,7 +140,9 @@ export function buildRollEmbed(
       {
         title: ctx.characterName || undefined,
         description: `${poolLine}\n${hitsLine}`,
-        color: result.botched ? 0x8a1a1a : result.passed ? THEME_COLOR : 0x555555,
+        color:
+          parseHexColor(ctx.color) ??
+          (result.botched ? 0x8a1a1a : result.passed ? THEME_COLOR : 0x555555),
       },
     ],
   };
@@ -129,6 +154,8 @@ export interface AdversaryRollContext {
   lang: string;
   instanceLabel: string;
   poolLabel: string;
+  /** Identity color override, e.g. "#5B4B8A" — falls back to the outcome-based color when unset/invalid. */
+  color?: string;
 }
 
 /** Build the roll-result embed for an adversary (GM page) roll. */
@@ -161,7 +188,9 @@ export function buildAdversaryRollEmbed(
       {
         title: ctx.instanceLabel || undefined,
         description: `${poolLine}\n${hitsLine}`,
-        color: result.botched ? 0x8a1a1a : result.passed ? THEME_COLOR : 0x555555,
+        color:
+          parseHexColor(ctx.color) ??
+          (result.botched ? 0x8a1a1a : result.passed ? THEME_COLOR : 0x555555),
       },
     ],
   };
@@ -224,7 +253,7 @@ export function buildTricksEmbed(purchase: PurchaseSummary, ctx: DiscordContext)
       {
         title: ctx.characterName || undefined,
         description: `${lines.join('\n') || '—'}\n${summaryParts.join(' · ')}`,
-        color: THEME_COLOR,
+        color: parseHexColor(ctx.color) ?? THEME_COLOR,
       },
     ],
   };
@@ -261,7 +290,27 @@ export function postTricks(
   return post(ctx.webhookUrl, buildTricksEmbed(purchase, ctx));
 }
 
-/** Post free-form text to a webhook — Discord renders its own markdown. */
-export function postPlainMessage(webhookUrl: string, content: string): Promise<void> {
-  return post(webhookUrl, { content });
+/**
+ * Post a free-form message as an embed — Discord renders its own markdown
+ * in the description, this app adds none. A color that fails to parse (or
+ * isn't given) leaves the embed's `color` unset, so Discord shows it with
+ * no accent border rather than silently falling back to the app's own
+ * brand color.
+ */
+export function postEmbedMessage(
+  webhookUrl: string,
+  title: string,
+  content: string,
+  color?: string,
+): Promise<void> {
+  const parsedColor = parseHexColor(color);
+  return post(webhookUrl, {
+    embeds: [
+      {
+        title: title.trim() || undefined,
+        description: content,
+        ...(parsedColor !== undefined ? { color: parsedColor } : {}),
+      },
+    ],
+  });
 }

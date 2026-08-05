@@ -153,6 +153,7 @@ export const useGmRollStore = create<GmRollStoreState>((set, get) => ({
       lang: useSettingsStore.getState().settings.uiLang,
       instanceLabel,
       poolLabel,
+      color: campaign.embedColor,
     })
       .then(() => set({ postStatus: 'posted' }))
       .catch((err) =>
@@ -173,6 +174,7 @@ export const useGmRollStore = create<GmRollStoreState>((set, get) => ({
       lang: useSettingsStore.getState().settings.uiLang,
       instanceLabel,
       poolLabel,
+      color: campaign.embedColor,
     })
       .then(() => set({ postStatus: 'posted' }))
       .catch((err) =>

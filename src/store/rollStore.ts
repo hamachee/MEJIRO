@@ -137,6 +137,7 @@ export const useRollStore = create<RollStoreState>((set, get) => ({
       webhookUrl,
       lang: useSettingsStore.getState().settings.uiLang,
       characterName: character.showNameInWebhook ? character.name : '',
+      color: character.embedColor,
     })
       .then(() => set({ postStatus: 'posted' }))
       .catch((err) =>

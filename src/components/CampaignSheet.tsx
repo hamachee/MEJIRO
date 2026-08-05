@@ -20,6 +20,7 @@ import { Counter } from './Counter';
 import { getTemplate } from '../templates';
 import { label } from '../lib/localize';
 import { useLang } from '../lib/useLang';
+import { cssHex, leftBorderStyle, pickerValue } from '../lib/color';
 
 /** Shorten a free-text field for the summary line; full text lives in the edit form. */
 function truncate(s: string, max = 24): string {
@@ -259,7 +260,7 @@ function CampaignSettingsCard({ campaign }: { campaign: Campaign }) {
 
   if (!editing) {
     return (
-      <section className="card identity">
+      <section className="card identity" style={leftBorderStyle(cssHex(campaign.embedColor))}>
         <div className="item-card-head">
           <h1 className="grow">
             {campaign.name} <span className="identity-rule muted">· {systemLabel}</span>
@@ -273,7 +274,7 @@ function CampaignSettingsCard({ campaign }: { campaign: Campaign }) {
   }
 
   return (
-    <section className="card identity">
+    <section className="card identity" style={leftBorderStyle(cssHex(campaign.embedColor))}>
       <div className="form-row">
         <label className="field grow">
           <span className="field-label">{t('sheet.rename')}</span>
@@ -293,6 +294,25 @@ function CampaignSettingsCard({ campaign }: { campaign: Campaign }) {
             defaultValue={campaign.webhookUrl}
             onBlur={(e) => patch({ webhookUrl: e.target.value.trim() })}
           />
+        </label>
+      </div>
+      <div className="form-row">
+        <label className="field">
+          <span className="field-label">{t('gm.embedColor')}</span>
+          <span className="color-field-row">
+            <input
+              type="color"
+              value={pickerValue(campaign.embedColor)}
+              onChange={(e) => patch({ embedColor: e.target.value })}
+            />
+            <input
+              key={campaign.embedColor}
+              className="color-input"
+              placeholder="#5B4B8A"
+              defaultValue={campaign.embedColor}
+              onBlur={(e) => patch({ embedColor: e.target.value.trim() })}
+            />
+          </span>
         </label>
       </div>
     </section>

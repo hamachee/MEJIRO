@@ -70,6 +70,7 @@ export function GmTrickPurchase({ campaign }: Props) {
           webhookUrl: url,
           lang: settings.uiLang,
           characterName: instanceLabel,
+          color: campaign.embedColor,
         },
       );
       setPostState('done');

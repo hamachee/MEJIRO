@@ -156,6 +156,8 @@ export interface Campaign {
   templateId: string;
   /** Discord webhook this campaign posts adversary rolls to. */
   webhookUrl: string;
+  /** Hex color (e.g. "#5B4B8A") for this campaign's embed left border. Empty uses the app default. */
+  embedColor: string;
   /** If false, rolls wait for the GM to press "post" instead of posting immediately. */
   autoPostToDiscord: boolean;
   /** Ad-hoc dice pool for a one-off roll that doesn't fit any adversary's pools — shared by the whole campaign. */

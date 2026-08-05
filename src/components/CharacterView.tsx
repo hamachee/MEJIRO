@@ -70,7 +70,7 @@ export function CharacterView() {
 
   return (
     <div className={`character-view ${editing ? 'editing' : ''}`}>
-      <MessagePanel webhookUrl={active.webhookUrl} />
+      <MessagePanel webhookUrl={active.webhookUrl} identityColor={active.embedColor} />
       <div className="toolbar">
         <Link to="/" className="back-link">
           <IconBack /> {t('sheet.back')}
