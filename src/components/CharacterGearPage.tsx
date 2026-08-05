@@ -224,14 +224,14 @@ function GearSection({
             />
             <button onClick={add}>{t('sheet.add')}</button>
           </div>
-          <ListImportExport
-            kind="gear"
-            items={items}
-            ownerName={character.name}
-            onChange={(next) => patch({ gear: next })}
-          />
         </>
       )}
+      <ListImportExport
+        kind="gear"
+        items={items}
+        ownerName={character.name}
+        onChange={(next) => patch({ gear: next })}
+      />
     </section>
   );
 }

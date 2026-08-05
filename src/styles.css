@@ -722,6 +722,15 @@ button.danger:hover:not(:disabled) {
   gap: 0.4rem;
   flex-wrap: wrap;
 }
+/* Without this, whether the cost badge sits beside the name or wraps below
+   the description (once open) depends on how the trick's name/description
+   length happens to interact with flex-wrap at the current width — so two
+   open tricks could lay out differently for no reason a player can see.
+   Forcing the badge's own line on open makes every trick's cost land in
+   the same place: beside the name closed, below the description open. */
+.trick-fold[open] ~ .trick-cost {
+  flex-basis: 100%;
+}
 .trick-cost {
   font-size: 0.8rem;
   color: var(--muted);

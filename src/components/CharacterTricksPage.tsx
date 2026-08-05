@@ -181,14 +181,14 @@ export function CharacterTricksPage({
                 onKeyDown={(e) => e.key === 'Enter' && add()}
               />
             </div>
-            <ListImportExport
-              kind="tricks"
-              items={tricks}
-              ownerName={character.name}
-              onChange={(next) => patch({ tricks: next })}
-            />
           </>
         )}
+        <ListImportExport
+          kind="tricks"
+          items={tricks}
+          ownerName={character.name}
+          onChange={(next) => patch({ tricks: next })}
+        />
       </section>
     </div>
   );
