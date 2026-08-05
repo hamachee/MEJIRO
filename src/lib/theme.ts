@@ -190,12 +190,14 @@ export const CURSEBORNE_THEME: Theme = {
 };
 
 /**
- * Newsprint — light base, but every accent (buttons, badges, curse dice)
- * stays within the four grays supplied for the theme rather than reaching
- * for hue: 252525 (ink), 545454, 7d7d7d, cfcfcf (paper shadow). The extra
- * in-between shades below (454545, 6a6a6a, 3a3a3a, 2f2f2f, 5a5a5a) are
- * hand-picked mixes of those four, not new hues — every value here has
- * R = G = B.
+ * Newsprint — light base, every accent (buttons, badges) stays within the
+ * four grays supplied for the theme rather than reaching for hue: 252525
+ * (ink), 545454, 7d7d7d, cfcfcf (paper shadow). The extra in-between shades
+ * below (454545, 6a6a6a, 3a3a3a, 2f2f2f, 5a5a5a) are hand-picked mixes of
+ * those four, not new hues — R = G = B. The one deliberate exception is the
+ * curse dice: a stamped-in-red-ink accent (981010, with -30%/+30% mixes for
+ * the hit-state shades), the same way an editor's red pen breaks the
+ * grayscale on an otherwise black-and-white page.
  */
 export const NEWSPAPER_THEME: Theme = {
   scheme: 'light',
@@ -211,7 +213,7 @@ export const NEWSPAPER_THEME: Theme = {
   success: '#545454',
   failure: '#7d7d7d',
   danger: '#252525',
-  curse: '#545454',
+  curse: '#981010',
   headerBg: 'rgba(255, 255, 255, 0.9)',
   barBg: 'rgba(240, 240, 240, 0.95)',
   scrim: 'rgba(37, 37, 37, 0.45)',
@@ -223,10 +225,10 @@ export const NEWSPAPER_THEME: Theme = {
   dangerText: '#252525',
   failureBright: '#5a5a5a',
   failureTerminal: '#2f2f2f',
-  curseStrong: '#3a3a3a',
-  curseHitBorder: '#7d7d7d',
-  curseText: '#454545',
-  wickedText: '#3a3a3a',
+  curseStrong: '#6a0b0b',
+  curseHitBorder: '#b75858',
+  curseText: '#6a0b0b',
+  wickedText: '#6a0b0b',
   cruelText: '#6a6a6a',
 };
 
@@ -234,8 +236,10 @@ export const NEWSPAPER_THEME: Theme = {
  * Pineapple — light base, warmed toward cream/gold, with the given yellows
  * and greens carrying every accent (FFD500/FDC500 for the bright highlights,
  * 3A7D44/1E4F2A/01200F for success/failure/danger). Bright yellow reads
- * poorly as text on white, so `onAccent` and the curse text/strength shades
- * lean on the darker greens instead of the usual white-on-accent pattern.
+ * poorly as text on white, so `onAccent` leans on the darker greens instead
+ * of the usual white-on-accent pattern. The curse dice use that same dark
+ * green (01200F) rather than the bright yellow — deliberately closer to
+ * "rotten" than "ripe" — with -30%/+30% mixes for the hit-state shades.
  */
 export const PINEAPPLE_THEME: Theme = {
   scheme: 'light',
@@ -251,7 +255,7 @@ export const PINEAPPLE_THEME: Theme = {
   success: '#3a7d44',
   failure: '#1e4f2a',
   danger: '#01200f',
-  curse: '#ffd500',
+  curse: '#01200f',
   headerBg: 'rgba(255, 253, 245, 0.9)',
   barBg: 'rgba(255, 246, 220, 0.95)',
   scrim: 'rgba(30, 79, 42, 0.45)',
@@ -263,10 +267,10 @@ export const PINEAPPLE_THEME: Theme = {
   dangerText: '#01200f',
   failureBright: '#4f8f57',
   failureTerminal: '#0f2e18',
-  curseStrong: '#fdc500',
-  curseHitBorder: '#ffe066',
-  curseText: '#8a6f00',
-  wickedText: '#8a6f00',
+  curseStrong: '#01160b',
+  curseHitBorder: '#4d6357',
+  curseText: '#01200f',
+  wickedText: '#01200f',
   cruelText: '#2f6636',
 };
 
