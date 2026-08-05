@@ -2038,18 +2038,34 @@ button.armor-box.marked:hover:not(:disabled) {
   overflow-y: auto;
 }
 
-/* Webhook message panel: an always-visible tab docked to the right edge
-   (roughly level with the toolbar's edit button) and a slide-out drawer
-   floating above the page (no scrim — it doesn't block the rest of the UI).
-   The tab stays on top of the drawer (higher z-index) so the same click
-   that opens it also closes it — no separate close button needed. It's
-   narrow enough to clip a sliver of the drawer's edge when open; that's an
-   accepted tradeoff, not a bug (this app isn't optimizing for mobile). */
-.message-tab {
+/* Webhook message panel: a slide-out drawer floating above the page (no
+   scrim — it doesn't block the rest of the UI), with a tab handle attached
+   to its left edge. `.message-panel` is just a positioning/transform shell
+   — the tab (`position: absolute; left` a negative offset equal to its own
+   width, i.e. outside the shell's box) rides the same transform as the
+   drawer body. That's what makes it work as a handle: translateX(100%)
+   shifts the shell by exactly its own width, so at rest the tab — sitting
+   just outside the shell's left edge — lands flush with the viewport's
+   edge (always visible); once open it protrudes from the drawer's left
+   edge like a physical pull handle. The shell can't itself clip overflow
+   (that's on `.message-panel-body` instead) or the tab would be cut off. */
+.message-panel {
   position: fixed;
-  top: 9.5rem;
+  top: 0;
   right: 0;
-  z-index: 43;
+  bottom: 0;
+  z-index: 42;
+  width: min(360px, 100vw);
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+}
+.message-panel.open {
+  transform: translateX(0);
+}
+.message-tab {
+  position: absolute;
+  top: 9.5rem;
+  left: -1.6rem;
   width: 1.6rem;
   height: 3.2rem;
   padding: 0;
@@ -2064,13 +2080,8 @@ button.armor-box.marked:hover:not(:disabled) {
   width: 0.9rem;
   height: 0.9rem;
 }
-.message-panel {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 42;
-  width: min(360px, 100vw);
+.message-panel-body {
+  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
@@ -2079,13 +2090,8 @@ button.armor-box.marked:hover:not(:disabled) {
   border-left: 1px solid var(--border);
   box-shadow: -4px 0 16px rgba(0, 0, 0, 0.35);
   overflow-y: auto;
-  transform: translateX(100%);
-  transition: transform 0.25s ease;
 }
-.message-panel.open {
-  transform: translateX(0);
-}
-.message-panel textarea {
+.message-panel-body textarea {
   min-height: 7rem;
 }
 .message-template-content {

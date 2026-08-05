@@ -11,12 +11,16 @@ import { ListImportExport } from './ListImportExport';
 type PostStatus = 'idle' | 'posting' | 'sent' | 'error';
 
 /**
- * Foldable webhook message panel: an always-visible tab docked to the right
- * edge that slides a drawer out over the page — clicking the tab again (it
- * stays on top of the drawer) slides it back in. Free-form text posts as-is
- * to Discord, which renders its own markdown — this app does none. Saved
- * templates are per-device (not part of the character/campaign data) since
- * the same device is often used for different characters or campaigns.
+ * Foldable webhook message panel: a drawer that slides out over the page,
+ * with a tab handle attached to its left edge. The tab rides the same
+ * transform as the drawer, so at rest (drawer off-screen) it sits flush
+ * with the viewport's edge — always visible — and once open it protrudes
+ * from the drawer like a physical handle; clicking it either way slides
+ * the drawer in or out, no separate close button needed. Free-form text
+ * posts as-is to Discord, which renders its own markdown — this app does
+ * none. Saved templates are per-device (not part of the character/campaign
+ * data) since the same device is often used for different characters or
+ * campaigns.
  */
 export function MessagePanel({ webhookUrl }: { webhookUrl?: string }) {
   const { t } = useTranslation();
@@ -55,7 +59,7 @@ export function MessagePanel({ webhookUrl }: { webhookUrl?: string }) {
   };
 
   return (
-    <>
+    <div className={`message-panel ${open ? 'open' : ''}`}>
       <button
         className="message-tab"
         aria-label={t('message.title')}
@@ -64,7 +68,7 @@ export function MessagePanel({ webhookUrl }: { webhookUrl?: string }) {
       >
         <IconTabHandle />
       </button>
-      <div className={`message-panel stack ${open ? 'open' : ''}`}>
+      <div className="message-panel-body stack">
         <h2>{t('message.title')}</h2>
 
         <textarea
@@ -157,6 +161,6 @@ export function MessagePanel({ webhookUrl }: { webhookUrl?: string }) {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }
