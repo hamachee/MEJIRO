@@ -1,17 +1,22 @@
 /**
  * Inline SVG icons, replacing the emoji glyphs the UI used before so icons
  * render identically on every platform and follow the theme via currentColor.
- * Stroke shapes adapted from Lucide (lucide.dev, ISC license).
+ * Stroke shapes adapted from Lucide (lucide.dev, ISC license); the diamond
+ * fill shape below is Bootstrap Icons' "suit-diamond-fill" (MIT license).
  *
  * All icons are decorative (aria-hidden): buttons that show only an icon
  * carry their own aria-label.
  */
 import type { ReactNode, SVGProps } from 'react';
 
-function Icon({ children, ...props }: SVGProps<SVGSVGElement> & { children: ReactNode }) {
+function Icon({
+  children,
+  className,
+  ...props
+}: SVGProps<SVGSVGElement> & { children: ReactNode }) {
   return (
     <svg
-      className="icon"
+      className={className ? `icon ${className}` : 'icon'}
       viewBox="0 0 24 24"
       width="1em"
       height="1em"
@@ -148,6 +153,15 @@ export function IconUndo(props: SVGProps<SVGSVGElement>) {
     <Icon {...props}>
       <path d="M1 4v6h6" />
       <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+    </Icon>
+  );
+}
+
+/** ♦ — filled diamond marker (Path Skill / Major Path) */
+export function IconDiamond(props: SVGProps<SVGSVGElement>) {
+  return (
+    <Icon viewBox="0 0 16 16" fill="currentColor" stroke="none" {...props}>
+      <path d="M2.45 7.4 7.2 1.067a1 1 0 0 1 1.6 0L13.55 7.4a1 1 0 0 1 0 1.2L8.8 14.933a1 1 0 0 1-1.6 0L2.45 8.6a1 1 0 0 1 0-1.2" />
     </Icon>
   );
 }

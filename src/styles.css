@@ -276,6 +276,13 @@ body {
   font-size: 0.78rem;
   color: var(--muted);
 }
+/* A field-label that also carries an inline checkbox (Major Path marking on
+   Lineage/Family) alongside its text. */
+.field-label-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
 .field-check {
   display: flex;
   align-items: center;
@@ -1014,13 +1021,26 @@ button.sheet-stat:hover:not(.selected) {
   border-bottom: 1px dashed var(--divider);
   border-radius: 0;
 }
-/* Marks a skill as a Path Skill; unlabeled by design (see aria-label), so it
-   just needs to sit tightly against the stat label instead of the wider
-   gap used between other row elements. */
-.path-skill-check {
+/* Marks a skill as a Path Skill, or Lineage/Family as the character's Major
+   Path; unlabeled by design (see aria-label), so it just needs to sit
+   tightly against the label instead of the wider gap used between other
+   row elements. */
+.diamond-check {
   flex-shrink: 0;
   margin: 0;
   accent-color: var(--accent);
+}
+/* The diamond glyph itself (IconDiamond) sits right after the marked label.
+   Its viewBox fills edge-to-edge (unlike text glyphs, which carry built-in
+   whitespace), so at the default 1em it reads visibly larger than the text
+   next to it — sized down here to match. `middle` (rather than the small
+   negative offset .icon uses elsewhere) centers it on the text's x-height,
+   since baseline alignment sits a filled shape like this too high. */
+.diamond-icon {
+  width: 0.7em;
+  height: 0.7em;
+  margin-left: 0.3em;
+  vertical-align: middle;
 }
 .hint {
   font-size: 0.82rem;

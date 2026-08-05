@@ -13,7 +13,7 @@ import {
 import type { InjuryLevel, L10n as L10nLabel, Stat, SystemTemplate } from '../types/template';
 import { ResourceTracker } from './ResourceTracker';
 import { FieldLabel } from './FieldLabel';
-import { IconClose, IconEdit, IconLink } from './icons';
+import { IconClose, IconDiamond, IconEdit, IconLink } from './icons';
 import { Stepper } from './Stepper';
 import { uid } from '../lib/uid';
 import { attributesByCategory } from '../templates';
@@ -108,7 +108,7 @@ function SheetStat({
         {onTogglePathSkill && (
           <input
             type="checkbox"
-            className="path-skill-check"
+            className="diamond-check"
             checked={!!pathSkill}
             onChange={onTogglePathSkill}
             aria-label={`${t('sheet.pathSkill')}: ${label(stat.label, lang)}`}
@@ -128,13 +128,8 @@ function SheetStat({
       aria-pressed={selected}
     >
       <span className="stat-label">
-        {pathSkill ? (
-          <strong>
-            <L l10n={stat.label} />
-          </strong>
-        ) : (
-          <L l10n={stat.label} />
-        )}
+        <L l10n={stat.label} />
+        {pathSkill && <IconDiamond className="diamond-icon" />}
       </span>
       <Dots value={value} />
     </button>
@@ -209,6 +204,14 @@ function IdentityCard({
     (e: React.FocusEvent<HTMLInputElement>) =>
       patch({ identity: { ...identity, [field]: e.target.value.trim() } });
 
+  // Major Path: which of Lineage/Family the character's supernatural nature
+  // mainly draws from. The two checkboxes are mutually exclusive — checking
+  // one clears the other — and checking the already-checked one clears it,
+  // so "neither" stays reachable.
+  const setMajorPath = (path: 'lineage' | 'family') =>
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      patch({ identity: { ...identity, majorPath: e.target.checked ? path : '' } });
+
   // Short/long-term aspirations, folded away until needed. Role path lives
   // up in the main identity row, next to Family, since it's identity rather
   // than a goal. Like the rest of the card, these only accept changes in
@@ -274,9 +277,27 @@ function IdentityCard({
           </h1>
         </div>
         <div className="identity-row muted">
-          {[identity.lineage, identity.family, identity.rolePath]
-            .filter(Boolean)
-            .join(' · ') || '—'}
+          {identity.lineage || identity.family || identity.rolePath ? (
+            <>
+              {identity.lineage && (
+                <span>
+                  {identity.lineage}
+                  {identity.majorPath === 'lineage' && <IconDiamond className="diamond-icon" />}
+                </span>
+              )}
+              {identity.lineage && (identity.family || identity.rolePath) ? ' · ' : null}
+              {identity.family && (
+                <span>
+                  {identity.family}
+                  {identity.majorPath === 'family' && <IconDiamond className="diamond-icon" />}
+                </span>
+              )}
+              {identity.family && identity.rolePath ? ' · ' : null}
+              {identity.rolePath}
+            </>
+          ) : (
+            '—'
+          )}
         </div>
         {identity.concept && <div className="identity-row muted">{identity.concept}</div>}
         {goalsFold}
@@ -297,13 +318,27 @@ function IdentityCard({
       </div>
       <div className="form-row">
         <label className="field grow">
-          <span className="field-label">
+          <span className="field-label field-label-check">
+            <input
+              type="checkbox"
+              className="diamond-check"
+              checked={identity.majorPath === 'lineage'}
+              onChange={setMajorPath('lineage')}
+              aria-label={`${t('sheet.majorPath')}: ${t('sheet.lineage')}`}
+            />
             <FieldLabel i18nKey="sheet.lineage" en="Lineage" />
           </span>
           <input defaultValue={identity.lineage} onBlur={setIdentity('lineage')} />
         </label>
         <label className="field grow">
-          <span className="field-label">
+          <span className="field-label field-label-check">
+            <input
+              type="checkbox"
+              className="diamond-check"
+              checked={identity.majorPath === 'family'}
+              onChange={setMajorPath('family')}
+              aria-label={`${t('sheet.majorPath')}: ${t('sheet.family')}`}
+            />
             <FieldLabel i18nKey="sheet.family" en="Family" />
           </span>
           <input defaultValue={identity.family} onBlur={setIdentity('family')} />
