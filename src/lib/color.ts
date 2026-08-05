@@ -19,16 +19,20 @@ export function parseHexColor(hex: string | undefined): number | undefined {
   return undefined;
 }
 
-/** Matches the engine's THEME_COLOR (0x5b4b8a) — used as the color picker's starting point when a field is empty. */
-export const DEFAULT_EMBED_COLOR_HEX = '#5b4b8a';
-
 /** A valid hex color string usable directly as a CSS color, or undefined if invalid/empty. */
 export function cssHex(raw: string): string | undefined {
   return parseHexColor(raw) !== undefined ? `#${raw.trim().replace(/^#/, '')}` : undefined;
 }
 
-/** A value <input type="color"> will accept — raw's parsed hex, or a fallback when raw is empty/invalid. */
-export function pickerValue(raw: string, fallback: string = DEFAULT_EMBED_COLOR_HEX): string {
+/**
+ * A value <input type="color"> will accept — raw's parsed hex, or `fallback`
+ * when raw is empty/invalid. `fallback` is required (no baked-in default
+ * hue): callers should pass a value the picker can honestly show as its
+ * "nothing set" state — e.g. the app's own input-field background (what
+ * shows through the rim around the swatch, same as any other text input),
+ * so the swatch blends in rather than implying a color was already chosen.
+ */
+export function pickerValue(raw: string, fallback: string): string {
   return cssHex(raw) ?? fallback;
 }
 

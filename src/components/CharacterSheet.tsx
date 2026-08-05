@@ -4,6 +4,7 @@ import { useCharacterStore } from '../store/characterStore';
 import { useRollStore } from '../store/rollStore';
 import { label } from '../lib/localize';
 import { useLang } from '../lib/useLang';
+import { useResolvedTheme } from '../lib/useTheme';
 import { cssHex, leftBorderStyle, pickerValue } from '../lib/color';
 import {
   MAX_ENTANGLEMENT,
@@ -203,6 +204,7 @@ function IdentityCard({
   const { t } = useTranslation();
   const rename = useCharacterStore((s) => s.rename);
   const patch = useCharacterStore((s) => s.patch);
+  const theme = useResolvedTheme();
   const { identity } = character;
 
   const setIdentity = (field: keyof typeof identity) =>
@@ -387,7 +389,7 @@ function IdentityCard({
           <input
             type="color"
             aria-label={t('sheet.embedColor')}
-            value={pickerValue(character.embedColor)}
+            value={pickerValue(character.embedColor, theme.bg2)}
             onChange={(e) => patch({ embedColor: e.target.value })}
           />
           <input

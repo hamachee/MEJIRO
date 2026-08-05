@@ -5,6 +5,7 @@ import { useDragReorder } from '../lib/useDragReorder';
 import { postEmbedMessage } from '../engine/discord';
 import { uid } from '../lib/uid';
 import { cssHex, leftBorderStyle, pickerValue } from '../lib/color';
+import { useResolvedTheme } from '../lib/useTheme';
 import type { MessageTemplate } from '../types/messageTemplate';
 import { IconClose, IconTabHandle, IconWarning } from './icons';
 import { ListImportExport } from './ListImportExport';
@@ -20,9 +21,11 @@ type PostStatus = 'idle' | 'posting' | 'sent' | 'error';
  * the drawer in or out, no separate close button needed. Posts as a
  * Discord embed (title + content, both markdown Discord renders itself —
  * this app adds none), with an optional per-message color that falls back
- * to the sheet's identity color, then the app default. Saved templates are
- * per-device (not part of the character/campaign data) since the same
- * device is often used for different characters or campaigns.
+ * to the sheet's identity color — if neither is set, no color is sent at
+ * all, so Discord renders a plain, uncolored embed rather than the app
+ * silently picking one. Saved templates are per-device (not part of the
+ * character/campaign data) since the same device is often used for
+ * different characters or campaigns.
  */
 export function MessagePanel({
   webhookUrl,
@@ -33,6 +36,7 @@ export function MessagePanel({
   identityColor?: string;
 }) {
   const { t } = useTranslation();
+  const theme = useResolvedTheme();
   const templates = useSettingsStore((s) => s.settings.messageTemplates);
   const update = useSettingsStore((s) => s.update);
   const [open, setOpen] = useState(false);
@@ -76,7 +80,12 @@ export function MessagePanel({
     setStatus('idle');
   };
 
-  const colorPickerFallback = pickerValue(identityColor ?? '');
+  // Blends into the color picker's own input-field background (the rim
+  // that shows around the swatch, same as any other text input) when
+  // nothing resolves — a message with no color anywhere posts as a plain,
+  // uncolored embed, so the swatch shouldn't imply a color is about to be
+  // sent.
+  const colorPickerFallback = pickerValue(identityColor ?? '', theme.bg2);
 
   return (
     <div className={`message-panel ${open ? 'open' : ''}`}>
