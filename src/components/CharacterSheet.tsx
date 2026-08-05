@@ -24,15 +24,19 @@ const MAX_DOTS = 5;
 /**
  * A localised label with the English original as a small sublabel when the
  * UI language differs — non-English template labels are unofficial fan
- * translations, so the source term stays visible.
+ * translations, so the source term stays visible. `suffix` (e.g. the Path
+ * Skill diamond) renders right after the localized text and before the
+ * sublabel, since the sublabel is block-level and would otherwise push an
+ * appended suffix onto its own line below.
  */
-function L({ l10n }: { l10n: L10nLabel }) {
+function L({ l10n, suffix }: { l10n: L10nLabel; suffix?: ReactNode }) {
   const lang = useLang();
   const localized = label(l10n, lang);
   const showEn = lang !== 'en' && l10n.en && l10n.en !== localized;
   return (
     <>
       {localized}
+      {suffix}
       {showEn && <small className="label-en">{l10n.en}</small>}
     </>
   );
@@ -128,8 +132,7 @@ function SheetStat({
       aria-pressed={selected}
     >
       <span className="stat-label">
-        <L l10n={stat.label} />
-        {pathSkill && <IconDiamond className="diamond-icon" />}
+        <L l10n={stat.label} suffix={pathSkill && <IconDiamond className="diamond-icon" />} />
       </span>
       <Dots value={value} />
     </button>
@@ -182,7 +185,7 @@ function MotifsCard({ character, editing }: { character: Character; editing: boo
           onBlur={(e) => patch({ identity: { ...identity, motifs: e.target.value } })}
         />
       ) : (
-        <p className="muted fold-readonly">{identity.motifs || '—'}</p>
+        <p className="fold-readonly">{identity.motifs || '—'}</p>
       )}
     </section>
   );
