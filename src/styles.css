@@ -1053,6 +1053,9 @@ button.sheet-stat:hover:not(.selected) {
   margin-top: -2px;
   color: var(--curse);
 }
+.sheet-stat.selected .diamond-icon {
+  color: var(--on-accent);
+}
 .hint {
   font-size: 0.82rem;
   margin: 0.5rem 0 0;
