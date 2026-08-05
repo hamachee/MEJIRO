@@ -117,6 +117,7 @@ export function MessagePanel({ webhookUrl }: { webhookUrl?: string }) {
           items={templates}
           ownerName={t('message.templates')}
           onChange={(next) => update({ messageTemplates: next })}
+          compact
         />
 
         <div className="form-row">

@@ -239,6 +239,8 @@
     "export": "Export",
     "importAdd": "Import (add)",
     "importReplace": "Import (replace)",
+    "add": "Add",
+    "replace": "Replace",
     "clear": "Clear",
     "confirmReplace": "Replace this list with the {{count}} imported entries? The current entries will be removed.",
     "confirmClear": "Remove all entries from this list? This cannot be undone.",

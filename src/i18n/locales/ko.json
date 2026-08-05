@@ -239,6 +239,8 @@
     "export": "내보내기",
     "importAdd": "가져오기 (추가)",
     "importReplace": "가져오기 (교체)",
+    "add": "추가",
+    "replace": "대체",
     "clear": "비우기",
     "confirmReplace": "이 목록을 가져온 항목 {{count}}개로 교체할까요? 기존 항목은 삭제됩니다.",
     "confirmClear": "이 목록의 항목을 모두 삭제할까요? 되돌릴 수 없습니다.",

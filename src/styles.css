@@ -2093,9 +2093,11 @@ button.armor-box.marked:hover:not(:disabled) {
   min-height: 7rem;
 }
 /* The template import/export toolbar is always visible (not folded away
-   with the list), so its four buttons are shrunk to icon-only — collapsing
-   the label via font-size rather than removing it keeps it in the
-   accessible name; a native title tooltip stands in for the visible label. */
+   with the list): export/clear stay icon-only (their icons already read as
+   distinct), but add/replace share one icon, so `compact` keeps a short
+   label on those two — otherwise they'd be indistinguishable. Shrunk to
+   fit all four on one line; a native title tooltip fills in the full label
+   the icon-only buttons no longer show. */
 .message-panel-body .list-io {
   margin-top: 0;
   padding-top: 0;
@@ -2104,13 +2106,13 @@ button.armor-box.marked:hover:not(:disabled) {
   flex-wrap: nowrap;
 }
 .message-panel-body .list-io button {
-  padding: 0.4rem;
-  font-size: 0;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.75rem;
   flex-shrink: 0;
 }
 .message-panel-body .list-io .icon {
-  width: 1rem;
-  height: 1rem;
+  width: 0.85em;
+  height: 0.85em;
 }
 .message-template-content {
   flex: 1;
