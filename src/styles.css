@@ -19,6 +19,9 @@
   --divider: rgba(255, 255, 255, 0.05);
   --divider-strong: rgba(255, 255, 255, 0.08);
   --on-accent: #ffffff;
+  --on-danger: #ffffff;
+  --on-failure: #ffffff;
+  --on-curse-strong: #ffffff;
   --success-text: #7ee0ac;
   --failure-text: #f0a0a0;
   --danger-text: #f0b8ac;
@@ -380,7 +383,7 @@ button.danger {
 }
 button.danger:hover:not(:disabled) {
   background: var(--danger);
-  color: var(--on-accent);
+  color: var(--on-danger);
 }
 
 .muted {
@@ -546,30 +549,32 @@ button.danger:hover:not(:disabled) {
   background: var(--card-2);
   border: 1px solid var(--border);
 }
+/* Tinted from the theme's own tokens (color-mix, not a hardcoded rgb triple)
+   so switching themes re-colors these fills too, not just the text. */
 .badge.success {
-  background: rgba(76, 175, 125, 0.18);
+  background: color-mix(in srgb, var(--success) 18%, transparent);
   color: var(--success-text);
   border-color: var(--success);
 }
 .badge.failure {
-  background: rgba(176, 84, 84, 0.18);
+  background: color-mix(in srgb, var(--failure) 18%, transparent);
   color: var(--failure-text);
   border-color: var(--failure);
 }
 .badge.botch {
-  background: rgba(138, 26, 26, 0.28);
+  background: color-mix(in srgb, var(--failure-terminal) 28%, transparent);
   color: var(--failure-bright);
   border-color: var(--failure-terminal);
 }
 .badge.wicked {
-  background: rgba(180, 74, 224, 0.2);
+  background: color-mix(in srgb, var(--curse) 20%, transparent);
   color: var(--wicked-text);
   border-color: var(--curse);
 }
 .badge.cruel {
-  background: rgba(120, 30, 90, 0.3);
+  background: color-mix(in srgb, var(--cruel-text) 30%, transparent);
   color: var(--cruel-text);
-  border-color: #a03470;
+  border-color: var(--cruel-text);
 }
 
 .dice-tray {
@@ -633,6 +638,10 @@ button.danger:hover:not(:disabled) {
 }
 .die.d10.curse.hit {
   background: var(--curse-hit-border);
+  /* The digit sits over ::before's fill (curse-strong), not this element's
+     own background (curse-hit-border, only visible as the thin outer ring)
+     — pick contrast against the layer actually behind the text. */
+  color: var(--on-curse-strong);
 }
 .die.d10.curse.hit::before {
   background: var(--curse-strong);
@@ -699,7 +708,7 @@ button.danger:hover:not(:disabled) {
 .severity.active {
   background: var(--failure);
   border-color: var(--failure);
-  color: var(--on-accent);
+  color: var(--on-failure);
 }
 .severity-cost {
   font-size: 0.78rem;
@@ -707,7 +716,7 @@ button.danger:hover:not(:disabled) {
   font-variant-numeric: tabular-nums;
 }
 .severity.active .severity-cost {
-  color: rgba(255, 255, 255, 0.8);
+  color: color-mix(in srgb, var(--on-failure) 80%, transparent);
 }
 .trick-body {
   flex: 1;
@@ -1361,7 +1370,7 @@ p.fold-readonly {
 .die.curse.hit {
   background: var(--curse-strong);
   border-color: var(--curse-hit-border);
-  color: var(--on-accent);
+  color: var(--on-curse-strong);
 }
 
 /* English sublabel for unofficial translations */

@@ -75,6 +75,23 @@ export interface Theme {
   scheme: 'dark' | 'light';
 }
 
+/**
+ * A resolved theme adds text-contrast tokens computed at resolve time from
+ * whichever danger/failure/curseStrong ended up active — including a
+ * curse-color override, which can be any hex a user picks. Those three
+ * backgrounds previously borrowed `onAccent` (chosen for contrast against
+ * `accent`/`accent2`, an unrelated color), which silently broke legibility
+ * whenever a theme's or override's own color had different lightness than
+ * the accent it was borrowing text from. Deriving instead of hand-picking
+ * means a new palette (or any curse-color override) gets correct contrast
+ * for free, with no per-theme bookkeeping.
+ */
+export interface ResolvedTheme extends Theme {
+  onDanger: string;
+  onFailure: string;
+  onCurseStrong: string;
+}
+
 const DARK_EXTRAS = {
   headerBg: 'rgba(22, 24, 29, 0.9)',
   barBg: 'rgba(28, 31, 38, 0.95)',
@@ -279,11 +296,30 @@ function systemPrefersDark(): boolean {
 }
 
 /**
+ * Black or white, whichever reads better as text on `hex` — perceptual
+ * luminance (ITU-R BT.601), not a full WCAG contrast-ratio computation, but
+ * enough for a binary pick against an arbitrary background color.
+ */
+function readableTextOn(hex: string): string {
+  const m = /^#([0-9a-f]{6})$/i.exec(hex.trim());
+  if (!m) return '#ffffff';
+  const n = parseInt(m[1], 16);
+  const r = (n >> 16) & 255;
+  const g = (n >> 8) & 255;
+  const b = n & 255;
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance >= 0.5 ? '#000000' : '#ffffff';
+}
+
+/**
  * Resolve the theme to render. A valid `curseColor` overrides the curse die
  * and its derived hit/border shades on top of whichever base was picked —
  * it applies the same way in every mode, dark/light/curseborne/system alike.
+ * `onDanger`/`onFailure`/`onCurseStrong` are then derived from whatever
+ * danger/failure/curseStrong ended up active, so they're always correct
+ * even for a curse color no theme author ever picked.
  */
-export function resolveTheme(mode: ThemeMode, curseColor: string): Theme {
+export function resolveTheme(mode: ThemeMode, curseColor: string): ResolvedTheme {
   const base = (() => {
     switch (mode) {
       case 'light':
@@ -302,18 +338,23 @@ export function resolveTheme(mode: ThemeMode, curseColor: string): Theme {
     }
   })();
 
-  const curse = cssHex(curseColor);
-  if (!curse) return base;
+  const curseOverride = cssHex(curseColor);
+  const curse = curseOverride ?? base.curse;
+  const curseStrong = curseOverride ? shadeHex(curseOverride, -0.3) : base.curseStrong;
+  const curseHitBorder = curseOverride ? shadeHex(curseOverride, 0.3) : base.curseHitBorder;
 
   return {
     ...base,
     curse,
-    curseStrong: shadeHex(curse, -0.3),
-    curseHitBorder: shadeHex(curse, 0.3),
+    curseStrong,
+    curseHitBorder,
+    onDanger: readableTextOn(base.danger),
+    onFailure: readableTextOn(base.failure),
+    onCurseStrong: readableTextOn(curseStrong),
   };
 }
 
-const CSS_VARS: Record<Exclude<keyof Theme, 'scheme'>, string> = {
+const CSS_VARS: Record<Exclude<keyof ResolvedTheme, 'scheme'>, string> = {
   bg: '--bg',
   bg2: '--bg-2',
   card: '--card',
@@ -332,6 +373,9 @@ const CSS_VARS: Record<Exclude<keyof Theme, 'scheme'>, string> = {
   divider: '--divider',
   dividerStrong: '--divider-strong',
   onAccent: '--on-accent',
+  onDanger: '--on-danger',
+  onFailure: '--on-failure',
+  onCurseStrong: '--on-curse-strong',
   successText: '--success-text',
   failureText: '--failure-text',
   dangerText: '--danger-text',
@@ -346,7 +390,7 @@ const CSS_VARS: Record<Exclude<keyof Theme, 'scheme'>, string> = {
 };
 
 /** Write the theme onto <html> so every CSS var reference picks it up. */
-export function applyTheme(theme: Theme): void {
+export function applyTheme(theme: ResolvedTheme): void {
   const root = document.documentElement;
   for (const [key, cssVar] of Object.entries(CSS_VARS)) {
     root.style.setProperty(cssVar, theme[key as keyof typeof CSS_VARS]);
