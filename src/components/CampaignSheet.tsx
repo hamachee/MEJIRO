@@ -4,6 +4,7 @@ import { useCampaignStore } from '../store/campaignStore';
 import { useGmRollStore } from '../store/gmRollStore';
 import { uid } from '../lib/uid';
 import { parseTags } from '../lib/tags';
+import { useDragReorder } from '../lib/useDragReorder';
 import { desperationPool, type AdversaryInstance, type AdversaryStats } from '../types/campaign';
 import type { Campaign } from '../types/campaign';
 import { FieldLabel } from './FieldLabel';
@@ -330,6 +331,11 @@ export function CampaignSheet({ campaign }: Props) {
   const { t } = useTranslation();
   const patch = useCampaignStore((s) => s.patch);
   const { instances } = campaign;
+  const { handleProps, itemProps } = useDragReorder(
+    instances,
+    (next) => patch({ instances: next }),
+    'grid',
+  );
 
   return (
     <div className="stack">
@@ -342,10 +348,13 @@ export function CampaignSheet({ campaign }: Props) {
         <p className="muted">{t('gm.noAdversaries')}</p>
       ) : (
         <div className="card-grid">
-          {instances.map((instance) => (
+          {instances.map((instance, i) => (
             <AdversaryCard
               key={instance.id}
               instance={instance}
+              index={i}
+              dragHandleProps={handleProps}
+              dragItemProps={itemProps}
               onChange={(updated) =>
                 patch({ instances: instances.map((x) => (x.id === updated.id ? updated : x)) })
               }

@@ -4,6 +4,7 @@ import { useGmRollStore, type AdversaryPool } from '../store/gmRollStore';
 import { parseTags } from '../lib/tags';
 import { uid } from '../lib/uid';
 import { desperationPool, type AdversaryInstance, type AdversaryStats } from '../types/campaign';
+import type { useDragReorder } from '../lib/useDragReorder';
 import { FieldLabel } from './FieldLabel';
 import { IconCheck, IconClose, IconCopy, IconEdit } from './icons';
 import { Stepper } from './Stepper';
@@ -377,9 +378,12 @@ export function AdversaryStatBody({
 
 interface Props {
   instance: AdversaryInstance;
+  index: number;
   onChange: (updated: AdversaryInstance) => void;
   onRemove: () => void;
   onDuplicate: () => void;
+  dragHandleProps: ReturnType<typeof useDragReorder<AdversaryInstance>>['handleProps'];
+  dragItemProps: ReturnType<typeof useDragReorder<AdversaryInstance>>['itemProps'];
 }
 
 /** Grow a textarea's height to fit its content, no scrollbar or manual resize needed. */
@@ -389,7 +393,15 @@ function autoGrow(el: HTMLTextAreaElement | null) {
   el.style.height = `${el.scrollHeight}px`;
 }
 
-export function AdversaryCard({ instance, onChange, onRemove, onDuplicate }: Props) {
+export function AdversaryCard({
+  instance,
+  index,
+  onChange,
+  onRemove,
+  onDuplicate,
+  dragHandleProps,
+  dragItemProps,
+}: Props) {
   const { t } = useTranslation();
   const selectedInstanceId = useGmRollStore((s) => s.selectedInstanceId);
   const selectedPool = useGmRollStore((s) => s.selectedPool);
@@ -422,18 +434,26 @@ export function AdversaryCard({ instance, onChange, onRemove, onDuplicate }: Pro
     setConditionName('');
   };
 
+  const drag = dragItemProps(index);
+
   return (
-    <div className={`item-card adversary-card ${instance.takenOut ? 'taken-out' : ''}`}>
+    <div
+      className={`item-card adversary-card ${instance.takenOut ? 'taken-out' : ''} ${drag.className}`}
+      data-drag-index={index}
+    >
       <div className="item-card-head">
-        {editing ? (
-          <input
-            className="grow named-name adversary-label"
-            defaultValue={instance.label}
-            onBlur={(e) => onChange({ ...instance, label: e.target.value.trim() || instance.label })}
-          />
-        ) : (
-          <span className="grow adversary-label">{instance.label}</span>
-        )}
+        <div className="item-card-title grow">
+          <span className="drag-handle" {...dragHandleProps(index)} />
+          {editing ? (
+            <input
+              className="grow named-name adversary-label"
+              defaultValue={instance.label}
+              onBlur={(e) => onChange({ ...instance, label: e.target.value.trim() || instance.label })}
+            />
+          ) : (
+            <span className="grow adversary-label">{instance.label}</span>
+          )}
+        </div>
         <div className="item-card-actions">
           <button className="chip ghost" aria-label={`duplicate ${instance.label}`} onClick={onDuplicate}>
             <IconCopy />

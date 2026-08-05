@@ -150,7 +150,7 @@ function GearSection({
   const [tags, setTags] = useState('');
   const [desc, setDesc] = useState('');
   const items = character.gear;
-  const { handleProps, itemProps } = useDragReorder(items, (next) => patch({ gear: next }));
+  const { handleProps, itemProps } = useDragReorder(items, (next) => patch({ gear: next }), 'grid');
 
   const add = () => {
     if (!name.trim()) return;
