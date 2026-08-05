@@ -120,7 +120,7 @@ function PcTrack({
 }
 
 /**
- * One roster entry on the Accursed tab: a full-width card split into two
+ * One roster entry on the Crew tab: a full-width card split into two
  * columns — identity/track/conditions/note on the left, a large free-notes
  * area on the right. Structural stats (lineage, armor, the Bloodied
  * extension) sit behind the card's edit toggle; the track, conditions and
@@ -310,7 +310,7 @@ export function PcTableCard({
   );
 }
 
-/** Accursed tab: the GM's simplified PC roster. */
+/** Crew tab: the GM's simplified PC roster. */
 export function CampaignPcsPage({ campaign }: { campaign: Campaign }) {
   const { t } = useTranslation();
   const patch = useCampaignStore((s) => s.patch);
@@ -348,7 +348,7 @@ export function CampaignPcsPage({ campaign }: { campaign: Campaign }) {
     <div className="stack">
       <section className="card">
         <h2>
-          <FieldLabel i18nKey="gm.accursed" en="Accursed" />
+          <FieldLabel i18nKey="gm.crew" en="Crew" />
         </h2>
         <div className="form-row">
           <input
