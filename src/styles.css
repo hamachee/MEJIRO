@@ -1527,6 +1527,93 @@ button.fav-toggle:hover:not(:disabled) {
 .adversary-card > * + * {
   margin-top: 0.5rem;
 }
+/* ◤ turn marker in a table card's top-left corner; quiet until hovered or
+   current. Sits on the card edge itself (the card is position: relative). */
+.turn-marker {
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  padding: 0 5px 5px 3px;
+  border: none;
+  background: transparent;
+  color: var(--border);
+  font-size: 0.8rem;
+  line-height: 1;
+}
+.turn-marker:hover,
+.turn-marker:focus-visible {
+  background: transparent;
+  color: var(--accent);
+}
+.turn-marker.current {
+  color: var(--accent);
+}
+/* The marker sits above .adversary-card's stacked-section margins. */
+.adversary-card > .turn-marker + * {
+  margin-top: 0;
+}
+.item-card.current-turn {
+  border-color: var(--accent);
+  box-shadow:
+    0 0 0 2px var(--accent),
+    0 0 16px color-mix(in srgb, var(--accent) 60%, transparent);
+}
+
+/* Turn tracker bar: sticks to the viewport top once the page scrolls past
+   it. The app header hides itself on scroll-down, so during play the bar
+   gets the top edge to itself; z-index stays below the header's (which is
+   10) so the header slides back over it on scroll-up. */
+.turn-bar {
+  position: sticky;
+  top: 0.4rem;
+  z-index: 9;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0.45rem 0.6rem;
+  background: var(--bar-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(8px);
+}
+.turn-bar-divider {
+  color: var(--divider-strong);
+}
+.turn-bar .exp-value {
+  width: 2.6rem;
+  padding: 0.15rem 0.2rem;
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* GM PC roster card (Accursed tab): full-width, body split into two
+   columns — identity/track/conditions/note left, big free-notes right. */
+.pc-card-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+@media (max-width: 820px) {
+  .pc-card-body {
+    grid-template-columns: 1fr;
+  }
+}
+.pc-card-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.pc-card-right {
+  display: flex;
+  min-width: 0;
+}
+.pc-memo {
+  width: 100%;
+  resize: vertical;
+}
 .adversary-label {
   font-weight: 600;
 }
@@ -1578,11 +1665,17 @@ button.fav-toggle:hover:not(:disabled) {
 .taken-out-box.marked:hover:not(:disabled) {
   background: var(--failure-terminal);
 }
-/* Taken out: the whole card's border flags it, not just its box track —
-   shared by the GM adversary card and the character sheet's Injuries card. */
+/* Taken out: the whole card flags it, not just its box track — shared by
+   the GM table cards and the character sheet's Injuries card. Thin diagonal
+   stripes rather than a glow, so it reads as "crossed out" at a glance
+   without competing with the current-turn highlight. */
 .taken-out {
   border-color: var(--failure-terminal);
-  box-shadow: 0 0 6px rgba(255, 60, 60, 0.5);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    color-mix(in srgb, var(--failure-terminal) 13%, transparent) 0 1px,
+    transparent 1px 10px
+  );
 }
 /* Taken Out moved into the Injuries card's header corner: same terminal
    label/box styling as the grouped track, just laid out as a row (label,

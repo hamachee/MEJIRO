@@ -5,11 +5,17 @@ import { useGmRollStore } from '../store/gmRollStore';
 import { uid } from '../lib/uid';
 import { parseTags } from '../lib/tags';
 import { useDragReorder } from '../lib/useDragReorder';
-import { desperationPool, type AdversaryInstance, type AdversaryStats } from '../types/campaign';
+import {
+  desperationPool,
+  isPcInstance,
+  type AdversaryStats,
+  type TableCard,
+} from '../types/campaign';
 import type { Campaign } from '../types/campaign';
 import { FieldLabel } from './FieldLabel';
 import { IconCheck, IconEdit } from './icons';
 import { AdversaryCard } from './AdversaryCard';
+import { PcTableCard } from './CampaignPcsPage';
 import { Counter } from './Counter';
 import { getTemplate } from '../templates';
 import { label } from '../lib/localize';
@@ -176,9 +182,9 @@ function CustomPoolControl({
  * dropping a template onto the table and when duplicating a deployed card
  * (stats are copied, not linked, so uniqueness is by label prefix).
  */
-function nextInstanceLabel(baseName: string, instances: AdversaryInstance[]): string {
+function nextInstanceLabel(baseName: string, instances: TableCard[]): string {
   const count = instances.filter(
-    (i) => i.label === baseName || i.label.startsWith(`${baseName} #`),
+    (i) => !isPcInstance(i) && (i.label === baseName || i.label.startsWith(`${baseName} #`)),
   ).length;
   return count === 0 ? baseName : `${baseName} #${count + 1}`;
 }
@@ -323,6 +329,73 @@ function CampaignMomentumCard({ campaign }: { campaign: Campaign }) {
   );
 }
 
+/**
+ * The table's combat controls, sticky above the deployed cards: turn
+ * navigation (◀/▶ walks the current-turn highlight through the cards in
+ * display order), the round counter, a reset (round 1, no highlight), and
+ * an initiative sort — PCs by their Initiative rating, adversaries by
+ * their Desperation pool, highest first.
+ */
+function TurnTracker({ campaign }: { campaign: Campaign }) {
+  const { t } = useTranslation();
+  const patch = useCampaignStore((s) => s.patch);
+  const { instances, pcs, round, turnId } = campaign;
+
+  const initiativeOf = (card: TableCard) =>
+    isPcInstance(card)
+      ? (pcs.find((p) => p.id === card.pcId)?.initiative ?? 0)
+      : desperationPool(card.stats.primaryPool);
+
+  const step = (dir: 1 | -1) => {
+    if (instances.length === 0) return;
+    const cur = instances.findIndex((i) => i.id === turnId);
+    const next =
+      cur === -1
+        ? dir === 1
+          ? 0
+          : instances.length - 1
+        : (cur + dir + instances.length) % instances.length;
+    patch({ turnId: instances[next].id });
+  };
+
+  return (
+    <div className="turn-bar">
+      <button aria-label={t('gm.prevTurn')} onClick={() => step(-1)}>
+        ◀
+      </button>
+      <button aria-label={t('gm.nextTurn')} onClick={() => step(1)}>
+        ▶
+      </button>
+      <span className="turn-bar-divider" aria-hidden="true">
+        |
+      </span>
+      <span className="field-label">{t('gm.round')}</span>
+      <div className="curse-controls">
+        <button
+          aria-label={`− ${t('gm.round')}`}
+          disabled={round <= 1}
+          onClick={() => patch({ round: round - 1 })}
+        >
+          −
+        </button>
+        <span className="exp-value">{round}</span>
+        <button aria-label={`+ ${t('gm.round')}`} onClick={() => patch({ round: round + 1 })}>
+          +
+        </button>
+      </div>
+      <button onClick={() => patch({ round: 1, turnId: null })}>{t('gm.resetRound')}</button>
+      <span className="grow" />
+      <button
+        onClick={() =>
+          patch({ instances: [...instances].sort((a, b) => initiativeOf(b) - initiativeOf(a)) })
+        }
+      >
+        {t('gm.sortInitiative')}
+      </button>
+    </div>
+  );
+}
+
 interface Props {
   campaign: Campaign;
 }
@@ -330,12 +403,17 @@ interface Props {
 export function CampaignSheet({ campaign }: Props) {
   const { t } = useTranslation();
   const patch = useCampaignStore((s) => s.patch);
-  const { instances } = campaign;
+  const { instances, pcs, turnId } = campaign;
   const { handleProps, itemProps } = useDragReorder(
     instances,
     (next) => patch({ instances: next }),
     'grid',
   );
+
+  const turnFor = (id: string) => ({
+    current: turnId === id,
+    onToggle: () => patch({ turnId: turnId === id ? null : id }),
+  });
 
   return (
     <div className="stack">
@@ -347,39 +425,65 @@ export function CampaignSheet({ campaign }: Props) {
       {instances.length === 0 ? (
         <p className="muted">{t('gm.noAdversaries')}</p>
       ) : (
-        <div className="card-grid">
-          {instances.map((instance, i) => (
-            <AdversaryCard
-              key={instance.id}
-              instance={instance}
-              index={i}
-              dragHandleProps={handleProps}
-              dragItemProps={itemProps}
-              onChange={(updated) =>
-                patch({ instances: instances.map((x) => (x.id === updated.id ? updated : x)) })
+        <>
+          <TurnTracker campaign={campaign} />
+          <div className="card-grid">
+            {instances.map((instance, i) => {
+              if (isPcInstance(instance)) {
+                const pc = pcs.find((p) => p.id === instance.pcId);
+                if (!pc) return null;
+                return (
+                  <PcTableCard
+                    key={instance.id}
+                    pc={pc}
+                    index={i}
+                    turn={turnFor(instance.id)}
+                    dragHandleProps={handleProps}
+                    dragItemProps={itemProps}
+                    onPatch={(p) =>
+                      patch({ pcs: pcs.map((x) => (x.id === pc.id ? { ...x, ...p } : x)) })
+                    }
+                    onRemove={() =>
+                      patch({ instances: instances.filter((x) => x.id !== instance.id) })
+                    }
+                  />
+                );
               }
-              onRemove={() => patch({ instances: instances.filter((x) => x.id !== instance.id) })}
-              onDuplicate={() => {
-                const baseName = instance.label.replace(/ #\d+$/, '');
-                patch({
-                  instances: [
-                    ...instances,
-                    {
-                      id: uid(),
-                      label: nextInstanceLabel(baseName, instances),
-                      stats: { ...instance.stats },
-                      memo: '',
-                      conditions: [],
-                      marked: 0,
-                      armorMarked: 0,
-                      takenOut: false,
-                    },
-                  ],
-                });
-              }}
-            />
-          ))}
-        </div>
+              return (
+                <AdversaryCard
+                  key={instance.id}
+                  instance={instance}
+                  index={i}
+                  turn={turnFor(instance.id)}
+                  dragHandleProps={handleProps}
+                  dragItemProps={itemProps}
+                  onChange={(updated) =>
+                    patch({ instances: instances.map((x) => (x.id === updated.id ? updated : x)) })
+                  }
+                  onRemove={() => patch({ instances: instances.filter((x) => x.id !== instance.id) })}
+                  onDuplicate={() => {
+                    const baseName = instance.label.replace(/ #\d+$/, '');
+                    patch({
+                      instances: [
+                        ...instances,
+                        {
+                          id: uid(),
+                          label: nextInstanceLabel(baseName, instances),
+                          stats: { ...instance.stats },
+                          memo: '',
+                          conditions: [],
+                          marked: 0,
+                          armorMarked: 0,
+                          takenOut: false,
+                        },
+                      ],
+                    });
+                  }}
+                />
+              );
+            })}
+          </div>
+        </>
       )}
     </div>
   );

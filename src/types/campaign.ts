@@ -81,6 +81,72 @@ export interface AdversaryInstance {
   takenOut: boolean;
 }
 
+/**
+ * A player character as the GM tracks it: a deliberately thin slice of the
+ * real character sheet (name, lineage/family, the armor/injury track, status
+ * tags, notes) plus GM-only fields like Initiative. Lives on the campaign,
+ * not the player's own sheet — there is no data link between the two.
+ */
+export interface AccursedPC {
+  id: string;
+  name: string;
+  lineage: string;
+  family: string;
+  armorRating: number;
+  armorMarked: number;
+  /** Base injury box count (before the Bloodied extension). */
+  injuryBoxes: number;
+  /** Bloodied extension boxes added at the front of the injury track. */
+  extraBoxes: number;
+  /** Boxes filled on the injury track (extension included). */
+  marked: number;
+  takenOut: boolean;
+  conditions: ConditionItem[];
+  /** One-line note, shown on the deployed table card too. */
+  note: string;
+  /** Long free-form notes, PC tab only. */
+  memo: string;
+  /** Turn-order rating for the table's initiative sort. */
+  initiative: number;
+}
+
+/**
+ * A PC placed on the table. Unlike an adversary instance this holds no
+ * copied stats — just a reference into {@link Campaign.pcs}, so the table
+ * card and the PC tab always show the same live data.
+ */
+export interface PcInstance {
+  id: string;
+  pcId: string;
+}
+
+/** Anything occupying a card slot on the GM table, in display/turn order. */
+export type TableCard = AdversaryInstance | PcInstance;
+
+export function isPcInstance(card: TableCard): card is PcInstance {
+  return 'pcId' in card;
+}
+
+/** A blank PC entry for the roster. */
+export function blankAccursedPC(id: string, name: string): AccursedPC {
+  return {
+    id,
+    name,
+    lineage: '',
+    family: '',
+    armorRating: 0,
+    armorMarked: 0,
+    injuryBoxes: 8,
+    extraBoxes: 0,
+    marked: 0,
+    takenOut: false,
+    conditions: [],
+    note: '',
+    memo: '',
+    initiative: 0,
+  };
+}
+
 /** A GM's campaign sheet: its adversary roster, playable at the table. */
 export interface Campaign {
   id: string;
@@ -96,9 +162,15 @@ export interface Campaign {
   /** Shared Momentum counter for the table. */
   momentum: number;
   templates: AdversaryTemplate[];
-  instances: AdversaryInstance[];
+  instances: TableCard[];
+  /** The GM's simplified PC roster (the Accursed tab). */
+  pcs: AccursedPC[];
   /** The GM's own trick list, purchased with extra hits after an adversary roll. */
   tricks: CharacterTrick[];
+  /** Combat round shown by the table's turn tracker. */
+  round: number;
+  /** Table card (by id) whose turn it currently is; null between fights. */
+  turnId: string | null;
   createdAt: number;
   updatedAt: number;
 }

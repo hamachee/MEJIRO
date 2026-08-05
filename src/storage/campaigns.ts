@@ -1,6 +1,12 @@
 import { getDB } from './db';
 import { uid } from '../lib/uid';
-import { blankAdversaryStats, type Campaign, type CampaignExport } from '../types/campaign';
+import {
+  blankAccursedPC,
+  blankAdversaryStats,
+  isPcInstance,
+  type Campaign,
+  type CampaignExport,
+} from '../types/campaign';
 import type { CharacterTrick } from '../types/character';
 import { DEFAULT_TEMPLATE_ID } from '../templates';
 
@@ -21,7 +27,10 @@ export function newCampaign(
     momentum: 0,
     templates: [],
     instances: [],
+    pcs: [],
     tricks,
+    round: 1,
+    turnId: null,
     createdAt: now,
     updatedAt: now,
   };
@@ -48,14 +57,21 @@ export function normalizeCampaign(
       ...tpl,
       stats: { ...blankAdversaryStats(), ...tpl.stats },
     })),
-    instances: (raw.instances ?? []).map((i) => ({
-      ...i,
-      memo: i.memo ?? '',
-      stats: { ...blankAdversaryStats(), ...i.stats },
-      conditions: i.conditions ?? [],
-      armorMarked: i.armorMarked ?? 0,
-    })),
+    instances: (raw.instances ?? []).map((i) =>
+      isPcInstance(i)
+        ? i
+        : {
+            ...i,
+            memo: i.memo ?? '',
+            stats: { ...blankAdversaryStats(), ...i.stats },
+            conditions: i.conditions ?? [],
+            armorMarked: i.armorMarked ?? 0,
+          },
+    ),
+    pcs: (raw.pcs ?? []).map((pc) => ({ ...blankAccursedPC(pc.id, pc.name), ...pc })),
     tricks: raw.tricks ?? [],
+    round: raw.round ?? 1,
+    turnId: raw.turnId ?? null,
   };
 }
 
