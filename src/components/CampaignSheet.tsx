@@ -20,6 +20,7 @@ import { Counter } from './Counter';
 import { getTemplate } from '../templates';
 import { label } from '../lib/localize';
 import { useLang } from '../lib/useLang';
+import { useResolvedTheme } from '../lib/useTheme';
 import { cssHex, leftBorderStyle, pickerValue } from '../lib/color';
 
 /** Shorten a free-text field for the summary line; full text lives in the edit form. */
@@ -254,6 +255,7 @@ function CampaignSettingsCard({ campaign }: { campaign: Campaign }) {
   const lang = useLang();
   const rename = useCampaignStore((s) => s.rename);
   const patch = useCampaignStore((s) => s.patch);
+  const theme = useResolvedTheme();
   const [editing, setEditing] = useState(false);
   const template = getTemplate(campaign.templateId);
   const systemLabel = template ? label(template.name, lang) : campaign.templateId;
@@ -301,7 +303,7 @@ function CampaignSettingsCard({ campaign }: { campaign: Campaign }) {
           <input
             type="color"
             aria-label={t('gm.embedColor')}
-            value={pickerValue(campaign.embedColor)}
+            value={pickerValue(campaign.embedColor, theme.card)}
             onChange={(e) => patch({ embedColor: e.target.value })}
           />
           <input

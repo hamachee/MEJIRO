@@ -2,12 +2,14 @@ import { useTranslation } from 'react-i18next';
 import { useSettingsStore } from '../store/settingsStore';
 import { SUPPORTED_LANGUAGES } from '../i18n';
 import { THEME_MODES, type ThemeMode } from '../lib/theme';
+import { useResolvedTheme } from '../lib/useTheme';
 import { pickerValue } from '../lib/color';
 
 export function Settings() {
   const { t } = useTranslation();
   const settings = useSettingsStore((s) => s.settings);
   const update = useSettingsStore((s) => s.update);
+  const theme = useResolvedTheme();
 
   return (
     <div className="stack">
@@ -60,7 +62,10 @@ export function Settings() {
             <span className="color-field-row">
               <input
                 type="color"
-                value={pickerValue(settings.curseColor)}
+                // Falls back to the active scheme's own curse color (not a
+                // fixed default) — that's the color actually in effect when
+                // this field is empty, whichever theme happens to be picked.
+                value={pickerValue(settings.curseColor, theme.curse)}
                 onChange={(e) => update({ curseColor: e.target.value })}
               />
               <input
