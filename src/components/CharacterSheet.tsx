@@ -383,23 +383,22 @@ function IdentityCard({
         </label>
       </div>
       <div className="form-row">
-        <label className="field">
-          <span className="field-label">{t('sheet.embedColor')}</span>
-          <span className="color-field-row">
-            <input
-              type="color"
-              value={pickerValue(character.embedColor)}
-              onChange={(e) => patch({ embedColor: e.target.value })}
-            />
-            <input
-              key={character.embedColor}
-              className="color-input"
-              placeholder="#5B4B8A"
-              defaultValue={character.embedColor}
-              onBlur={(e) => patch({ embedColor: e.target.value.trim() })}
-            />
-          </span>
-        </label>
+        <span className="color-field-row">
+          <input
+            type="color"
+            aria-label={t('sheet.embedColor')}
+            value={pickerValue(character.embedColor)}
+            onChange={(e) => patch({ embedColor: e.target.value })}
+          />
+          <input
+            key={character.embedColor}
+            className="color-input"
+            aria-label={t('sheet.embedColor')}
+            placeholder="#5B4B8A"
+            defaultValue={character.embedColor}
+            onBlur={(e) => patch({ embedColor: e.target.value.trim() })}
+          />
+        </span>
       </div>
       <div className="form-row">
         <label className="field-check">

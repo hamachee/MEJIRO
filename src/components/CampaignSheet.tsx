@@ -297,23 +297,22 @@ function CampaignSettingsCard({ campaign }: { campaign: Campaign }) {
         </label>
       </div>
       <div className="form-row">
-        <label className="field">
-          <span className="field-label">{t('gm.embedColor')}</span>
-          <span className="color-field-row">
-            <input
-              type="color"
-              value={pickerValue(campaign.embedColor)}
-              onChange={(e) => patch({ embedColor: e.target.value })}
-            />
-            <input
-              key={campaign.embedColor}
-              className="color-input"
-              placeholder="#5B4B8A"
-              defaultValue={campaign.embedColor}
-              onBlur={(e) => patch({ embedColor: e.target.value.trim() })}
-            />
-          </span>
-        </label>
+        <span className="color-field-row">
+          <input
+            type="color"
+            aria-label={t('gm.embedColor')}
+            value={pickerValue(campaign.embedColor)}
+            onChange={(e) => patch({ embedColor: e.target.value })}
+          />
+          <input
+            key={campaign.embedColor}
+            className="color-input"
+            aria-label={t('gm.embedColor')}
+            placeholder="#5B4B8A"
+            defaultValue={campaign.embedColor}
+            onBlur={(e) => patch({ embedColor: e.target.value.trim() })}
+          />
+        </span>
       </div>
     </section>
   );
