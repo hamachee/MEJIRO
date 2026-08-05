@@ -244,6 +244,20 @@
     "confirmClear": "Remove all entries from this list? This cannot be undone.",
     "importError": "Could not import file: {{message}}"
   },
+  "message": {
+    "title": "Message",
+    "placeholder": "Type a message to send to Discord…",
+    "send": "Send",
+    "saveTemplate": "Save as template",
+    "clear": "Clear",
+    "templates": "Templates",
+    "noTemplates": "No saved templates yet.",
+    "confirmDeleteTemplate": "Delete this template?",
+    "posting": "Sending…",
+    "sent": "Sent.",
+    "postError": "Could not send: {{message}}",
+    "noWebhook": "No webhook URL set for this page yet."
+  },
   "common": {
     "cancel": "Cancel",
     "close": "Close"

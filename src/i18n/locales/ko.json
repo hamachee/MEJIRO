@@ -244,6 +244,20 @@
     "confirmClear": "이 목록의 항목을 모두 삭제할까요? 되돌릴 수 없습니다.",
     "importError": "파일을 가져올 수 없습니다: {{message}}"
   },
+  "message": {
+    "title": "메시지",
+    "placeholder": "디스코드로 보낼 메시지를 입력하세요…",
+    "send": "보내기",
+    "saveTemplate": "템플릿으로 저장",
+    "clear": "지우기",
+    "templates": "템플릿",
+    "noTemplates": "저장된 템플릿이 없습니다.",
+    "confirmDeleteTemplate": "이 템플릿을 삭제할까요?",
+    "posting": "전송 중…",
+    "sent": "전송 완료.",
+    "postError": "전송 실패: {{message}}",
+    "noWebhook": "이 페이지에 설정된 웹훅 URL이 없습니다."
+  },
   "common": {
     "cancel": "취소",
     "close": "닫기"
