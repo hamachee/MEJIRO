@@ -18,6 +18,7 @@ export function newCampaign(
     webhookUrl: '',
     autoPostToDiscord: true,
     customPool: 0,
+    momentum: 0,
     templates: [],
     instances: [],
     tricks,
@@ -42,6 +43,7 @@ export function normalizeCampaign(
     webhookUrl: raw.webhookUrl ?? '',
     autoPostToDiscord: raw.autoPostToDiscord ?? true,
     customPool: raw.customPool ?? 0,
+    momentum: raw.momentum ?? 0,
     templates: (raw.templates ?? []).map((tpl) => ({
       ...tpl,
       stats: { ...blankAdversaryStats(), ...tpl.stats },

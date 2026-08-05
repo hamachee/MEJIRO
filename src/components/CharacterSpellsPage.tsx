@@ -252,14 +252,14 @@ function SpellSection({
             />
             <button onClick={add}>{t('sheet.add')}</button>
           </div>
-          <ListImportExport
-            kind="spells"
-            items={items}
-            ownerName={character.name}
-            onChange={(next) => patch({ spells: next })}
-          />
         </>
       )}
+      <ListImportExport
+        kind="spells"
+        items={items}
+        ownerName={character.name}
+        onChange={(next) => patch({ spells: next })}
+      />
     </section>
   );
 }

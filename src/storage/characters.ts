@@ -83,6 +83,8 @@ export function newCharacter(
     armor: { rating: 0, marked: 0, note: '' },
     curseDice: 1,
     exp: 0,
+    momentum: 0,
+    hideMomentum: false,
     resources: initialResources(template),
     createdAt: now,
     updatedAt: now,
@@ -146,6 +148,8 @@ export function normalizeCharacter(raw: Partial<Character> & Pick<Character, 'id
     armor: { rating: 0, marked: 0, note: '', ...raw.armor },
     curseDice: raw.curseDice ?? 1,
     exp: raw.exp ?? 0,
+    momentum: raw.momentum ?? 0,
+    hideMomentum: raw.hideMomentum ?? false,
   };
 }
 

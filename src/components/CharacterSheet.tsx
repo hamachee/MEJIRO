@@ -12,6 +12,7 @@ import {
 } from '../types/character';
 import type { InjuryLevel, L10n as L10nLabel, Stat, SystemTemplate } from '../types/template';
 import { ResourceTracker } from './ResourceTracker';
+import { Counter } from './Counter';
 import { FieldLabel } from './FieldLabel';
 import { IconClose, IconDiamond, IconEdit, IconLink } from './icons';
 import { Stepper } from './Stepper';
@@ -493,6 +494,28 @@ export function CurseCard({
         </span>
         {curseDiceControls}
       </div>
+      {!character.hideMomentum && (
+        <div className="curse-row">
+          <span className="field-label">
+            <FieldLabel i18nKey="sheet.momentum" en="Momentum" />
+          </span>
+          <Counter
+            value={character.momentum}
+            onChange={(n) => patch({ momentum: n })}
+            ariaLabel={t('sheet.momentum')}
+          />
+        </div>
+      )}
+      {editing && (
+        <label className="field-check momentum-hide-toggle">
+          <input
+            type="checkbox"
+            checked={character.hideMomentum}
+            onChange={(e) => patch({ hideMomentum: e.target.checked })}
+          />
+          <span>{t('sheet.hideMomentum')}</span>
+        </label>
+      )}
     </section>
   );
 }

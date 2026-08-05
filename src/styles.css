@@ -722,6 +722,15 @@ button.danger:hover:not(:disabled) {
   gap: 0.4rem;
   flex-wrap: wrap;
 }
+/* Without this, whether the cost badge sits beside the name or wraps below
+   the description (once open) depends on how the trick's name/description
+   length happens to interact with flex-wrap at the current width — so two
+   open tricks could lay out differently for no reason a player can see.
+   Forcing the badge's own line on open makes every trick's cost land in
+   the same place: beside the name closed, below the description open. */
+.trick-fold[open] ~ .trick-cost {
+  flex-basis: 100%;
+}
 .trick-cost {
   font-size: 0.8rem;
   color: var(--muted);
@@ -912,6 +921,12 @@ button.danger:hover:not(:disabled) {
 }
 .identity-row {
   font-size: 0.9rem;
+}
+/* Campaign identity card's name + system line, e.g. "Ashwood · Curseborne" —
+   the system half rendered smaller/muted inline rather than the h1 size. */
+.identity-rule {
+  font-size: 0.6em;
+  font-weight: 400;
 }
 
 /* Dots */
@@ -1266,6 +1281,9 @@ span.exp-value:focus-visible {
   margin-top: 0.6rem;
   padding-top: 0.6rem;
   border-top: 1px dashed var(--divider-strong);
+}
+.momentum-hide-toggle {
+  margin-top: 0.6rem;
 }
 /* Compact variant (Spells tab): Entanglement + Curse Dice on one line. */
 .curse-line {
@@ -1781,6 +1799,13 @@ button.armor-box.marked:hover:not(:disabled) {
   width: 2.6rem;
   padding: 0.15rem 0.2rem;
   font-size: 1rem;
+}
+/* Momentum row under the Free Roll pool card — same divider treatment as
+   stacked .curse-row siblings, since .custom-pool isn't one itself. */
+.custom-pool + .momentum-row {
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--divider-strong);
 }
 .tag-chips {
   display: flex;

@@ -43,8 +43,8 @@ export function App() {
         <nav className="app-nav">
           <NavLink to="/">{t('nav.characters')}</NavLink>
           <NavLink to="/gm">{t('nav.gm')}</NavLink>
-          <NavLink to="/settings">{t('nav.settings')}</NavLink>
           <NavLink to="/info">{t('nav.info')}</NavLink>
+          <NavLink to="/settings">{t('nav.settings')}</NavLink>
           <LanguageSwitcher />
         </nav>
       </header>

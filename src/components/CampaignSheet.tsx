@@ -9,6 +9,7 @@ import type { Campaign } from '../types/campaign';
 import { FieldLabel } from './FieldLabel';
 import { IconCheck, IconEdit } from './icons';
 import { AdversaryCard } from './AdversaryCard';
+import { Counter } from './Counter';
 import { getTemplate } from '../templates';
 import { label } from '../lib/localize';
 import { useLang } from '../lib/useLang';
@@ -239,39 +240,27 @@ function AddInstanceRow({ campaign }: { campaign: Campaign }) {
   );
 }
 
-/** Campaign name + free-roll pool + Discord webhook. Manages its own edit toggle, since the name may only be changed while it's open. */
+/** Campaign name + Discord webhook. Manages its own edit toggle, since the name may only be changed while it's open. */
 function CampaignSettingsCard({ campaign }: { campaign: Campaign }) {
   const { t } = useTranslation();
   const lang = useLang();
   const rename = useCampaignStore((s) => s.rename);
   const patch = useCampaignStore((s) => s.patch);
-  const selectedInstanceId = useGmRollStore((s) => s.selectedInstanceId);
-  const selectedPool = useGmRollStore((s) => s.selectedPool);
-  const select = useGmRollStore((s) => s.select);
   const [editing, setEditing] = useState(false);
   const template = getTemplate(campaign.templateId);
   const systemLabel = template ? label(template.name, lang) : campaign.templateId;
-
-  const customPoolControl = (
-    <CustomPoolControl
-      value={campaign.customPool}
-      selected={selectedInstanceId === null && selectedPool === 'custom'}
-      onSelect={() => select(null, 'custom')}
-      onChange={(n) => patch({ customPool: n })}
-    />
-  );
 
   if (!editing) {
     return (
       <section className="card identity">
         <div className="item-card-head">
-          <h1 className="grow">{campaign.name}</h1>
+          <h1 className="grow">
+            {campaign.name} <span className="identity-rule muted">· {systemLabel}</span>
+          </h1>
           <button className="chip ghost" aria-label={t('sheet.edit')} onClick={() => setEditing(true)}>
             <IconEdit />
           </button>
         </div>
-        <div className="identity-row muted">{systemLabel}</div>
-        {customPoolControl}
       </section>
     );
   }
@@ -288,7 +277,6 @@ function CampaignSettingsCard({ campaign }: { campaign: Campaign }) {
         </button>
       </div>
       <div className="identity-row muted">{systemLabel}</div>
-      {customPoolControl}
       <div className="form-row">
         <label className="field grow">
           <span className="field-label">{t('gm.webhook')}</span>
@@ -299,6 +287,36 @@ function CampaignSettingsCard({ campaign }: { campaign: Campaign }) {
             onBlur={(e) => patch({ webhookUrl: e.target.value.trim() })}
           />
         </label>
+      </div>
+    </section>
+  );
+}
+
+/** Free-roll pool + Momentum counter, alongside the identity card. */
+function CampaignMomentumCard({ campaign }: { campaign: Campaign }) {
+  const { t } = useTranslation();
+  const patch = useCampaignStore((s) => s.patch);
+  const selectedInstanceId = useGmRollStore((s) => s.selectedInstanceId);
+  const selectedPool = useGmRollStore((s) => s.selectedPool);
+  const select = useGmRollStore((s) => s.select);
+
+  return (
+    <section className="card">
+      <CustomPoolControl
+        value={campaign.customPool}
+        selected={selectedInstanceId === null && selectedPool === 'custom'}
+        onSelect={() => select(null, 'custom')}
+        onChange={(n) => patch({ customPool: n })}
+      />
+      <div className="curse-row momentum-row">
+        <span className="field-label">
+          <FieldLabel i18nKey="gm.momentum" en="Momentum" />
+        </span>
+        <Counter
+          value={campaign.momentum}
+          onChange={(n) => patch({ momentum: n })}
+          ariaLabel={t('gm.momentum')}
+        />
       </div>
     </section>
   );
@@ -315,7 +333,10 @@ export function CampaignSheet({ campaign }: Props) {
 
   return (
     <div className="stack">
-      <CampaignSettingsCard campaign={campaign} />
+      <div className="two-col identity-split">
+        <CampaignSettingsCard campaign={campaign} />
+        <CampaignMomentumCard campaign={campaign} />
+      </div>
       <AddInstanceRow campaign={campaign} />
       {instances.length === 0 ? (
         <p className="muted">{t('gm.noAdversaries')}</p>
