@@ -24,13 +24,14 @@ const MAX_EXTRA_BOXES = 2;
 
 /**
  * The non-terminal injury levels of the campaign's system template — the
- * same structure a real character sheet uses — with a single flat 8-box
- * level as the fallback for templates without a structured track.
+ * same structure a real character sheet uses — with a single flat 7-box
+ * level as the fallback for templates without a structured track. Taken
+ * Out is never one of these boxes; it's the track's own separate toggle.
  */
 export function pcInjuryLevels(campaign: Campaign): InjuryLevel[] {
   const levels = getTemplate(campaign.templateId)?.injuryTrack?.levels;
   const track = levels?.filter((l) => !l.terminal) ?? [];
-  return track.length > 0 ? track : [{ boxes: 8, label: { en: '', ko: '' } }];
+  return track.length > 0 ? track : [{ boxes: 7, label: { en: '', ko: '' } }];
 }
 
 /**
