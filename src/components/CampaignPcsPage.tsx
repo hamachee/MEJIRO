@@ -2,39 +2,56 @@ import { Fragment, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCampaignStore } from '../store/campaignStore';
 import { uid } from '../lib/uid';
+import { label } from '../lib/localize';
+import { useLang } from '../lib/useLang';
 import { useDragReorder } from '../lib/useDragReorder';
-import { blankAccursedPC, isPcInstance, type AccursedPC, type Campaign } from '../types/campaign';
+import { getTemplate } from '../templates';
+import {
+  blankAccursedPC,
+  isPcInstance,
+  type AccursedPC,
+  type Campaign,
+} from '../types/campaign';
+import type { InjuryLevel } from '../types/template';
 import { ConditionEditor } from './ConditionEditor';
 import { FieldLabel } from './FieldLabel';
 import { IconCheck, IconClose, IconEdit } from './icons';
 import { Stepper } from './Stepper';
 import { TurnMarker } from './TurnMarker';
 
-/**
- * A PC's injury track always starts with this many boxes — independent of
- * the campaign's system template, unlike a real character sheet's
- * structured levels. Only the Bloodied-style extension (0-2, added at the
- * front) is configurable; Taken Out is a separate toggle, not one of these.
- */
-const PC_BASE_INJURY_BOXES = 8;
+/** A PC's Bloodied extension can add at most this many boxes. */
 const MAX_EXTRA_BOXES = 2;
-/** Boxes per `|`-divided group in the flat track, e.g. □□|□□|□□|□□. */
-const PC_TRACK_GROUP_SIZE = 2;
 
 /**
- * A PC's armor/injury track: armor boxes, then the flat injury track (base
- * 8 + the Bloodied extension, grouped every 2 boxes), then Taken Out — the
- * character sheet's box styling without its level labels.
+ * The non-terminal injury levels of the campaign's system template — the
+ * same structure a real character sheet uses — with a single flat 7-box
+ * level as the fallback for templates without a structured track. Taken
+ * Out is never one of these boxes; it's the track's own separate toggle.
+ */
+export function pcInjuryLevels(campaign: Campaign): InjuryLevel[] {
+  const levels = getTemplate(campaign.templateId)?.injuryTrack?.levels;
+  const track = levels?.filter((l) => !l.terminal) ?? [];
+  return track.length > 0 ? track : [{ boxes: 7, label: { en: '', ko: '' } }];
+}
+
+/**
+ * A PC's armor/injury track: armor boxes, then the injury levels from the
+ * system template (Bloodied extension boxes at the front), then Taken Out —
+ * the character sheet's grouped track with a `|` divider standing in for
+ * each level label.
  */
 function PcTrack({
   pc,
+  levels,
   onPatch,
 }: {
   pc: AccursedPC;
+  levels: InjuryLevel[];
   onPatch: (patch: Partial<AccursedPC>) => void;
 }) {
   const { t } = useTranslation();
-  const total = PC_BASE_INJURY_BOXES + pc.extraBoxes;
+  const groups = levels.map((l, i) => (i === 0 ? l.boxes + pc.extraBoxes : l.boxes));
+  const total = groups.reduce((sum, n) => sum + n, 0);
   const armorCount = Math.max(0, pc.armorRating);
   const marked = Math.min(pc.marked, total);
   const armorMarked = Math.min(pc.armorMarked, armorCount);
@@ -55,11 +72,6 @@ function PcTrack({
       />
     );
   };
-
-  const groups: number[] = [];
-  for (let remaining = total; remaining > 0; remaining -= PC_TRACK_GROUP_SIZE) {
-    groups.push(Math.min(PC_TRACK_GROUP_SIZE, remaining));
-  }
 
   let offset = 0;
   return (
@@ -116,18 +128,21 @@ function PcTrack({
  */
 function PcRosterCard({
   pc,
+  levels,
   deployed,
   onPatch,
   onDeployToggle,
   onRemove,
 }: {
   pc: AccursedPC;
+  levels: InjuryLevel[];
   deployed: boolean;
   onPatch: (patch: Partial<AccursedPC>) => void;
   onDeployToggle: () => void;
   onRemove: () => void;
 }) {
   const { t } = useTranslation();
+  const lang = useLang();
   const [editing, setEditing] = useState(false);
 
   return (
@@ -188,7 +203,7 @@ function PcRosterCard({
                   }
                 />
                 <Stepper
-                  label={t('sheet.extraBoxes')}
+                  label={`${label(levels[0].label, lang)} ${t('sheet.extraBoxes')}`.trim()}
                   ariaLabel={t('sheet.extraBoxes')}
                   value={pc.extraBoxes}
                   max={MAX_EXTRA_BOXES}
@@ -201,7 +216,7 @@ function PcRosterCard({
               {[pc.lineage, pc.family].filter(Boolean).join(' / ') || '—'}
             </div>
           )}
-          <PcTrack pc={pc} onPatch={onPatch} />
+          <PcTrack pc={pc} levels={levels} onPatch={onPatch} />
           <ConditionEditor
             conditions={pc.conditions}
             onChange={(next) => onPatch({ conditions: next })}
@@ -235,6 +250,7 @@ function PcRosterCard({
  */
 export function PcTableCard({
   pc,
+  levels,
   index,
   onPatch,
   onRemove,
@@ -243,6 +259,7 @@ export function PcTableCard({
   turn,
 }: {
   pc: AccursedPC;
+  levels: InjuryLevel[];
   index: number;
   onPatch: (patch: Partial<AccursedPC>) => void;
   onRemove: () => void;
@@ -278,7 +295,7 @@ export function PcTableCard({
           onChange={(n) => onPatch({ initiative: n })}
         />
       </div>
-      <PcTrack pc={pc} onPatch={onPatch} />
+      <PcTrack pc={pc} levels={levels} onPatch={onPatch} />
       <ConditionEditor
         conditions={pc.conditions}
         onChange={(next) => onPatch({ conditions: next })}
@@ -299,6 +316,7 @@ export function CampaignPcsPage({ campaign }: { campaign: Campaign }) {
   const patch = useCampaignStore((s) => s.patch);
   const [name, setName] = useState('');
   const { pcs, instances } = campaign;
+  const levels = pcInjuryLevels(campaign);
 
   const patchPc = (id: string, p: Partial<AccursedPC>) =>
     patch({ pcs: pcs.map((x) => (x.id === id ? { ...x, ...p } : x)) });
@@ -350,6 +368,7 @@ export function CampaignPcsPage({ campaign }: { campaign: Campaign }) {
         <PcRosterCard
           key={pc.id}
           pc={pc}
+          levels={levels}
           deployed={instances.some((i) => isPcInstance(i) && i.pcId === pc.id)}
           onPatch={(p) => patchPc(pc.id, p)}
           onDeployToggle={() => toggleDeploy(pc)}
