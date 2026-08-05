@@ -1051,6 +1051,7 @@ button.sheet-stat:hover:not(.selected) {
   margin-left: 0.2em;
   vertical-align: middle;
   margin-top: -2px;
+  color: var(--curse);
 }
 .hint {
   font-size: 0.82rem;
