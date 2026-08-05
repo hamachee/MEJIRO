@@ -1020,6 +1020,15 @@ button.sheet-stat:hover:not(.selected) {
 .sheet-stat.editing {
   border-bottom: 1px dashed var(--divider);
   border-radius: 0;
+  /* Skill rows carry a Path Skill checkbox as a 3rd flex item; the base
+     .sheet-stat's space-between would then divide free space around the
+     label itself, so its left edge drifts with how long the label text is.
+     flex-start + a growing label keeps every label starting at the same
+     x position (right after the checkbox, if any) regardless. */
+  justify-content: flex-start;
+}
+.sheet-stat.editing .stat-label {
+  flex: 1;
 }
 /* Marks a skill as a Path Skill, or Lineage/Family as the character's Major
    Path; unlabeled by design (see aria-label), so it just needs to sit
