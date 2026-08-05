@@ -66,6 +66,7 @@ export function newCharacter(
     showNameInWebhook: true,
     attributes: Object.fromEntries(template.attributes.map((a) => [a.id, 1])),
     skills: Object.fromEntries(template.skills.map((s) => [s.id, 0])),
+    pathSkills: Object.fromEntries(template.skills.map((s) => [s.id, false])),
     edges: [],
     paths: [],
     contacts: [],
@@ -98,6 +99,7 @@ export function normalizeCharacter(raw: Partial<Character> & Pick<Character, 'id
   return {
     attributes: {},
     skills: {},
+    pathSkills: {},
     resources: {},
     createdAt: now,
     updatedAt: now,

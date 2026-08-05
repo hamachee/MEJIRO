@@ -150,6 +150,8 @@ export interface Character {
   showNameInWebhook: boolean;
   attributes: Record<string, number>;
   skills: Record<string, number>;
+  /** Which skills (by id) are marked as this character's Path Skills. */
+  pathSkills: Record<string, boolean>;
   edges: RatedItem[];
   paths: RatedItem[];
   contacts: RatedItem[];
