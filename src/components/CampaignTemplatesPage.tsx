@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCampaignStore } from '../store/campaignStore';
 import { uid } from '../lib/uid';
+import { useDragReorder } from '../lib/useDragReorder';
 import { blankAdversaryStats, type AdversaryStats, type AdversaryTemplate, type Campaign } from '../types/campaign';
 import { AdversaryStatBody, AdversaryStatsFields } from './AdversaryCard';
 import { IconClose, IconCopy, IconEdit } from './icons';
@@ -64,21 +65,28 @@ function AdversaryTemplateForm({
  */
 function TemplateRow({
   template,
+  index,
   onSave,
   onRemove,
   onDuplicate,
+  dragHandleProps,
+  dragItemProps,
 }: {
   template: AdversaryTemplate;
+  index: number;
   onSave: (template: AdversaryTemplate) => void;
   onRemove: () => void;
   onDuplicate: () => void;
+  dragHandleProps: ReturnType<typeof useDragReorder<AdversaryTemplate>>['handleProps'];
+  dragItemProps: ReturnType<typeof useDragReorder<AdversaryTemplate>>['itemProps'];
 }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const drag = dragItemProps(index);
 
   if (open) {
     return (
-      <div className="item-card adversary-card editing">
+      <div className="item-card adversary-card editing" data-drag-index={index}>
         <AdversaryTemplateForm
           initialName={template.name}
           initialStats={template.stats}
@@ -94,9 +102,12 @@ function TemplateRow({
   }
 
   return (
-    <div className="item-card adversary-card">
+    <div className={`item-card adversary-card ${drag.className}`} data-drag-index={index}>
       <div className="item-card-head">
-        <span className="grow adversary-label">{template.name}</span>
+        <div className="item-card-title grow">
+          <span className="drag-handle" {...dragHandleProps(index)} />
+          <span className="grow adversary-label">{template.name}</span>
+        </div>
         <div className="item-card-actions">
           <button className="chip ghost" aria-label={`duplicate ${template.name}`} onClick={onDuplicate}>
             <IconCopy />
@@ -120,6 +131,11 @@ export function CampaignTemplatesPage({ campaign }: { campaign: Campaign }) {
   const patch = useCampaignStore((s) => s.patch);
   const { templates } = campaign;
   const [adding, setAdding] = useState(false);
+  const { handleProps, itemProps } = useDragReorder(
+    templates,
+    (next) => patch({ templates: next }),
+    'grid',
+  );
 
   return (
     <div className="stack">
@@ -149,10 +165,13 @@ export function CampaignTemplatesPage({ campaign }: { campaign: Campaign }) {
       </section>
       {templates.length > 0 && (
         <div className="card-grid">
-          {templates.map((tpl) => (
+          {templates.map((tpl, i) => (
             <TemplateRow
               key={tpl.id}
               template={tpl}
+              index={i}
+              dragHandleProps={handleProps}
+              dragItemProps={itemProps}
               onSave={(updated) =>
                 patch({ templates: templates.map((x) => (x.id === tpl.id ? updated : x)) })
               }

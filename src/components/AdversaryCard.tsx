@@ -2,12 +2,14 @@ import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGmRollStore, type AdversaryPool } from '../store/gmRollStore';
 import { parseTags } from '../lib/tags';
-import { uid } from '../lib/uid';
 import { desperationPool, type AdversaryInstance, type AdversaryStats } from '../types/campaign';
+import type { useDragReorder } from '../lib/useDragReorder';
+import { ConditionEditor } from './ConditionEditor';
 import { FieldLabel } from './FieldLabel';
 import { IconCheck, IconClose, IconCopy, IconEdit } from './icons';
 import { Stepper } from './Stepper';
 import { TagChips } from './TagChips';
+import { TurnMarker } from './TurnMarker';
 
 /**
  * A "Primary N" style pool readout, hidden when the rating is 0. Without
@@ -377,9 +379,14 @@ export function AdversaryStatBody({
 
 interface Props {
   instance: AdversaryInstance;
+  index: number;
   onChange: (updated: AdversaryInstance) => void;
   onRemove: () => void;
   onDuplicate: () => void;
+  dragHandleProps: ReturnType<typeof useDragReorder<AdversaryInstance>>['handleProps'];
+  dragItemProps: ReturnType<typeof useDragReorder<AdversaryInstance>>['itemProps'];
+  /** Turn-tracker wiring: whether this card is the current turn, and the ◤ toggle. */
+  turn: { current: boolean; onToggle: () => void };
 }
 
 /** Grow a textarea's height to fit its content, no scrollbar or manual resize needed. */
@@ -389,7 +396,16 @@ function autoGrow(el: HTMLTextAreaElement | null) {
   el.style.height = `${el.scrollHeight}px`;
 }
 
-export function AdversaryCard({ instance, onChange, onRemove, onDuplicate }: Props) {
+export function AdversaryCard({
+  instance,
+  index,
+  onChange,
+  onRemove,
+  onDuplicate,
+  dragHandleProps,
+  dragItemProps,
+  turn,
+}: Props) {
   const { t } = useTranslation();
   const selectedInstanceId = useGmRollStore((s) => s.selectedInstanceId);
   const selectedPool = useGmRollStore((s) => s.selectedPool);
@@ -398,7 +414,6 @@ export function AdversaryCard({ instance, onChange, onRemove, onDuplicate }: Pro
   const memoRef = useRef<HTMLTextAreaElement>(null);
   // Size to the loaded memo on mount; typing after that is handled by onInput.
   useLayoutEffect(() => autoGrow(memoRef.current), [instance.memo]);
-  const [conditionName, setConditionName] = useState('');
 
   const { stats } = instance;
   const boxes = Math.max(0, stats.injuryBoxes);
@@ -413,27 +428,27 @@ export function AdversaryCard({ instance, onChange, onRemove, onDuplicate }: Pro
   const setArmorMarked = (n: number) =>
     onChange({ ...instance, armorMarked: Math.max(0, Math.min(n, armorBoxes)) });
 
-  const addCondition = () => {
-    if (!conditionName.trim()) return;
-    onChange({
-      ...instance,
-      conditions: [...instance.conditions, { id: uid(), name: conditionName.trim() }],
-    });
-    setConditionName('');
-  };
+  const drag = dragItemProps(index);
 
   return (
-    <div className={`item-card adversary-card ${instance.takenOut ? 'taken-out' : ''}`}>
+    <div
+      className={`item-card adversary-card ${instance.takenOut ? 'taken-out' : ''} ${turn.current ? 'current-turn' : ''} ${drag.className}`}
+      data-drag-index={index}
+    >
+      <TurnMarker current={turn.current} onToggle={turn.onToggle} label={instance.label} />
       <div className="item-card-head">
-        {editing ? (
-          <input
-            className="grow named-name adversary-label"
-            defaultValue={instance.label}
-            onBlur={(e) => onChange({ ...instance, label: e.target.value.trim() || instance.label })}
-          />
-        ) : (
-          <span className="grow adversary-label">{instance.label}</span>
-        )}
+        <div className="item-card-title grow">
+          <span className="drag-handle" {...dragHandleProps(index)} />
+          {editing ? (
+            <input
+              className="grow named-name adversary-label"
+              defaultValue={instance.label}
+              onBlur={(e) => onChange({ ...instance, label: e.target.value.trim() || instance.label })}
+            />
+          ) : (
+            <span className="grow adversary-label">{instance.label}</span>
+          )}
+        </div>
         <div className="item-card-actions">
           <button className="chip ghost" aria-label={`duplicate ${instance.label}`} onClick={onDuplicate}>
             <IconCopy />
@@ -471,35 +486,10 @@ export function AdversaryCard({ instance, onChange, onRemove, onDuplicate }: Pro
         />
       )}
 
-      <div>
-        <span className="field-label">{t('sheet.conditions')}</span>
-        <div className="condition-chips">
-          {instance.conditions.length === 0 && <span className="muted">—</span>}
-          {instance.conditions.map((c) => (
-            <span key={c.id} className="condition">
-              {c.name}
-              <button
-                aria-label={`remove ${c.name}`}
-                onClick={() =>
-                  onChange({ ...instance, conditions: instance.conditions.filter((x) => x.id !== c.id) })
-                }
-              >
-                <IconClose />
-              </button>
-            </span>
-          ))}
-        </div>
-        <div className="form-row">
-          <input
-            className="grow"
-            placeholder={t('gm.conditionPlaceholder')}
-            value={conditionName}
-            onChange={(e) => setConditionName(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && addCondition()}
-          />
-          <button onClick={addCondition}>{t('sheet.add')}</button>
-        </div>
-      </div>
+      <ConditionEditor
+        conditions={instance.conditions}
+        onChange={(next) => onChange({ ...instance, conditions: next })}
+      />
 
       <textarea
         ref={memoRef}

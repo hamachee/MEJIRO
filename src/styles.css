@@ -1217,6 +1217,7 @@ span.exp-value:focus-visible {
   gap: 0.3rem;
 }
 .named-item {
+  position: relative;
   padding: 0.3rem 0;
   border-bottom: 1px dashed var(--divider);
 }
@@ -1456,6 +1457,7 @@ p.fold-readonly {
   margin-bottom: 0.5rem;
 }
 .item-card {
+  position: relative;
   background: var(--bg-2);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -1525,6 +1527,99 @@ button.fav-toggle:hover:not(:disabled) {
 .adversary-card > * + * {
   margin-top: 0.5rem;
 }
+/* Turn marker: just the pin icon, no button chrome — pinned to the card's
+   top-left corner. Outline pin/muted when idle, filled pin/accent once it
+   marks the current turn (the fill swap alone carries the state; padding
+   only pads the click/touch target, it's never visible). Selector carries
+   the .item-card prefix so these outweigh the global
+   `button:hover:not(:disabled):not(.selected)` background. */
+.item-card button.turn-marker {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  padding: 3px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1;
+}
+.item-card button.turn-marker:hover,
+.item-card button.turn-marker:focus-visible {
+  background: transparent;
+  color: var(--accent);
+}
+.item-card button.turn-marker.current,
+.item-card button.turn-marker.current:hover {
+  background: transparent;
+  color: var(--accent);
+}
+/* The marker sits above .adversary-card's stacked-section margins. */
+.adversary-card > .turn-marker + * {
+  margin-top: 0;
+}
+.item-card.current-turn {
+  border-color: var(--accent);
+  box-shadow:
+    0 0 0 2px var(--accent),
+    0 0 16px color-mix(in srgb, var(--accent) 60%, transparent);
+}
+
+/* Turn tracker bar: sticks to the viewport top once the page scrolls past
+   it. The app header hides itself on scroll-down, so during play the bar
+   gets the top edge to itself; z-index stays below the header's (which is
+   10) so the header slides back over it on scroll-up. */
+.turn-bar {
+  position: sticky;
+  top: 0.4rem;
+  z-index: 9;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0.45rem 0.6rem;
+  background: var(--bar-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(8px);
+}
+.turn-bar-divider {
+  color: var(--divider-strong);
+}
+.turn-bar .exp-value {
+  width: 2.6rem;
+  padding: 0.15rem 0.2rem;
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* GM PC roster card (Accursed tab): full-width, body split into two
+   columns — identity/track/conditions/note left, big free-notes right. */
+.pc-card-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+@media (max-width: 820px) {
+  .pc-card-body {
+    grid-template-columns: 1fr;
+  }
+}
+.pc-card-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.pc-card-right {
+  display: flex;
+  min-width: 0;
+}
+.pc-memo {
+  width: 100%;
+  resize: vertical;
+}
 .adversary-label {
   font-weight: 600;
 }
@@ -1576,11 +1671,17 @@ button.fav-toggle:hover:not(:disabled) {
 .taken-out-box.marked:hover:not(:disabled) {
   background: var(--failure-terminal);
 }
-/* Taken out: the whole card's border flags it, not just its box track —
-   shared by the GM adversary card and the character sheet's Injuries card. */
+/* Taken out: the whole card flags it, not just its box track — shared by
+   the GM table cards and the character sheet's Injuries card. Thin diagonal
+   stripes rather than a glow, so it reads as "crossed out" at a glance
+   without competing with the current-turn highlight. */
 .taken-out {
   border-color: var(--failure-terminal);
-  box-shadow: 0 0 6px rgba(255, 60, 60, 0.5);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    color-mix(in srgb, var(--failure-terminal) 13%, transparent) 0 1px,
+    transparent 1px 10px
+  );
 }
 /* Taken Out moved into the Injuries card's header corner: same terminal
    label/box styling as the grouped track, just laid out as a row (label,
@@ -1854,9 +1955,47 @@ button.armor-box.marked:hover:not(:disabled) {
 .dragging {
   opacity: 0.4;
 }
-.drag-over {
-  outline: 2px dashed var(--accent);
-  outline-offset: 2px;
+/* Insertion line rather than a box outline — reads as "goes between these
+   two", not "replaces this one". `.drag-line-before`/`.drag-line-after` are
+   set on whichever item the pointer is currently over; by default (a
+   single-column list) the line spans the row's full width, above or below
+   that item. `.drag-grid` (wrapping card grids) swaps it for a line along
+   the item's left/right edge instead, since neighbors sit side by side. */
+.drag-line-before::before,
+.drag-line-after::after {
+  content: '';
+  position: absolute;
+  background: var(--accent);
+  border-radius: 1px;
+  pointer-events: none;
+}
+.drag-line-before::before {
+  left: 0;
+  right: 0;
+  top: -3px;
+  height: 3px;
+}
+.drag-line-after::after {
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 3px;
+}
+.drag-grid.drag-line-before::before {
+  top: 0;
+  bottom: 0;
+  left: -5px;
+  right: auto;
+  width: 3px;
+  height: auto;
+}
+.drag-grid.drag-line-after::after {
+  top: 0;
+  bottom: 0;
+  right: -5px;
+  left: auto;
+  width: 3px;
+  height: auto;
 }
 
 /* Identity card wider than the curse card on desktop */

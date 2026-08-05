@@ -17,8 +17,13 @@ function initialResources(template: SystemTemplate): Record<string, ResourceStat
   return out;
 }
 
-/** Fallback injury box count when a template defines no injury track. */
-const DEFAULT_INJURY_BOXES = 8;
+/**
+ * Fallback injury box count when a template defines no injury track. Taken
+ * Out isn't an injury box in the structured-track case (its own separate
+ * toggle) — 7 keeps the fallback consistent with that rule instead of
+ * folding a Taken-Out-equivalent box into the flat count.
+ */
+const DEFAULT_INJURY_BOXES = 7;
 
 /** Identity defaults shared by new characters and older-save normalisation. */
 const DEFAULT_IDENTITY: Character['identity'] = {

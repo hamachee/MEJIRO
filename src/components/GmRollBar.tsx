@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useCampaignStore } from '../store/campaignStore';
 import { useGmRollStore } from '../store/gmRollStore';
-import { desperationPool, type Campaign } from '../types/campaign';
+import { desperationPool, isPcInstance, type Campaign } from '../types/campaign';
 import { Stepper } from './Stepper';
 
 const BONUS_DICE_OPTIONS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -23,7 +23,9 @@ export function GmRollBar({ campaign }: Props) {
   const setDifficulty = useGmRollStore((s) => s.setDifficulty);
   const performRoll = useGmRollStore((s) => s.performRoll);
 
-  const instance = campaign.instances.find((i) => i.id === selectedInstanceId);
+  // PC cards carry no pools, so only adversary instances are ever selectable.
+  const found = campaign.instances.find((i) => i.id === selectedInstanceId);
+  const instance = found && !isPcInstance(found) ? found : undefined;
 
   const poolLabel = selectedPool
     ? {

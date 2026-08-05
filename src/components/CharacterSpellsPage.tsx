@@ -167,7 +167,7 @@ function SpellSection({
   const [effect, setEffect] = useState('');
   const [advancements, setAdvancements] = useState('');
   const items = character.spells;
-  const { handleProps, itemProps } = useDragReorder(items, (next) => patch({ spells: next }));
+  const { handleProps, itemProps } = useDragReorder(items, (next) => patch({ spells: next }), 'grid');
 
   const add = () => {
     if (!name.trim()) return;
