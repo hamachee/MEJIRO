@@ -4,7 +4,7 @@ import { useCharacterStore } from '../store/characterStore';
 import { useRollStore } from '../store/rollStore';
 import { label } from '../lib/localize';
 import { useLang } from '../lib/useLang';
-import { cssHex } from '../lib/color';
+import { cssHex, leftBorderStyle, pickerValue } from '../lib/color';
 import {
   MAX_ENTANGLEMENT,
   curseDiceCap,
@@ -263,7 +263,7 @@ function IdentityCard({
 
   if (!editing) {
     return (
-      <section className="card identity">
+      <section className="card identity" style={leftBorderStyle(cssHex(character.embedColor))}>
         <div className="identity-name">
           <h1>
             {character.name}
@@ -311,7 +311,7 @@ function IdentityCard({
   }
 
   return (
-    <section className="card identity">
+    <section className="card identity" style={leftBorderStyle(cssHex(character.embedColor))}>
       <div className="form-row">
         <label className="field grow">
           <span className="field-label">{t('sheet.rename')}</span>
@@ -386,11 +386,13 @@ function IdentityCard({
         <label className="field">
           <span className="field-label">{t('sheet.embedColor')}</span>
           <span className="color-field-row">
-            <span
-              className="color-swatch"
-              style={{ background: cssHex(character.embedColor) ?? 'transparent' }}
+            <input
+              type="color"
+              value={pickerValue(character.embedColor)}
+              onChange={(e) => patch({ embedColor: e.target.value })}
             />
             <input
+              key={character.embedColor}
               className="color-input"
               placeholder="#5B4B8A"
               defaultValue={character.embedColor}

@@ -289,19 +289,21 @@ body {
   gap: 0.5rem;
   font-size: 0.9rem;
 }
-/* Hex color field: a small swatch previewing the color next to a plain text
-   input — no color picker, just visual confirmation of what was typed. */
+/* Hex color field: a native color picker (its own swatch doubles as the
+   live preview) alongside a plain text input for typing/clearing the exact
+   value — the picker alone can't represent "empty" (falls back to a
+   default), so the text field stays the source of truth. */
 .color-field-row {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
-.color-swatch {
+.color-field-row input[type='color'] {
+  width: 34px;
+  height: 26px;
+  padding: 0.1rem;
   flex-shrink: 0;
-  width: 1.3rem;
-  height: 1.3rem;
-  border-radius: 50%;
-  border: 1px solid var(--border);
+  cursor: pointer;
 }
 .color-input {
   width: 8rem;

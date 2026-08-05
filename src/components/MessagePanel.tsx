@@ -4,7 +4,7 @@ import { useSettingsStore } from '../store/settingsStore';
 import { useDragReorder } from '../lib/useDragReorder';
 import { postEmbedMessage } from '../engine/discord';
 import { uid } from '../lib/uid';
-import { cssHex } from '../lib/color';
+import { cssHex, leftBorderStyle, pickerValue } from '../lib/color';
 import type { MessageTemplate } from '../types/messageTemplate';
 import { IconClose, IconTabHandle, IconWarning } from './icons';
 import { ListImportExport } from './ListImportExport';
@@ -76,7 +76,7 @@ export function MessagePanel({
     setStatus('idle');
   };
 
-  const effectiveColor = cssHex(color) ?? (identityColor ? cssHex(identityColor) : undefined);
+  const colorPickerFallback = pickerValue(identityColor ?? '');
 
   return (
     <div className={`message-panel ${open ? 'open' : ''}`}>
@@ -110,10 +110,17 @@ export function MessagePanel({
           rows={5}
         />
 
-        <label className="field message-color-field">
+        <label className="field">
           <span className="field-label">{t('message.colorLabel')}</span>
           <span className="color-field-row">
-            <span className="color-swatch" style={{ background: effectiveColor ?? 'transparent' }} />
+            <input
+              type="color"
+              value={pickerValue(color, colorPickerFallback)}
+              onChange={(e) => {
+                setColor(e.target.value);
+                setStatus('idle');
+              }}
+            />
             <input
               className="color-input"
               value={color}
@@ -177,16 +184,15 @@ export function MessagePanel({
             {templates.map((tpl, i) => {
               const drag = itemProps(i);
               return (
-                <div key={tpl.id} className={`item-card ${drag.className}`} data-drag-index={i}>
+                <div
+                  key={tpl.id}
+                  className={`item-card ${drag.className}`}
+                  data-drag-index={i}
+                  style={leftBorderStyle(cssHex(tpl.color))}
+                >
                   <div className="item-card-head">
                     <div className="item-card-title grow">
                       <span className="drag-handle" {...handleProps(i)} />
-                      {tpl.color && (
-                        <span
-                          className="color-swatch"
-                          style={{ background: cssHex(tpl.color) ?? 'transparent' }}
-                        />
-                      )}
                       <button
                         type="button"
                         className="message-template-content"
