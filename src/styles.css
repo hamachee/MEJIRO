@@ -1527,37 +1527,32 @@ button.fav-toggle:hover:not(:disabled) {
 .adversary-card > * + * {
   margin-top: 0.5rem;
 }
-/* Turn marker: a round pin-icon button pinned to the card's top-left
-   corner, overlapping the border. Outline pin/muted when idle, filled
-   pin/accent once it marks the current turn. Selector carries the
-   .item-card prefix so these outweigh the global
+/* Turn marker: just the pin icon, no button chrome — pinned to the card's
+   top-left corner. Outline pin/muted when idle, filled pin/accent once it
+   marks the current turn (the fill swap alone carries the state; padding
+   only pads the click/touch target, it's never visible). Selector carries
+   the .item-card prefix so these outweigh the global
    `button:hover:not(:disabled):not(.selected)` background. */
 .item-card button.turn-marker {
   position: absolute;
   top: -8px;
   left: -8px;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  background: var(--card);
+  padding: 3px;
+  border: none;
+  background: transparent;
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: 1.05rem;
+  line-height: 1;
 }
 .item-card button.turn-marker:hover,
 .item-card button.turn-marker:focus-visible {
-  background: var(--card);
-  border-color: var(--accent);
+  background: transparent;
   color: var(--accent);
 }
 .item-card button.turn-marker.current,
 .item-card button.turn-marker.current:hover {
-  border-color: var(--accent);
-  background: var(--accent);
-  color: var(--on-accent);
+  background: transparent;
+  color: var(--accent);
 }
 /* The marker sits above .adversary-card's stacked-section margins. */
 .adversary-card > .turn-marker + * {
