@@ -15,7 +15,7 @@ import type { Campaign } from '../types/campaign';
 import { FieldLabel } from './FieldLabel';
 import { IconCheck, IconEdit } from './icons';
 import { AdversaryCard } from './AdversaryCard';
-import { PcTableCard, pcInjuryLevels } from './CampaignPcsPage';
+import { PcTableCard } from './CampaignPcsPage';
 import { Counter } from './Counter';
 import { getTemplate } from '../templates';
 import { label } from '../lib/localize';
@@ -404,7 +404,6 @@ export function CampaignSheet({ campaign }: Props) {
   const { t } = useTranslation();
   const patch = useCampaignStore((s) => s.patch);
   const { instances, pcs, turnId } = campaign;
-  const levels = pcInjuryLevels(campaign);
   const { handleProps, itemProps } = useDragReorder(
     instances,
     (next) => patch({ instances: next }),
@@ -437,7 +436,6 @@ export function CampaignSheet({ campaign }: Props) {
                   <PcTableCard
                     key={instance.id}
                     pc={pc}
-                    levels={levels}
                     index={i}
                     turn={turnFor(instance.id)}
                     dragHandleProps={handleProps}
