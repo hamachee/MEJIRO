@@ -1014,6 +1014,14 @@ button.sheet-stat:hover:not(.selected) {
   border-bottom: 1px dashed var(--divider);
   border-radius: 0;
 }
+/* Marks a skill as a Path Skill; unlabeled by design (see aria-label), so it
+   just needs to sit tightly against the stat label instead of the wider
+   gap used between other row elements. */
+.path-skill-check {
+  flex-shrink: 0;
+  margin: 0;
+  accent-color: var(--accent);
+}
 .hint {
   font-size: 0.82rem;
   margin: 0.5rem 0 0;

@@ -66,8 +66,8 @@ export function newCharacter(
     showNameInWebhook: true,
     attributes: Object.fromEntries(template.attributes.map((a) => [a.id, 1])),
     skills: Object.fromEntries(template.skills.map((s) => [s.id, 0])),
+    pathSkills: Object.fromEntries(template.skills.map((s) => [s.id, false])),
     edges: [],
-    paths: [],
     contacts: [],
     bonds: [],
     conditions: [],
@@ -95,13 +95,18 @@ export function newCharacter(
  */
 export function normalizeCharacter(raw: Partial<Character> & Pick<Character, 'id' | 'templateId' | 'name'>): Character {
   const now = Date.now();
+  // Older saves may still carry a `paths` array from the since-removed Paths
+  // card; drop it explicitly so it doesn't keep getting spread back into
+  // every normalized character (and re-persisted on the next save).
+  const { paths: _paths, ...clean } = raw as typeof raw & { paths?: unknown };
   return {
     attributes: {},
     skills: {},
+    pathSkills: {},
     resources: {},
     createdAt: now,
     updatedAt: now,
-    ...raw,
+    ...clean,
     identity: {
       ...DEFAULT_IDENTITY,
       ...raw.identity,
@@ -112,7 +117,6 @@ export function normalizeCharacter(raw: Partial<Character> & Pick<Character, 'id
     externalSheetUrl: raw.externalSheetUrl ?? '',
     showNameInWebhook: raw.showNameInWebhook ?? true,
     edges: raw.edges ?? [],
-    paths: raw.paths ?? [],
     contacts: raw.contacts ?? [],
     bonds: raw.bonds ?? [],
     conditions: raw.conditions ?? [],

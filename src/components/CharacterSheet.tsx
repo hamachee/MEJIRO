@@ -76,7 +76,9 @@ function Dots({
 /**
  * One attribute or skill on the sheet. In play mode the whole row is a
  * toggle that selects the stat for the dice pool; in edit mode the dots
- * are clickable to set the rating.
+ * are clickable to set the rating. Skills additionally carry a Path Skill
+ * checkbox (`onTogglePathSkill`); attributes don't pass it, so they never
+ * render one.
  */
 function SheetStat({
   stat,
@@ -85,6 +87,8 @@ function SheetStat({
   selected,
   onToggle,
   onSet,
+  pathSkill,
+  onTogglePathSkill,
 }: {
   stat: Stat;
   value: number;
@@ -92,10 +96,24 @@ function SheetStat({
   selected: boolean;
   onToggle: () => void;
   onSet: (n: number) => void;
+  pathSkill?: boolean;
+  onTogglePathSkill?: () => void;
 }) {
+  const { t } = useTranslation();
+  const lang = useLang();
+
   if (editing) {
     return (
       <div className="sheet-stat editing">
+        {onTogglePathSkill && (
+          <input
+            type="checkbox"
+            className="path-skill-check"
+            checked={!!pathSkill}
+            onChange={onTogglePathSkill}
+            aria-label={`${t('sheet.pathSkill')}: ${label(stat.label, lang)}`}
+          />
+        )}
         <span className="stat-label">
           <L l10n={stat.label} />
         </span>
@@ -110,7 +128,13 @@ function SheetStat({
       aria-pressed={selected}
     >
       <span className="stat-label">
-        <L l10n={stat.label} />
+        {pathSkill ? (
+          <strong>
+            <L l10n={stat.label} />
+          </strong>
+        ) : (
+          <L l10n={stat.label} />
+        )}
       </span>
       <Dots value={value} />
     </button>
@@ -145,6 +169,30 @@ export function MotifsFold({
   );
 }
 
+/** The character's guiding motifs, as an always-visible card (where the Paths card used to sit). */
+function MotifsCard({ character, editing }: { character: Character; editing: boolean }) {
+  const { t } = useTranslation();
+  const patch = useCharacterStore((s) => s.patch);
+  const { identity } = character;
+  return (
+    <section className="card">
+      <h2>
+        <FieldLabel i18nKey="sheet.motifs" en="Motifs" />
+      </h2>
+      {editing ? (
+        <textarea
+          rows={3}
+          placeholder={t('sheet.tormentPlaceholder')}
+          defaultValue={identity.motifs}
+          onBlur={(e) => patch({ identity: { ...identity, motifs: e.target.value } })}
+        />
+      ) : (
+        <p className="muted item-card-desc">{identity.motifs || '—'}</p>
+      )}
+    </section>
+  );
+}
+
 function IdentityCard({
   character,
   editing,
@@ -161,20 +209,15 @@ function IdentityCard({
     (e: React.FocusEvent<HTMLInputElement>) =>
       patch({ identity: { ...identity, [field]: e.target.value.trim() } });
 
-  // Role path and aspirations, folded away until needed. Like the rest of
-  // the card, these only accept changes in edit mode; play mode shows the
-  // current values read-only.
+  // Short/long-term aspirations, folded away until needed. Role path lives
+  // up in the main identity row, next to Family, since it's identity rather
+  // than a goal. Like the rest of the card, these only accept changes in
+  // edit mode; play mode shows the current values read-only.
   const goalsFold = (
     <details className="fold">
       <summary>{t('sheet.pathGoals')}</summary>
       {editing ? (
         <>
-          <div className="form-row">
-            <label className="field grow">
-              <span className="field-label">{t('sheet.rolePath')}</span>
-              <input defaultValue={identity.rolePath} onBlur={setIdentity('rolePath')} />
-            </label>
-          </div>
           <div className="form-row">
             <label className="field grow">
               <span className="field-label">{t('sheet.shortTerm1')}</span>
@@ -195,9 +238,6 @@ function IdentityCard({
       ) : (
         <div className="fold-readonly">
           <div>
-            <span className="field-label">{t('sheet.rolePath')}</span> {identity.rolePath || '—'}
-          </div>
-          <div>
             <span className="field-label">{t('sheet.shortTerm1')}</span>{' '}
             {identity.shortTerm1 || '—'}
           </div>
@@ -212,8 +252,6 @@ function IdentityCard({
       )}
     </details>
   );
-
-  const motifsFold = <MotifsFold character={character} editing={editing} />;
 
   if (!editing) {
     return (
@@ -236,12 +274,12 @@ function IdentityCard({
           </h1>
         </div>
         <div className="identity-row muted">
-          {[identity.lineage, identity.family, identity.concept]
+          {[identity.lineage, identity.family, identity.rolePath]
             .filter(Boolean)
             .join(' · ') || '—'}
         </div>
+        <div className="identity-row muted">{identity.concept || '—'}</div>
         {goalsFold}
-        {motifsFold}
       </section>
     );
   }
@@ -270,6 +308,10 @@ function IdentityCard({
           </span>
           <input defaultValue={identity.family} onBlur={setIdentity('family')} />
         </label>
+        <label className="field grow">
+          <span className="field-label">{t('sheet.rolePath')}</span>
+          <input defaultValue={identity.rolePath} onBlur={setIdentity('rolePath')} />
+        </label>
       </div>
       <div className="form-row">
         <label className="field grow">
@@ -278,7 +320,6 @@ function IdentityCard({
         </label>
       </div>
       {goalsFold}
-      {motifsFold}
       <div className="form-row">
         <label className="field grow">
           <span className="field-label">{t('sheet.externalSheet')}</span>
@@ -890,6 +931,15 @@ export function CharacterSheet({ character, template, editing }: Props) {
               selected={skillId === stat.id}
               onToggle={() => toggleSkill(stat.id)}
               onSet={(n) => setStat('skills', stat.id, n)}
+              pathSkill={!!character.pathSkills[stat.id]}
+              onTogglePathSkill={() =>
+                patch({
+                  pathSkills: {
+                    ...character.pathSkills,
+                    [stat.id]: !character.pathSkills[stat.id],
+                  },
+                })
+              }
             />
           ))}
         </div>
@@ -934,12 +984,7 @@ export function CharacterSheet({ character, template, editing }: Props) {
           editing={editing}
           onChange={(edges) => patch({ edges })}
         />
-        <RatedListCard
-          title={<FieldLabel i18nKey="sheet.paths" en="Paths" />}
-          items={character.paths}
-          editing={editing}
-          onChange={(paths) => patch({ paths })}
-        />
+        <MotifsCard character={character} editing={editing} />
       </div>
 
       <div className="two-col">
