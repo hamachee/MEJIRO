@@ -332,8 +332,9 @@ function CampaignMomentumCard({ campaign }: { campaign: Campaign }) {
 /**
  * The table's combat controls, sticky above the deployed cards: turn
  * navigation (◀/▶ walks the current-turn highlight through the cards in
- * display order), the round counter, a reset (round 1, no highlight), and
- * an initiative sort — PCs by their Initiative rating, adversaries by
+ * display order, incrementing the round when it wraps from the last card
+ * back to the first), the round counter, a reset (round 1, no highlight),
+ * and an initiative sort — PCs by their Initiative rating, adversaries by
  * their Desperation pool, highest first.
  */
 function TurnTracker({ campaign }: { campaign: Campaign }) {
@@ -355,7 +356,8 @@ function TurnTracker({ campaign }: { campaign: Campaign }) {
           ? 0
           : instances.length - 1
         : (cur + dir + instances.length) % instances.length;
-    patch({ turnId: instances[next].id });
+    const wrappedToStart = cur !== -1 && dir === 1 && next === 0;
+    patch({ turnId: instances[next].id, ...(wrappedToStart ? { round: round + 1 } : {}) });
   };
 
   return (
