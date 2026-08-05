@@ -110,28 +110,27 @@ export function MessagePanel({
           rows={5}
         />
 
-        <label className="field">
-          <span className="field-label">{t('message.colorLabel')}</span>
-          <span className="color-field-row">
-            <input
-              type="color"
-              value={pickerValue(color, colorPickerFallback)}
-              onChange={(e) => {
-                setColor(e.target.value);
-                setStatus('idle');
-              }}
-            />
-            <input
-              className="color-input"
-              value={color}
-              onChange={(e) => {
-                setColor(e.target.value);
-                setStatus('idle');
-              }}
-              placeholder={identityColor ? identityColor : '#5B4B8A'}
-            />
-          </span>
-        </label>
+        <span className="color-field-row">
+          <input
+            type="color"
+            aria-label={t('message.colorLabel')}
+            value={pickerValue(color, colorPickerFallback)}
+            onChange={(e) => {
+              setColor(e.target.value);
+              setStatus('idle');
+            }}
+          />
+          <input
+            className="color-input"
+            aria-label={t('message.colorLabel')}
+            value={color}
+            onChange={(e) => {
+              setColor(e.target.value);
+              setStatus('idle');
+            }}
+            placeholder={identityColor ? identityColor : '#5B4B8A'}
+          />
+        </span>
 
         <div className="form-row">
           <button
