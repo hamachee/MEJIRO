@@ -922,6 +922,12 @@ button.danger:hover:not(:disabled) {
 .identity-row {
   font-size: 0.9rem;
 }
+/* Campaign identity card's name + system line, e.g. "Ashwood · Curseborne" —
+   the system half rendered smaller/muted inline rather than the h1 size. */
+.identity-rule {
+  font-size: 0.6em;
+  font-weight: 400;
+}
 
 /* Dots */
 .dots {
@@ -1275,6 +1281,9 @@ span.exp-value:focus-visible {
   margin-top: 0.6rem;
   padding-top: 0.6rem;
   border-top: 1px dashed var(--divider-strong);
+}
+.momentum-hide-toggle {
+  margin-top: 0.6rem;
 }
 /* Compact variant (Spells tab): Entanglement + Curse Dice on one line. */
 .curse-line {
@@ -1790,6 +1799,13 @@ button.armor-box.marked:hover:not(:disabled) {
   width: 2.6rem;
   padding: 0.15rem 0.2rem;
   font-size: 1rem;
+}
+/* Momentum row under the Free Roll pool card — same divider treatment as
+   stacked .curse-row siblings, since .custom-pool isn't one itself. */
+.custom-pool + .momentum-row {
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--divider-strong);
 }
 .tag-chips {
   display: flex;

@@ -178,6 +178,10 @@ export interface Character {
   curseDice: number;
   /** Total experience points earned, spent or unspent alike. */
   exp: number;
+  /** Momentum counter, tracked next to Entanglement/curse dice. */
+  momentum: number;
+  /** Hides the Momentum counter for characters/groups that don't track it. */
+  hideMomentum: boolean;
   resources: Record<string, ResourceState>;
   createdAt: number;
   updatedAt: number;

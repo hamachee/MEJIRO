@@ -93,6 +93,8 @@ export interface Campaign {
   autoPostToDiscord: boolean;
   /** Ad-hoc dice pool for a one-off roll that doesn't fit any adversary's pools — shared by the whole campaign. */
   customPool: number;
+  /** Shared Momentum counter for the table. */
+  momentum: number;
   templates: AdversaryTemplate[];
   instances: AdversaryInstance[];
   /** The GM's own trick list, purchased with extra hits after an adversary roll. */
