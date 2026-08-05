@@ -389,7 +389,7 @@ function IdentityCard({
           <input
             type="color"
             aria-label={t('sheet.embedColor')}
-            value={pickerValue(character.embedColor, theme.card)}
+            value={pickerValue(character.embedColor, theme.bg2)}
             onChange={(e) => patch({ embedColor: e.target.value })}
           />
           <input

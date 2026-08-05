@@ -303,7 +303,7 @@ function CampaignSettingsCard({ campaign }: { campaign: Campaign }) {
           <input
             type="color"
             aria-label={t('gm.embedColor')}
-            value={pickerValue(campaign.embedColor, theme.card)}
+            value={pickerValue(campaign.embedColor, theme.bg2)}
             onChange={(e) => patch({ embedColor: e.target.value })}
           />
           <input

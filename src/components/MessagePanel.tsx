@@ -80,10 +80,12 @@ export function MessagePanel({
     setStatus('idle');
   };
 
-  // Blends into the panel background when nothing resolves — a message with
-  // no color anywhere posts as a plain, uncolored embed, so the swatch
-  // shouldn't imply a specific color is about to be sent.
-  const colorPickerFallback = pickerValue(identityColor ?? '', theme.card);
+  // Blends into the color picker's own input-field background (the rim
+  // that shows around the swatch, same as any other text input) when
+  // nothing resolves — a message with no color anywhere posts as a plain,
+  // uncolored embed, so the swatch shouldn't imply a color is about to be
+  // sent.
+  const colorPickerFallback = pickerValue(identityColor ?? '', theme.bg2);
 
   return (
     <div className={`message-panel ${open ? 'open' : ''}`}>

@@ -28,8 +28,9 @@ export function cssHex(raw: string): string | undefined {
  * A value <input type="color"> will accept — raw's parsed hex, or `fallback`
  * when raw is empty/invalid. `fallback` is required (no baked-in default
  * hue): callers should pass a value the picker can honestly show as its
- * "nothing set" state — e.g. the surrounding card's own background, so the
- * swatch blends in rather than implying a color was already chosen.
+ * "nothing set" state — e.g. the app's own input-field background (what
+ * shows through the rim around the swatch, same as any other text input),
+ * so the swatch blends in rather than implying a color was already chosen.
  */
 export function pickerValue(raw: string, fallback: string): string {
   return cssHex(raw) ?? fallback;
