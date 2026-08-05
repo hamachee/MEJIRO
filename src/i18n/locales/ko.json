@@ -70,6 +70,7 @@
     "save": "저장",
     "externalSheet": "외부 캐릭터 시트",
     "webhook": "디스코드 웹훅 URL",
+    "embedColor": "임베드 색상",
     "showNameInWebhook": "웹훅 메시지에 캐릭터 이름 표시"
   },
   "roller": {
@@ -173,6 +174,7 @@
     "noTricks": "아직 이 캠페인에 트릭이 없습니다. 트릭 탭에서 추가하세요.",
     "copySuffix": " (사본)",
     "webhook": "디스코드 웹훅 URL",
+    "embedColor": "임베드 색상",
     "autoPostToDiscord": "디스코드 연동",
     "postToDiscord": "디스코드로 전송",
     "noWebhook": "이 캠페인에 설정된 웹훅이 없습니다."
@@ -248,7 +250,9 @@
   },
   "message": {
     "title": "메시지",
+    "titlePlaceholder": "제목 (선택)",
     "placeholder": "디스코드로 보낼 메시지를 입력하세요…",
+    "colorLabel": "색상",
     "send": "보내기",
     "saveTemplate": "템플릿으로 저장",
     "clear": "지우기",

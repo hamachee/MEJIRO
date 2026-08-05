@@ -141,6 +141,8 @@ export interface Character {
    * sheets.
    */
   webhookUrl: string;
+  /** Hex color (e.g. "#5B4B8A") for this character's embed left border. Empty uses the app default. */
+  embedColor: string;
   /** Link to a fuller character sheet hosted elsewhere (e.g. a VTT or wiki page). */
   externalSheetUrl: string;
   /**

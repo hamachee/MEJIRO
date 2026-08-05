@@ -52,7 +52,7 @@ export function CampaignView() {
 
   return (
     <div className="character-view">
-      <MessagePanel webhookUrl={active.webhookUrl} />
+      <MessagePanel webhookUrl={active.webhookUrl} identityColor={active.embedColor} />
       <div className="toolbar">
         <Link to="/gm" className="back-link">
           <IconBack /> {t('sheet.back')}

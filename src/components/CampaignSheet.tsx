@@ -20,6 +20,7 @@ import { Counter } from './Counter';
 import { getTemplate } from '../templates';
 import { label } from '../lib/localize';
 import { useLang } from '../lib/useLang';
+import { cssHex } from '../lib/color';
 
 /** Shorten a free-text field for the summary line; full text lives in the edit form. */
 function truncate(s: string, max = 24): string {
@@ -293,6 +294,23 @@ function CampaignSettingsCard({ campaign }: { campaign: Campaign }) {
             defaultValue={campaign.webhookUrl}
             onBlur={(e) => patch({ webhookUrl: e.target.value.trim() })}
           />
+        </label>
+      </div>
+      <div className="form-row">
+        <label className="field">
+          <span className="field-label">{t('gm.embedColor')}</span>
+          <span className="color-field-row">
+            <span
+              className="color-swatch"
+              style={{ background: cssHex(campaign.embedColor) ?? 'transparent' }}
+            />
+            <input
+              className="color-input"
+              placeholder="#5B4B8A"
+              defaultValue={campaign.embedColor}
+              onBlur={(e) => patch({ embedColor: e.target.value.trim() })}
+            />
+          </span>
         </label>
       </div>
     </section>

@@ -109,7 +109,12 @@ export const normalizeEntry = {
     if (typeof r.content !== 'string' || !r.content.trim()) {
       throw new Error('Every entry needs content');
     }
-    return { id: uid(), content: r.content };
+    return {
+      id: uid(),
+      title: typeof r.title === 'string' ? r.title : '',
+      content: r.content,
+      color: typeof r.color === 'string' ? r.color : '',
+    };
   },
 } as const;
 

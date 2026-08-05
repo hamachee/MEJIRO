@@ -4,6 +4,7 @@ import { useCharacterStore } from '../store/characterStore';
 import { useRollStore } from '../store/rollStore';
 import { label } from '../lib/localize';
 import { useLang } from '../lib/useLang';
+import { cssHex } from '../lib/color';
 import {
   MAX_ENTANGLEMENT,
   curseDiceCap,
@@ -379,6 +380,23 @@ function IdentityCard({
             defaultValue={character.webhookUrl}
             onBlur={(e) => patch({ webhookUrl: e.target.value.trim() })}
           />
+        </label>
+      </div>
+      <div className="form-row">
+        <label className="field">
+          <span className="field-label">{t('sheet.embedColor')}</span>
+          <span className="color-field-row">
+            <span
+              className="color-swatch"
+              style={{ background: cssHex(character.embedColor) ?? 'transparent' }}
+            />
+            <input
+              className="color-input"
+              placeholder="#5B4B8A"
+              defaultValue={character.embedColor}
+              onBlur={(e) => patch({ embedColor: e.target.value.trim() })}
+            />
+          </span>
         </label>
       </div>
       <div className="form-row">

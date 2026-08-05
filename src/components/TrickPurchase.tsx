@@ -70,6 +70,7 @@ export function TrickPurchase({ character }: Props) {
           webhookUrl: url,
           lang: settings.uiLang,
           characterName: character.showNameInWebhook ? character.name : '',
+          color: character.embedColor,
         },
       );
       setPostState('done');
