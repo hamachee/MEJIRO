@@ -10,7 +10,7 @@ import { useHeaderHidden } from './lib/useHeaderHidden';
 import { useSendModeHotkey } from './lib/useSendModeHotkey';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { SendModeCursor } from './components/SendModeCursor';
-import { IconGearFill, IconQuestionCircle } from './components/icons';
+import { IconGear, IconQuestionCircle } from './components/icons';
 import { CharacterList } from './components/CharacterList';
 import { CharacterView } from './components/CharacterView';
 import { CampaignList } from './components/CampaignList';
@@ -73,7 +73,7 @@ export function App() {
             aria-label={t('nav.settings')}
             title={t('nav.settings')}
           >
-            <IconGearFill />
+            <IconGear />
           </NavLink>
           <LanguageSwitcher />
         </nav>
