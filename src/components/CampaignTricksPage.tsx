@@ -39,11 +39,8 @@ function TrickRow({
   const sendable = useSendableCard({
     webhookUrl: campaign.webhookUrl,
     embedColor: campaign.embedColor,
-    title: trick.name,
-    buildContent: () =>
-      [campaign.name, `${t('tricks.cost')} ${formatTrickCost(trick.cost)}`, trick.description]
-        .filter(Boolean)
-        .join(' · '),
+    title: `${t('send.trickItem')}: ${trick.name} · ${formatTrickCost(trick.cost)} ${t('send.hits')}`,
+    buildContent: () => trick.description ?? '',
   });
   const sendableHere = sendable.active && !editing;
   const [name, setName] = useState(trick.name);

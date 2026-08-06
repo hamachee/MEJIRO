@@ -40,17 +40,16 @@ function SpellCard({
   const sendable = useSendableCard({
     webhookUrl: character.webhookUrl,
     embedColor: character.embedColor,
-    title: item.name,
+    title: `${t('send.spellItem')}: ${item.name}`,
     buildContent: () =>
       [
-        character.showNameInWebhook && character.name,
-        item.cost && `${t('spells.cost')}: ${item.cost}`,
-        item.attunements.length > 0 && item.attunements.join(', '),
+        item.cost && `**${item.cost}**`,
+        item.attunements.length > 0 && item.attunements.map((tag) => `\`${tag}\``).join(' '),
         item.effect,
         item.advancements,
       ]
         .filter(Boolean)
-        .join(' · '),
+        .join('\n'),
   });
   const sendableHere = sendable.active && !editing;
   const [name, setName] = useState(item.name);

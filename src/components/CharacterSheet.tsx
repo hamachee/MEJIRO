@@ -177,8 +177,15 @@ function MotifsCard({ character, editing }: { character: Character; editing: boo
   const { t } = useTranslation();
   const patch = useCharacterStore((s) => s.patch);
   const { identity } = character;
+  const sendable = useSendableCard({
+    webhookUrl: character.webhookUrl,
+    embedColor: character.embedColor,
+    title: `${character.name} · ${t('sheet.motifs')}`,
+    buildContent: () => identity.motifs,
+  });
+  const sendableHere = sendable.active && !editing;
   return (
-    <section className="card motifs-card">
+    <section className={`card motifs-card ${sendableHere ? 'sendable-active' : ''}`}>
       <h2>
         <FieldLabel i18nKey="sheet.motifs" en="Motifs" />
       </h2>
@@ -191,6 +198,101 @@ function MotifsCard({ character, editing }: { character: Character; editing: boo
         />
       ) : (
         <p className="fold-readonly">{identity.motifs || '—'}</p>
+      )}
+      {sendableHere && (
+        <div className="sendable-overlay" onClick={sendable.openConfirm}>
+          <SendConfirmPopover
+            confirm={sendable.confirm}
+            popoverRef={sendable.popoverRef}
+            cancel={sendable.cancel}
+            send={sendable.send}
+            status={sendable.status}
+            error={sendable.error}
+          />
+        </div>
+      )}
+    </section>
+  );
+}
+
+/**
+ * Torment: a free-form notes card. Unlike most cards, its textarea has no
+ * separate read-only display — it's always directly editable, sheet-wide
+ * edit mode or not — so the sendable overlay is the only thing that ever
+ * gates clicking into it.
+ */
+function TormentCard({ character, editing }: { character: Character; editing: boolean }) {
+  const { t } = useTranslation();
+  const patch = useCharacterStore((s) => s.patch);
+  const sendable = useSendableCard({
+    webhookUrl: character.webhookUrl,
+    embedColor: character.embedColor,
+    title: `${character.name} · ${t('sheet.torment')}`,
+    buildContent: () => character.torment,
+  });
+  const sendableHere = sendable.active && !editing;
+  return (
+    <section className={`card ${sendableHere ? 'sendable-active' : ''}`}>
+      <h2>
+        <FieldLabel i18nKey="sheet.torment" en="Torment" />
+      </h2>
+      <textarea
+        className="torment-field"
+        rows={4}
+        placeholder={t('sheet.tormentPlaceholder')}
+        defaultValue={character.torment}
+        onBlur={(e) => patch({ torment: e.target.value })}
+      />
+      {sendableHere && (
+        <div className="sendable-overlay" onClick={sendable.openConfirm}>
+          <SendConfirmPopover
+            confirm={sendable.confirm}
+            popoverRef={sendable.popoverRef}
+            cancel={sendable.cancel}
+            send={sendable.send}
+            status={sendable.status}
+            error={sendable.error}
+          />
+        </div>
+      )}
+    </section>
+  );
+}
+
+/** Damnation: same shape and always-editable behavior as {@link TormentCard}. */
+function DamnationCard({ character, editing }: { character: Character; editing: boolean }) {
+  const { t } = useTranslation();
+  const patch = useCharacterStore((s) => s.patch);
+  const sendable = useSendableCard({
+    webhookUrl: character.webhookUrl,
+    embedColor: character.embedColor,
+    title: `${character.name} · ${t('sheet.damnation')}`,
+    buildContent: () => character.damnation,
+  });
+  const sendableHere = sendable.active && !editing;
+  return (
+    <section className={`card ${sendableHere ? 'sendable-active' : ''}`}>
+      <h2>
+        <FieldLabel i18nKey="sheet.damnation" en="Damnation" />
+      </h2>
+      <textarea
+        className="torment-field"
+        rows={4}
+        placeholder={t('sheet.tormentPlaceholder')}
+        defaultValue={character.damnation}
+        onBlur={(e) => patch({ damnation: e.target.value })}
+      />
+      {sendableHere && (
+        <div className="sendable-overlay" onClick={sendable.openConfirm}>
+          <SendConfirmPopover
+            confirm={sendable.confirm}
+            popoverRef={sendable.popoverRef}
+            cancel={sendable.cancel}
+            send={sendable.send}
+            status={sendable.status}
+            error={sendable.error}
+          />
+        </div>
       )}
     </section>
   );
@@ -439,12 +541,14 @@ export function CurseCard({
   const curseCap = curseDiceCap(identity.entanglement);
 
   // Only the momentum counter itself is sendable — not entanglement or
-  // curse dice — so only that row gets the overlay/highlight below.
+  // curse dice — so only that row gets the overlay/highlight below. A
+  // fixed "Momentum" title (not the character's name) since the number by
+  // itself is the whole point of the message.
   const sendable = useSendableCard({
     webhookUrl: character.webhookUrl,
     embedColor: character.embedColor,
-    title: character.showNameInWebhook ? character.name : '',
-    buildContent: () => `${t('sheet.momentum')} ${character.momentum}`,
+    title: t('sheet.momentum'),
+    buildContent: () => `# ${character.momentum}`,
   });
 
   const entanglementDots = (
@@ -612,21 +716,6 @@ export function InjuryCard({
     return undefined;
   })();
 
-  const sendable = useSendableCard({
-    webhookUrl: character.webhookUrl,
-    embedColor: character.embedColor,
-    title: character.showNameInWebhook ? character.name : '',
-    buildContent: () =>
-      [
-        `${t('sheet.injuries')} ${marked}/${total}`,
-        currentLevelLabel,
-        injuries.takenOut && terminalLevel && label(terminalLevel.label, lang),
-      ]
-        .filter(Boolean)
-        .join(' · '),
-  });
-  const sendableHere = sendable.active && !editing;
-
   const setMarked = (n: number) =>
     patch({ injuries: { ...injuries, marked: Math.max(0, Math.min(n, total)) } });
 
@@ -659,6 +748,40 @@ export function InjuryCard({
   // stat set with +/-, defaulting to 0 (no boxes shown); marking follows the
   // same fill convention as the injury track but never touches it.
   const armorMarked = Math.min(armor.marked, armor.rating);
+
+  // Plain-text box glyphs (■ filled, □ empty) for the sendable summary —
+  // one run per structured level, in the same left-to-right order as the
+  // boxes on the card, plus the current (and Taken Out) level's label.
+  const injurySummaryLine = () => {
+    const segments: string[] = [];
+    let offset = 0;
+    trackLevels.forEach((level, i) => {
+      const boxes = levelBoxes(level, i);
+      const start = offset;
+      offset += boxes;
+      const filled = Math.max(0, Math.min(marked, offset) - start);
+      segments.push('■'.repeat(filled) + '□'.repeat(boxes - filled));
+    });
+    if (currentLevelLabel) segments.push(`*${currentLevelLabel}*`);
+    if (injuries.takenOut && terminalLevel) segments.push(`*${label(terminalLevel.label, lang)}*`);
+    return segments.join(' · ');
+  };
+
+  const sendable = useSendableCard({
+    webhookUrl: character.webhookUrl,
+    embedColor: character.embedColor,
+    title: `${character.name} · ${t('sheet.injuries')}`,
+    buildContent: () =>
+      [
+        armor.rating > 0 &&
+          `${t('sheet.armor')} ${'■'.repeat(armorMarked)}${'□'.repeat(armor.rating - armorMarked)}`,
+        injurySummaryLine(),
+      ]
+        .filter(Boolean)
+        .join('\n'),
+  });
+  const sendableHere = sendable.active && !editing;
+
   const setArmorRating = (n: number) => {
     const rating = Math.max(0, n);
     patch({ armor: { ...armor, rating, marked: Math.min(armorMarked, rating) } });
@@ -1154,30 +1277,8 @@ export function CharacterSheet({ character, template, editing }: Props) {
       </div>
 
       <div className="two-col">
-        <section className="card">
-          <h2>
-            <FieldLabel i18nKey="sheet.torment" en="Torment" />
-          </h2>
-          <textarea
-            className="torment-field"
-            rows={4}
-            placeholder={t('sheet.tormentPlaceholder')}
-            defaultValue={character.torment}
-            onBlur={(e) => patch({ torment: e.target.value })}
-          />
-        </section>
-        <section className="card">
-          <h2>
-            <FieldLabel i18nKey="sheet.damnation" en="Damnation" />
-          </h2>
-          <textarea
-            className="torment-field"
-            rows={4}
-            placeholder={t('sheet.tormentPlaceholder')}
-            defaultValue={character.damnation}
-            onBlur={(e) => patch({ damnation: e.target.value })}
-          />
-        </section>
+        <TormentCard character={character} editing={editing} />
+        <DamnationCard character={character} editing={editing} />
       </div>
 
       <section className="card">

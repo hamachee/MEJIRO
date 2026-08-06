@@ -40,11 +40,14 @@ function GearCard({
   const sendable = useSendableCard({
     webhookUrl: campaign.webhookUrl,
     embedColor: campaign.embedColor,
-    title: item.name,
+    title: `${t('sheet.gear')}: ${item.name}`,
     buildContent: () =>
-      [campaign.name, item.type, item.tags.length > 0 && item.tags.join(', '), item.description]
+      [
+        item.tags.length > 0 && item.tags.map((tag) => `\`${tag}\``).join(' '),
+        item.description,
+      ]
         .filter(Boolean)
-        .join(' · '),
+        .join('\n'),
   });
   const sendableHere = sendable.active && !editing;
   const [name, setName] = useState(item.name);

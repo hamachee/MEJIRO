@@ -331,12 +331,14 @@ function CampaignMomentumCard({ campaign }: { campaign: Campaign }) {
   const select = useGmRollStore((s) => s.select);
 
   // Only the momentum counter itself is sendable — not the free-roll pool
-  // above it — so only that row gets the overlay/highlight below.
+  // above it — so only that row gets the overlay/highlight below. A fixed
+  // "Momentum" title (not the campaign's name) since the number by itself
+  // is the whole point of the message.
   const sendable = useSendableCard({
     webhookUrl: campaign.webhookUrl,
     embedColor: campaign.embedColor,
-    title: campaign.name,
-    buildContent: () => `${t('gm.momentum')} ${campaign.momentum}`,
+    title: t('gm.momentum'),
+    buildContent: () => `# ${campaign.momentum}`,
   });
 
   return (

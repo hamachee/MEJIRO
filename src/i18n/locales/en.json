@@ -262,7 +262,10 @@
     "no": "Cancel",
     "posting": "Sending…",
     "error": "Could not send: {{message}}",
-    "noWebhook": "No webhook set for this sheet."
+    "noWebhook": "No webhook set for this sheet.",
+    "spellItem": "Spell",
+    "trickItem": "Trick",
+    "hits": "hits"
   },
   "info": {
     "title": "Info & Help",
