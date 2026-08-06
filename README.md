@@ -2,6 +2,8 @@
 
 **M**ulti-system **E**lectronic **J**ournal with **I**ntegrated **R**olling and **O**utput
 
+<sub>*(a.k.a. **M**y **E**xcellent **J**ournal for **I**ncredible **R**olling **O**nline)*</sub>
+
 A local-first, no-backend Progressive Web App for non-D&D tabletop RPGs: a
 character sheet editor, a dice-pool builder, and a roller that posts formatted
 results to Discord via webhooks. Free, open source, no account, no server —
@@ -76,14 +78,14 @@ by each user on their own characters, never bundled with the app.
 
 ## Discord webhooks
 
-In **Settings**, add one or more Discord webhook URLs (Discord → Server
+For each sheet, add a Discord webhook URL (Discord → Server
 Settings → Integrations → Webhooks). Roll results and purchased tricks are
 posted as embeds to the active webhook, localized to your chosen Discord output
 language.
 
 ## Roadmap
 
-GM mode, additional systems (WoD)
+- Additional systems
 
 ## License
 
