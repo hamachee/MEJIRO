@@ -102,18 +102,18 @@ body {
 .app.send-mode {
   background-image:
     repeating-linear-gradient(
-      0deg,
+      40deg,
       color-mix(in srgb, var(--discord-blurple) 16%, transparent) 0,
-      color-mix(in srgb, var(--discord-blurple) 16%, transparent) 1px,
+      color-mix(in srgb, var(--discord-blurple) 16%, transparent) 6px,
       transparent 1px,
-      transparent 24px
+      transparent 32px
     ),
     repeating-linear-gradient(
-      90deg,
+      -40deg,
       color-mix(in srgb, var(--discord-blurple) 16%, transparent) 0,
-      color-mix(in srgb, var(--discord-blurple) 16%, transparent) 1px,
+      color-mix(in srgb, var(--discord-blurple) 16%, transparent) 6px,
       transparent 1px,
-      transparent 24px
+      transparent 32px
     ),
     linear-gradient(180deg, var(--bg), var(--bg-2));
 }
@@ -2326,15 +2326,15 @@ button.send-mode-toggle {
   cursor: not-allowed;
 }
 .send-mode-toggle .icon {
-  width: 1rem;
-  height: 1rem;
+  width: 1.2rem;
+  height: 1.2rem;
   color: inherit;
 }
 .send-mode-toggle-track {
   position: relative;
   display: inline-block;
-  width: 2.1rem;
-  height: 1.2rem;
+  width: 3rem;
+  height: 1.5rem;
   border-radius: 999px;
   background: var(--bg-2);
   border: 1px solid var(--border);
@@ -2359,6 +2359,6 @@ button.send-mode-toggle {
   border-color: var(--discord-blurple);
 }
 .send-mode-toggle.on .send-mode-toggle-thumb {
-  transform: translateX(0.9rem);
+  transform: translateX(1.5rem);
   background: var(--discord-blurple);
 }
