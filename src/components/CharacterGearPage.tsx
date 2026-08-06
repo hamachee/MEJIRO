@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCharacterStore } from '../store/characterStore';
 import { FieldLabel } from './FieldLabel';
-import { IconClose, IconEdit, IconStar } from './icons';
+import { IconClose, IconCopy, IconEdit, IconStar } from './icons';
 import { TagChips } from './TagChips';
 import { InjuryCard } from './CharacterSheet';
 import { ListImportExport } from './ListImportExport';
@@ -21,6 +21,7 @@ interface GearCardProps {
   character: Character;
   onSave: (item: GearItem) => void;
   onRemove: () => void;
+  onDuplicate: () => void;
   dragHandleProps: ReturnType<typeof useDragReorder<GearItem>>['handleProps'];
   dragItemProps: ReturnType<typeof useDragReorder<GearItem>>['itemProps'];
 }
@@ -33,6 +34,7 @@ function GearCard({
   character,
   onSave,
   onRemove,
+  onDuplicate,
   dragHandleProps,
   dragItemProps,
 }: GearCardProps) {
@@ -50,7 +52,7 @@ function GearCard({
         .filter(Boolean)
         .join('\n'),
   });
-  const sendableHere = sendable.active && !editing;
+  const sendableHere = sendable.active && !open;
   const [name, setName] = useState(item.name);
   const [type, setType] = useState(item.type ?? '');
   const [tags, setTags] = useState(item.tags.join(', '));
@@ -70,7 +72,7 @@ function GearCard({
 
   const drag = dragItemProps(index);
 
-  if (editing && open) {
+  if (open) {
     return (
       <div className={`item-card editing ${drag.className}`} data-drag-index={index}>
         <div className="form-row">
@@ -122,30 +124,29 @@ function GearCard({
           <strong className="item-card-name">{item.name}</strong>
         </div>
         <div className="item-card-controls">
-          {!editing && (
-            <button
-              className={`chip ghost fav-toggle ${item.favorite ? 'active' : ''}`}
-              aria-label={item.favorite ? `unfavorite ${item.name}` : `favorite ${item.name}`}
-              aria-pressed={item.favorite}
-              onClick={() => onSave({ ...item, favorite: !item.favorite })}
-            >
-              <IconStar filled={item.favorite} />
+          <button
+            className={`chip ghost fav-toggle ${item.favorite ? 'active' : ''}`}
+            aria-label={item.favorite ? `unfavorite ${item.name}` : `favorite ${item.name}`}
+            aria-pressed={item.favorite}
+            onClick={() => onSave({ ...item, favorite: !item.favorite })}
+          >
+            <IconStar filled={item.favorite} />
+          </button>
+          <div className="item-card-actions">
+            <button className="chip ghost" aria-label={`duplicate ${item.name}`} onClick={onDuplicate}>
+              <IconCopy />
             </button>
-          )}
-          {editing && (
-            <div className="item-card-actions">
-              <button
-                className="chip ghost"
-                aria-label={`edit ${item.name}`}
-                onClick={() => setOpen(true)}
-              >
-                <IconEdit />
-              </button>
-              <button className="chip ghost" aria-label={`remove ${item.name}`} onClick={onRemove}>
-                <IconClose />
-              </button>
-            </div>
-          )}
+            <button
+              className="chip ghost"
+              aria-label={`edit ${item.name}`}
+              onClick={() => setOpen(true)}
+            >
+              <IconEdit />
+            </button>
+            <button className="chip ghost" aria-label={`remove ${item.name}`} onClick={onRemove}>
+              <IconClose />
+            </button>
+          </div>
         </div>
       </div>
       {item.type && <div className="muted item-card-type">{item.type}</div>}
@@ -218,6 +219,11 @@ function GearSection({
               patch({ gear: items.map((x) => (x.id === item.id ? updated : x)) })
             }
             onRemove={() => patch({ gear: items.filter((x) => x.id !== item.id) })}
+            onDuplicate={() =>
+              patch({
+                gear: [...items, { ...item, id: uid(), name: `${item.name}${t('common.copySuffix')}` }],
+              })
+            }
             dragHandleProps={handleProps}
             dragItemProps={itemProps}
           />
@@ -282,7 +288,7 @@ interface GearPageProps {
 export function CharacterGearPage({ character, editing, template }: GearPageProps) {
   return (
     <div className="stack">
-      <InjuryCard character={character} template={template} variant="compact" />
+      <InjuryCard character={character} template={template} variant="compact" editing={editing} />
       <GearSection character={character} editing={editing} />
     </div>
   );

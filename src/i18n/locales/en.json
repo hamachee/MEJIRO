@@ -256,7 +256,8 @@
   },
   "common": {
     "cancel": "Cancel",
-    "close": "Close"
+    "close": "Close",
+    "copySuffix": " (Copy)"
   },
   "send": {
     "yes": "Send to Discord",

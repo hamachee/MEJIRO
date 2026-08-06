@@ -829,17 +829,16 @@ export function InjuryCard({
           </button>
         </div>
       </div>
-      {!compact &&
-        (editing ? (
-          <input
-            className="grow"
-            placeholder={t('sheet.notePlaceholder')}
-            defaultValue={armor.note}
-            onBlur={(e) => patch({ armor: { ...armor, note: e.target.value } })}
-          />
-        ) : (
-          armor.note.trim() && <p className="muted item-card-desc">{armor.note}</p>
-        ))}
+      {editing ? (
+        <input
+          className="grow"
+          placeholder={t('sheet.notePlaceholder')}
+          defaultValue={armor.note}
+          onBlur={(e) => patch({ armor: { ...armor, note: e.target.value } })}
+        />
+      ) : (
+        armor.note.trim() && <p className="muted item-card-desc">{armor.note}</p>
+      )}
     </div>
   );
 
@@ -899,6 +898,20 @@ export function InjuryCard({
             <div className="injury-track grouped compact">{groups}</div>
             {takenOutRow}
           </div>
+          {editing && trackLevels[0] && (
+            <div className="form-row">
+              <Stepper
+                label={
+                  <>
+                    <L l10n={trackLevels[0].label} /> {t('sheet.extraBoxes')}
+                  </>
+                }
+                ariaLabel={t('sheet.extraBoxes')}
+                value={injuries.extraBoxes}
+                onChange={(n) => patch({ injuries: { ...injuries, extraBoxes: Math.max(0, n) } })}
+              />
+            </div>
+          )}
         </section>
       );
     }

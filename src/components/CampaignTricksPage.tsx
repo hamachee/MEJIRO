@@ -5,7 +5,7 @@ import { useUiStore } from '../store/uiStore';
 import { uid } from '../lib/uid';
 import { useDragReorder } from '../lib/useDragReorder';
 import { FieldLabel } from './FieldLabel';
-import { IconCheck, IconClose, IconEdit } from './icons';
+import { IconCheck, IconClose, IconCopy, IconEdit } from './icons';
 import { ListImportExport } from './ListImportExport';
 import { SendConfirmPopover } from './SendConfirmPopover';
 import { TrickInfo } from './TrickInfo';
@@ -23,6 +23,7 @@ function TrickRow({
   campaign,
   onSave,
   onRemove,
+  onDuplicate,
   dragHandleProps,
   dragItemProps,
 }: {
@@ -32,6 +33,7 @@ function TrickRow({
   campaign: Campaign;
   onSave: (trick: CharacterTrick) => void;
   onRemove: () => void;
+  onDuplicate: () => void;
   dragHandleProps: ReturnType<typeof useDragReorder<CharacterTrick>>['handleProps'];
   dragItemProps: ReturnType<typeof useDragReorder<CharacterTrick>>['itemProps'];
 }) {
@@ -43,7 +45,7 @@ function TrickRow({
     title: `${t('send.trickItem')}: ${trick.name} · ${formatTrickCost(trick.cost)} ${t('send.hits')}`,
     buildContent: () => trick.description ?? '',
   });
-  const sendableHere = sendable.active && !editing;
+  const sendableHere = sendable.active && !open;
   const [name, setName] = useState(trick.name);
   const [cost, setCost] = useState<CharacterTrick['cost']>(trick.cost);
   const [desc, setDesc] = useState(trick.description ?? '');
@@ -56,7 +58,7 @@ function TrickRow({
 
   const drag = dragItemProps(index);
 
-  if (editing && open) {
+  if (open) {
     return (
       <li className={`named-item named-item-editing ${drag.className}`} data-drag-index={index}>
         <div className="form-row">
@@ -98,16 +100,17 @@ function TrickRow({
             · {t('tricks.cost')} {formatTrickCost(trick.cost)}
           </span>
         </span>
-        {editing && (
-          <div className="item-card-actions">
-            <button className="chip ghost" aria-label={`edit ${trick.name}`} onClick={() => setOpen(true)}>
-              <IconEdit />
-            </button>
-            <button className="chip ghost" aria-label={`remove ${trick.name}`} onClick={onRemove}>
-              <IconClose />
-            </button>
-          </div>
-        )}
+        <div className="item-card-actions">
+          <button className="chip ghost" aria-label={`duplicate ${trick.name}`} onClick={onDuplicate}>
+            <IconCopy />
+          </button>
+          <button className="chip ghost" aria-label={`edit ${trick.name}`} onClick={() => setOpen(true)}>
+            <IconEdit />
+          </button>
+          <button className="chip ghost" aria-label={`remove ${trick.name}`} onClick={onRemove}>
+            <IconClose />
+          </button>
+        </div>
       </div>
       {sendableHere && (
         <div className="sendable-overlay" onClick={sendable.openConfirm}>
@@ -190,6 +193,11 @@ export function CampaignTricksPage({ campaign }: { campaign: Campaign }) {
                 patch({ tricks: tricks.map((x) => (x.id === updated.id ? updated : x)) })
               }
               onRemove={() => patch({ tricks: tricks.filter((x) => x.id !== tr.id) })}
+              onDuplicate={() =>
+                patch({
+                  tricks: [...tricks, { ...tr, id: uid(), name: `${tr.name}${t('common.copySuffix')}` }],
+                })
+              }
               dragHandleProps={handleProps}
               dragItemProps={itemProps}
             />
