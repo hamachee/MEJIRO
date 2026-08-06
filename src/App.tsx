@@ -10,7 +10,7 @@ import { useHeaderHidden } from './lib/useHeaderHidden';
 import { useSendModeHotkey } from './lib/useSendModeHotkey';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { SendModeCursor } from './components/SendModeCursor';
-import { IconGear, IconQuestionCircle } from './components/icons';
+import { IconGear, IconGearFill, IconQuestion } from './components/icons';
 import { CharacterList } from './components/CharacterList';
 import { CharacterView } from './components/CharacterView';
 import { CampaignList } from './components/CampaignList';
@@ -65,7 +65,7 @@ export function App() {
           <NavLink to="/">{t('nav.characters')}</NavLink>
           <NavLink to="/gm">{t('nav.gm')}</NavLink>
           <NavLink to="/info" className="icon-link" aria-label={t('nav.info')} title={t('nav.info')}>
-            <IconQuestionCircle />
+            <IconQuestion />
           </NavLink>
           <NavLink
             to="/settings"
@@ -73,7 +73,7 @@ export function App() {
             aria-label={t('nav.settings')}
             title={t('nav.settings')}
           >
-            <IconGear />
+            {({ isActive }) => (isActive ? <IconGearFill /> : <IconGear />)}
           </NavLink>
           <LanguageSwitcher />
         </nav>

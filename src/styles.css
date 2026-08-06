@@ -192,7 +192,12 @@ body {
    links get — just the glyph, color shifting on hover/active. */
 .app-nav a.icon-link {
   display: inline-flex;
-  padding: 0.2rem;
+  align-items: center;
+  justify-content: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  padding: 0;
+  border-radius: 50%;
   background: none;
 }
 .app-nav a.icon-link .icon {
@@ -201,11 +206,17 @@ body {
 }
 .app-nav a.icon-link:hover {
   color: var(--text);
-  background: none;
+  background: var(--card);
 }
+/* Filled circle instead of just a tinted glyph — a color change alone on
+   an icon this small was too easy to miss; matches how the text links'
+   own active state (filled pill, contrasting text) already reads. */
 .app-nav a.icon-link.active {
-  color: var(--accent);
-  background: none;
+  color: var(--on-accent);
+  background: var(--accent-2);
+}
+.app-nav a.icon-link.active:hover {
+  background: var(--accent-2);
 }
 
 .app-main {
