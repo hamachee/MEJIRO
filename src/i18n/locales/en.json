@@ -239,6 +239,7 @@
     "title": "Message",
     "sendMode": "Send mode",
     "sendModeHint": "While on, clicking a sendable card posts its current contents to Discord instead of its usual action. Hold Ctrl to activate it temporarily without toggling.",
+    "sendModeDisabledHint": "Unavailable while editing.",
     "titlePlaceholder": "Title (optional)",
     "placeholder": "Type a message to send to Discord…",
     "colorLabel": "Color",
