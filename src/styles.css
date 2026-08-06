@@ -1327,6 +1327,9 @@ span.exp-value:focus-visible {
 .momentum-hide-toggle {
   margin-top: 0.6rem;
 }
+.hotkey-toggle {
+  margin-top: 0.6rem;
+}
 /* Compact variant (Spells tab): Entanglement + Curse Dice on one line. */
 .curse-line {
   display: flex;

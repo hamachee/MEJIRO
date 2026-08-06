@@ -222,7 +222,6 @@
     "noWebhooks": "아직 웹훅이 없습니다.",
     "save": "저장",
     "disableSendModeHotkey": "Ctrl 홀드로 전송 모드 켜기 비활성화",
-    "webhookMoved": "디스코드 웹훅은 이제 캐릭터 시트별로 설정합니다 (시트 편집 → 디스코드 웹훅 URL).",
     "fanDisclaimer": "MEJIRO는 비공식·무료·비상업 팬 도구이며, 어떤 게임 출판사와도 제휴하거나 승인을 받지 않았습니다. 게임 시스템 이름은 각 권리자의 소유입니다."
   },
   "listIO": {
