@@ -1593,13 +1593,13 @@ button.fav-toggle:hover:not(:disabled) {
    `button:hover:not(:disabled):not(.selected)` background. */
 .item-card button.turn-marker {
   position: absolute;
-  top: -8px;
-  left: -8px;
+  top: -12px;
+  left: -9px;
   padding: 3px;
   border: none;
   background: transparent;
   color: var(--muted);
-  font-size: 1.05rem;
+  font-size: 1.5rem;
   line-height: 1;
 }
 .item-card button.turn-marker:hover,
@@ -1611,6 +1611,10 @@ button.fav-toggle:hover:not(:disabled) {
 .item-card button.turn-marker.current:hover {
   background: transparent;
   color: var(--accent);
+  filter: drop-shadow(1px 1px 1px var(--on-accent))
+          drop-shadow(-1px -1px 1px var(--on-accent))
+          drop-shadow(-1px 1px 1px var(--on-accent))
+          drop-shadow(1px -1px 1px var(--on-accent));
 }
 /* The marker sits above .adversary-card's stacked-section margins. */
 .adversary-card > .turn-marker + * {
@@ -1640,6 +1644,7 @@ button.fav-toggle:hover:not(:disabled) {
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   backdrop-filter: blur(8px);
+  margin-bottom: 5px;
 }
 .turn-bar-divider {
   color: var(--divider-strong);
@@ -1962,8 +1967,8 @@ button.armor-box.marked:hover:not(:disabled) {
 /* Momentum row under the Free Roll pool card — same divider treatment as
    stacked .curse-row siblings, since .custom-pool isn't one itself. */
 .custom-pool + .momentum-row {
-  margin-top: 0.6rem;
-  padding-top: 0.6rem;
+  margin-top: 0.2rem;
+  padding-top: 0.2rem;
   border-top: 1px dashed var(--divider-strong);
 }
 .tag-chips {
@@ -2164,13 +2169,13 @@ button.armor-box.marked:hover:not(:disabled) {
   flex-wrap: nowrap;
 }
 .message-panel-body .list-io button {
-  padding: 0.35rem 0.5rem;
-  font-size: 0.75rem;
+  padding: .1rem .4rem .2rem .4rem;
+  font-size: 0.8rem;
   flex-shrink: 0;
 }
 .message-panel-body .list-io .icon {
-  width: 0.85em;
-  height: 0.85em;
+  width: 1em;
+  height: 1em;
 }
 .message-template-content {
   flex: 1;
