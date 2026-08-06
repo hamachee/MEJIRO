@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { NavLink, Route, Routes } from 'react-router-dom';
+import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSettingsStore } from './store/settingsStore';
 import { useCharacterStore } from './store/characterStore';
@@ -27,6 +27,8 @@ export function App() {
   const editingActive = useUiStore((s) => s.editingActive);
   const sendModeActive = useUiStore((s) => s.sendModeActive);
   const sendModeViaHotkey = useUiStore((s) => s.sendModeViaHotkey);
+  const setSendModeActive = useUiStore((s) => s.setSendModeActive);
+  const setSendModeViaHotkey = useUiStore((s) => s.setSendModeViaHotkey);
   useSendModeHotkey();
 
   useEffect(() => {
@@ -34,6 +36,16 @@ export function App() {
     loadRoster();
     loadCampaignRoster();
   }, [loadSettings, loadRoster, loadCampaignRoster]);
+
+  // Send mode is scoped to whatever sheet it was turned on for — leaving
+  // the page (a different character/campaign, or a different section of
+  // the app entirely) always turns it back off rather than silently
+  // carrying it into a context the user never turned it on for.
+  const { pathname } = useLocation();
+  useEffect(() => {
+    setSendModeActive(false);
+    setSendModeViaHotkey(false);
+  }, [pathname, setSendModeActive, setSendModeViaHotkey]);
 
   return (
     <div
