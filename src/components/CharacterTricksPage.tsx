@@ -136,6 +136,7 @@ export function CharacterTricksPage({
 }) {
   const { t } = useTranslation();
   const patch = useCharacterStore((s) => s.patch);
+  const [adding, setAdding] = useState(false);
   const [name, setName] = useState('');
   const [cost, setCost] = useState<CharacterTrick['cost']>(1);
   const [desc, setDesc] = useState('');
@@ -169,6 +170,44 @@ export function CharacterTricksPage({
           <FieldLabel i18nKey="tricks.title" en="Tricks" />
         </h2>
         <p className="muted hint">{t('tricks.manageHint')}</p>
+        <div className="form-row">
+          <button className="primary" onClick={() => setAdding((v) => !v)}>
+            {adding ? <><IconClose /> {t('common.cancel')}</> : `+ ${t('tricks.add')}`}
+          </button>
+        </div>
+        <ListImportExport
+          kind="tricks"
+          items={tricks}
+          ownerName={character.name}
+          onChange={(next) => patch({ tricks: next })}
+        />
+        {adding && (
+          <>
+            <div className="form-row">
+              <input
+                className="grow"
+                placeholder={t('tricks.namePlaceholder')}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && add()}
+              />
+              <TrickCostSelect value={cost} onChange={setCost} />
+              <button className="primary" onClick={add}>{t('tricks.add')}</button>
+            </div>
+            <div className="form-row">
+              <input
+                className="grow"
+                placeholder={t('tricks.descPlaceholder')}
+                value={desc}
+                onChange={(e) => setDesc(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && add()}
+              />
+            </div>
+          </>
+        )}
+        {tricks.length === 0 && <p className="muted">—</p>}
+      </section>
+      {tricks.length > 0 && (
         <ul className="named-list">
           {tricks.map((tr, i) => (
             <TrickRow
@@ -191,37 +230,7 @@ export function CharacterTricksPage({
             />
           ))}
         </ul>
-        {editing && (
-          <>
-            <div className="form-row">
-              <input
-                className="grow"
-                placeholder={t('tricks.namePlaceholder')}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && add()}
-              />
-              <TrickCostSelect value={cost} onChange={setCost} />
-              <button onClick={add}>{t('tricks.add')}</button>
-            </div>
-            <div className="form-row">
-              <input
-                className="grow"
-                placeholder={t('tricks.descPlaceholder')}
-                value={desc}
-                onChange={(e) => setDesc(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && add()}
-              />
-            </div>
-          </>
-        )}
-        <ListImportExport
-          kind="tricks"
-          items={tricks}
-          ownerName={character.name}
-          onChange={(next) => patch({ tricks: next })}
-        />
-      </section>
+      )}
     </div>
   );
 }

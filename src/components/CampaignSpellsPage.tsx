@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCampaignStore } from '../store/campaignStore';
-import { useUiStore } from '../store/uiStore';
 import { FieldLabel } from './FieldLabel';
-import { IconCheck, IconClose, IconCopy, IconEdit, IconStar } from './icons';
+import { IconClose, IconCopy, IconEdit, IconStar } from './icons';
 import { TagChips } from './TagChips';
 import { ListImportExport } from './ListImportExport';
 import { SendConfirmPopover } from './SendConfirmPopover';
@@ -17,7 +16,6 @@ import type { SpellItem } from '../types/character';
 interface SpellCardProps {
   item: SpellItem;
   index: number;
-  editing: boolean;
   campaign: Campaign;
   onSave: (item: SpellItem) => void;
   onRemove: () => void;
@@ -30,7 +28,6 @@ interface SpellCardProps {
 function SpellCard({
   item,
   index,
-  editing,
   campaign,
   onSave,
   onRemove,
@@ -132,7 +129,7 @@ function SpellCard({
     <div className={`item-card ${sendableHere ? 'sendable-active' : ''} ${drag.className}`} data-drag-index={index}>
       <div className="item-card-head">
         <div className="item-card-title">
-          {editing && <span className="drag-handle" {...dragHandleProps(index)} />}
+          <span className="drag-handle" {...dragHandleProps(index)} />
           <strong className="item-card-name">{item.name}</strong>
         </div>
         <div className="item-card-controls">
@@ -185,21 +182,11 @@ function SpellCard({
   );
 }
 
-/** Spells tab: the GM's own shared spell reference list, editable via its own edit toggle. */
+/** Spells tab: the GM's own shared spell reference list, laid out like the adversary templates tab. */
 export function CampaignSpellsPage({ campaign }: { campaign: Campaign }) {
   const { t } = useTranslation();
   const patch = useCampaignStore((s) => s.patch);
-  const setEditingActive = useUiStore((s) => s.setEditingActive);
-  const [editing, setEditing] = useState(false);
-  // This tab has no page-level edit toggle to piggyback on (each GM tab
-  // edits its own list independently) — mirror it into the shared
-  // editingActive flag so the send-mode toggle disables itself here too,
-  // and clear it on unmount so switching tabs mid-edit doesn't leave it
-  // stuck on.
-  useEffect(() => {
-    setEditingActive(editing);
-    return () => setEditingActive(false);
-  }, [editing, setEditingActive]);
+  const [adding, setAdding] = useState(false);
   const [name, setName] = useState('');
   const [cost, setCost] = useState('');
   const [attunements, setAttunements] = useState('');
@@ -230,38 +217,21 @@ export function CampaignSpellsPage({ campaign }: { campaign: Campaign }) {
   return (
     <div className="stack">
       <section className="card">
-        <div className="item-card-head">
-          <h2 className="grow">
-            <FieldLabel i18nKey="sheet.spells" en="Spells" />
-          </h2>
-          <button className={editing ? 'primary' : ''} onClick={() => setEditing((v) => !v)}>
-            {editing ? <><IconCheck /> {t('sheet.done')}</> : <><IconEdit /> {t('sheet.edit')}</>}
+        <h2>
+          <FieldLabel i18nKey="sheet.spells" en="Spells" />
+        </h2>
+        <div className="form-row">
+          <button className="primary" onClick={() => setAdding((v) => !v)}>
+            {adding ? <><IconClose /> {t('common.cancel')}</> : `+ ${t('sheet.add')}`}
           </button>
         </div>
-        {items.length === 0 && <p className="muted">—</p>}
-        <div className="card-grid">
-          {items.map((item, i) => (
-            <SpellCard
-              key={item.id}
-              item={item}
-              index={i}
-              editing={editing}
-              campaign={campaign}
-              onSave={(updated) =>
-                patch({ spells: items.map((x) => (x.id === item.id ? updated : x)) })
-              }
-              onRemove={() => patch({ spells: items.filter((x) => x.id !== item.id) })}
-              onDuplicate={() =>
-                patch({
-                  spells: [...items, { ...item, id: uid(), name: `${item.name}${t('common.copySuffix')}` }],
-                })
-              }
-              dragHandleProps={handleProps}
-              dragItemProps={itemProps}
-            />
-          ))}
-        </div>
-        {editing && (
+        <ListImportExport
+          kind="spells"
+          items={items}
+          ownerName={campaign.name}
+          onChange={(next) => patch({ spells: next })}
+        />
+        {adding && (
           <>
             <div className="form-row">
               <input
@@ -301,17 +271,35 @@ export function CampaignSpellsPage({ campaign }: { campaign: Campaign }) {
                 value={advancements}
                 onChange={(e) => setAdvancements(e.target.value)}
               />
-              <button onClick={add}>{t('sheet.add')}</button>
+              <button className="primary" onClick={add}>{t('sheet.add')}</button>
             </div>
-            <ListImportExport
-              kind="spells"
-              items={items}
-              ownerName={campaign.name}
-              onChange={(next) => patch({ spells: next })}
-            />
           </>
         )}
+        {items.length === 0 && <p className="muted">—</p>}
       </section>
+      {items.length > 0 && (
+        <div className="card-grid">
+          {items.map((item, i) => (
+            <SpellCard
+              key={item.id}
+              item={item}
+              index={i}
+              campaign={campaign}
+              onSave={(updated) =>
+                patch({ spells: items.map((x) => (x.id === item.id ? updated : x)) })
+              }
+              onRemove={() => patch({ spells: items.filter((x) => x.id !== item.id) })}
+              onDuplicate={() =>
+                patch({
+                  spells: [...items, { ...item, id: uid(), name: `${item.name}${t('common.copySuffix')}` }],
+                })
+              }
+              dragHandleProps={handleProps}
+              dragItemProps={itemProps}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

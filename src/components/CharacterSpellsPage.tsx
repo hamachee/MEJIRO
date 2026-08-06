@@ -193,6 +193,7 @@ function SpellSection({
 }) {
   const { t } = useTranslation();
   const patch = useCharacterStore((s) => s.patch);
+  const [adding, setAdding] = useState(false);
   const [name, setName] = useState('');
   const [cost, setCost] = useState('');
   const [attunements, setAttunements] = useState('');
@@ -221,84 +222,93 @@ function SpellSection({
   };
 
   return (
-    <section className="card">
-      <h2>
-        <FieldLabel i18nKey="sheet.spells" en="Spells" />
-      </h2>
-      {items.length === 0 && <p className="muted">—</p>}
-      <div className="card-grid">
-        {items.map((item, i) => (
-          <SpellCard
-            key={item.id}
-            item={item}
-            index={i}
-            editing={editing}
-            character={character}
-            onSave={(updated) =>
-              patch({ spells: items.map((x) => (x.id === item.id ? updated : x)) })
-            }
-            onRemove={() => patch({ spells: items.filter((x) => x.id !== item.id) })}
-            onDuplicate={() =>
-              patch({
-                spells: [...items, { ...item, id: uid(), name: `${item.name}${t('common.copySuffix')}` }],
-              })
-            }
-            dragHandleProps={handleProps}
-            dragItemProps={itemProps}
-          />
-        ))}
-      </div>
-      {editing && (
-        <>
-          <div className="form-row">
-            <input
-              placeholder={t('sheet.namePlaceholder')}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && add()}
+    <>
+      <section className="card">
+        <h2>
+          <FieldLabel i18nKey="sheet.spells" en="Spells" />
+        </h2>
+        <div className="form-row">
+          <button className="primary" onClick={() => setAdding((v) => !v)}>
+            {adding ? <><IconClose /> {t('common.cancel')}</> : `+ ${t('sheet.add')}`}
+          </button>
+        </div>
+        <ListImportExport
+          kind="spells"
+          items={items}
+          ownerName={character.name}
+          onChange={(next) => patch({ spells: next })}
+        />
+        {adding && (
+          <>
+            <div className="form-row">
+              <input
+                placeholder={t('sheet.namePlaceholder')}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && add()}
+              />
+              <input
+                placeholder={t('spells.costPlaceholder')}
+                value={cost}
+                onChange={(e) => setCost(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && add()}
+              />
+              <input
+                className="grow"
+                placeholder={t('spells.attunementsPlaceholder')}
+                value={attunements}
+                onChange={(e) => setAttunements(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && add()}
+              />
+            </div>
+            <div className="form-row">
+              <textarea
+                className="grow"
+                rows={2}
+                placeholder={t('spells.effectPlaceholder')}
+                value={effect}
+                onChange={(e) => setEffect(e.target.value)}
+              />
+            </div>
+            <div className="form-row">
+              <textarea
+                className="grow"
+                rows={2}
+                placeholder={t('spells.advancementsPlaceholder')}
+                value={advancements}
+                onChange={(e) => setAdvancements(e.target.value)}
+              />
+              <button className="primary" onClick={add}>{t('sheet.add')}</button>
+            </div>
+          </>
+        )}
+        {items.length === 0 && <p className="muted">—</p>}
+      </section>
+      {items.length > 0 && (
+        <div className="card-grid">
+          {items.map((item, i) => (
+            <SpellCard
+              key={item.id}
+              item={item}
+              index={i}
+              editing={editing}
+              character={character}
+              onSave={(updated) =>
+                patch({ spells: items.map((x) => (x.id === item.id ? updated : x)) })
+              }
+              onRemove={() => patch({ spells: items.filter((x) => x.id !== item.id) })}
+              onDuplicate={() =>
+                patch({
+                  spells: [...items, { ...item, id: uid(), name: `${item.name}${t('common.copySuffix')}` }],
+                })
+              }
+              dragHandleProps={handleProps}
+              dragItemProps={itemProps}
             />
-            <input
-              placeholder={t('spells.costPlaceholder')}
-              value={cost}
-              onChange={(e) => setCost(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && add()}
-            />
-            <input
-              className="grow"
-              placeholder={t('spells.attunementsPlaceholder')}
-              value={attunements}
-              onChange={(e) => setAttunements(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && add()}
-            />
-          </div>
-          <div className="form-row">
-            <textarea
-              className="grow"
-              rows={2}
-              placeholder={t('spells.effectPlaceholder')}
-              value={effect}
-              onChange={(e) => setEffect(e.target.value)}
-            />
-          </div>
-          <div className="form-row">
-            <textarea
-              className="grow"
-              rows={2}
-              placeholder={t('spells.advancementsPlaceholder')}
-              value={advancements}
-              onChange={(e) => setAdvancements(e.target.value)}
-            />
-            <button onClick={add}>{t('sheet.add')}</button>
-          </div>
-        </>
+          ))}
+        </div>
       )}
-      <ListImportExport
-        kind="spells"
-        items={items}
-        ownerName={character.name}
-        onChange={(next) => patch({ spells: next })}
-      />
-    </section>
+    </>
   );
 }
 

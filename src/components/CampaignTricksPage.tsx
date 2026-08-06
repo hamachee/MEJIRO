@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCampaignStore } from '../store/campaignStore';
-import { useUiStore } from '../store/uiStore';
 import { uid } from '../lib/uid';
 import { useDragReorder } from '../lib/useDragReorder';
 import { FieldLabel } from './FieldLabel';
-import { IconCheck, IconClose, IconCopy, IconEdit } from './icons';
+import { IconClose, IconCopy, IconEdit } from './icons';
 import { ListImportExport } from './ListImportExport';
 import { SendConfirmPopover } from './SendConfirmPopover';
 import { TrickInfo } from './TrickInfo';
@@ -19,7 +18,6 @@ import type { CharacterTrick } from '../types/character';
 function TrickRow({
   trick,
   index,
-  editing,
   campaign,
   onSave,
   onRemove,
@@ -29,7 +27,6 @@ function TrickRow({
 }: {
   trick: CharacterTrick;
   index: number;
-  editing: boolean;
   campaign: Campaign;
   onSave: (trick: CharacterTrick) => void;
   onRemove: () => void;
@@ -93,7 +90,7 @@ function TrickRow({
   return (
     <li className={`named-item ${sendableHere ? 'sendable-active' : ''} ${drag.className}`} data-drag-index={index}>
       <div className="named-item-row">
-        {editing && <span className="drag-handle" {...dragHandleProps(index)} />}
+        <span className="drag-handle" {...dragHandleProps(index)} />
         <span className="trick-name-cost">
           <TrickInfo trick={trick} />
           <span className="trick-cost">
@@ -128,21 +125,11 @@ function TrickRow({
   );
 }
 
-/** Tricks tab: the GM's own trick list, editable via its own edit toggle. */
+/** Tricks tab: the GM's own trick list, laid out like the adversary templates tab. */
 export function CampaignTricksPage({ campaign }: { campaign: Campaign }) {
   const { t } = useTranslation();
   const patch = useCampaignStore((s) => s.patch);
-  const setEditingActive = useUiStore((s) => s.setEditingActive);
-  const [editing, setEditing] = useState(false);
-  // This tab has no page-level edit toggle to piggyback on (each GM tab
-  // edits its own list independently) — mirror it into the shared
-  // editingActive flag so the send-mode toggle disables itself here too,
-  // and clear it on unmount so switching tabs mid-edit doesn't leave it
-  // stuck on.
-  useEffect(() => {
-    setEditingActive(editing);
-    return () => setEditingActive(false);
-  }, [editing, setEditingActive]);
+  const [adding, setAdding] = useState(false);
   const [name, setName] = useState('');
   const [cost, setCost] = useState<CharacterTrick['cost']>(1);
   const [desc, setDesc] = useState('');
@@ -172,22 +159,54 @@ export function CampaignTricksPage({ campaign }: { campaign: Campaign }) {
   return (
     <div className="stack">
       <section className="card">
-        <div className="item-card-head">
-          <h2 className="grow">
-            <FieldLabel i18nKey="tricks.title" en="Tricks" />
-          </h2>
-          <button className={editing ? 'primary' : ''} onClick={() => setEditing((v) => !v)}>
-            {editing ? <><IconCheck /> {t('sheet.done')}</> : <><IconEdit /> {t('sheet.edit')}</>}
+        <h2>
+          <FieldLabel i18nKey="tricks.title" en="Tricks" />
+        </h2>
+        <p className="muted hint">{t('tricks.manageHint')}</p>
+        <div className="form-row">
+          <button className="primary" onClick={() => setAdding((v) => !v)}>
+            {adding ? <><IconClose /> {t('common.cancel')}</> : `+ ${t('tricks.add')}`}
           </button>
         </div>
-        <p className="muted hint">{t('tricks.manageHint')}</p>
+        <ListImportExport
+          kind="tricks"
+          items={tricks}
+          ownerName={campaign.name}
+          onChange={(next) => patch({ tricks: next })}
+        />
+        {adding && (
+          <>
+            <div className="form-row">
+              <input
+                className="grow"
+                placeholder={t('tricks.namePlaceholder')}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && add()}
+              />
+              <TrickCostSelect value={cost} onChange={setCost} />
+              <button className="primary" onClick={add}>{t('tricks.add')}</button>
+            </div>
+            <div className="form-row">
+              <input
+                className="grow"
+                placeholder={t('tricks.descPlaceholder')}
+                value={desc}
+                onChange={(e) => setDesc(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && add()}
+              />
+            </div>
+          </>
+        )}
+        {tricks.length === 0 && <p className="muted">—</p>}
+      </section>
+      {tricks.length > 0 && (
         <ul className="named-list">
           {tricks.map((tr, i) => (
             <TrickRow
               key={tr.id}
               trick={tr}
               index={i}
-              editing={editing}
               campaign={campaign}
               onSave={(updated) =>
                 patch({ tricks: tricks.map((x) => (x.id === updated.id ? updated : x)) })
@@ -203,37 +222,7 @@ export function CampaignTricksPage({ campaign }: { campaign: Campaign }) {
             />
           ))}
         </ul>
-        {editing && (
-          <>
-            <div className="form-row">
-              <input
-                className="grow"
-                placeholder={t('tricks.namePlaceholder')}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && add()}
-              />
-              <TrickCostSelect value={cost} onChange={setCost} />
-              <button onClick={add}>{t('tricks.add')}</button>
-            </div>
-            <div className="form-row">
-              <input
-                className="grow"
-                placeholder={t('tricks.descPlaceholder')}
-                value={desc}
-                onChange={(e) => setDesc(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && add()}
-              />
-            </div>
-            <ListImportExport
-              kind="tricks"
-              items={tricks}
-              ownerName={campaign.name}
-              onChange={(next) => patch({ tricks: next })}
-            />
-          </>
-        )}
-      </section>
+      )}
     </div>
   );
 }
