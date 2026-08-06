@@ -7,6 +7,7 @@ import { useCampaignStore } from './store/campaignStore';
 import { useUiStore } from './store/uiStore';
 import { useTheme } from './lib/useTheme';
 import { useHeaderHidden } from './lib/useHeaderHidden';
+import { useSendModeHotkey } from './lib/useSendModeHotkey';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { SendModeCursor } from './components/SendModeCursor';
 import { CharacterList } from './components/CharacterList';
@@ -25,6 +26,7 @@ export function App() {
   const headerHidden = useHeaderHidden();
   const editingActive = useUiStore((s) => s.editingActive);
   const sendModeActive = useUiStore((s) => s.sendModeActive);
+  useSendModeHotkey();
 
   useEffect(() => {
     loadSettings();

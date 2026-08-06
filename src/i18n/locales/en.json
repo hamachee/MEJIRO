@@ -238,7 +238,7 @@
   "message": {
     "title": "Message",
     "sendMode": "Send mode",
-    "sendModeHint": "While on, clicking a sendable card (identity, injuries, momentum) posts its current contents to Discord instead of its usual action.",
+    "sendModeHint": "While on, clicking a sendable card posts its current contents to Discord instead of its usual action. Hold Ctrl to activate it temporarily without toggling.",
     "titlePlaceholder": "Title (optional)",
     "placeholder": "Type a message to send to Discord…",
     "colorLabel": "Color",
