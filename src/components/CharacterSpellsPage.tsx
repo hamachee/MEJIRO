@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCharacterStore } from '../store/characterStore';
 import { FieldLabel } from './FieldLabel';
-import { IconClose, IconEdit, IconStar } from './icons';
+import { IconClose, IconCopy, IconEdit, IconStar } from './icons';
 import { TagChips } from './TagChips';
 import { CurseCard } from './CharacterSheet';
 import { ListImportExport } from './ListImportExport';
@@ -20,6 +20,7 @@ interface SpellCardProps {
   character: Character;
   onSave: (item: SpellItem) => void;
   onRemove: () => void;
+  onDuplicate: () => void;
   dragHandleProps: ReturnType<typeof useDragReorder<SpellItem>>['handleProps'];
   dragItemProps: ReturnType<typeof useDragReorder<SpellItem>>['itemProps'];
 }
@@ -32,6 +33,7 @@ function SpellCard({
   character,
   onSave,
   onRemove,
+  onDuplicate,
   dragHandleProps,
   dragItemProps,
 }: SpellCardProps) {
@@ -51,7 +53,7 @@ function SpellCard({
         .filter(Boolean)
         .join('\n'),
   });
-  const sendableHere = sendable.active && !editing;
+  const sendableHere = sendable.active && !open;
   const [name, setName] = useState(item.name);
   const [cost, setCost] = useState(item.cost ?? '');
   const [attunements, setAttunements] = useState(item.attunements.join(', '));
@@ -73,7 +75,7 @@ function SpellCard({
 
   const drag = dragItemProps(index);
 
-  if (editing && open) {
+  if (open) {
     return (
       <div className={`item-card editing ${drag.className}`} data-drag-index={index}>
         <div className="form-row">
@@ -133,30 +135,29 @@ function SpellCard({
           <strong className="item-card-name">{item.name}</strong>
         </div>
         <div className="item-card-controls">
-          {!editing && (
-            <button
-              className={`chip ghost fav-toggle ${item.favorite ? 'active' : ''}`}
-              aria-label={item.favorite ? `unfavorite ${item.name}` : `favorite ${item.name}`}
-              aria-pressed={item.favorite}
-              onClick={() => onSave({ ...item, favorite: !item.favorite })}
-            >
-              <IconStar filled={item.favorite} />
+          <button
+            className={`chip ghost fav-toggle ${item.favorite ? 'active' : ''}`}
+            aria-label={item.favorite ? `unfavorite ${item.name}` : `favorite ${item.name}`}
+            aria-pressed={item.favorite}
+            onClick={() => onSave({ ...item, favorite: !item.favorite })}
+          >
+            <IconStar filled={item.favorite} />
+          </button>
+          <div className="item-card-actions">
+            <button className="chip ghost" aria-label={`duplicate ${item.name}`} onClick={onDuplicate}>
+              <IconCopy />
             </button>
-          )}
-          {editing && (
-            <div className="item-card-actions">
-              <button
-                className="chip ghost"
-                aria-label={`edit ${item.name}`}
-                onClick={() => setOpen(true)}
-              >
-                <IconEdit />
-              </button>
-              <button className="chip ghost" aria-label={`remove ${item.name}`} onClick={onRemove}>
-                <IconClose />
-              </button>
-            </div>
-          )}
+            <button
+              className="chip ghost"
+              aria-label={`edit ${item.name}`}
+              onClick={() => setOpen(true)}
+            >
+              <IconEdit />
+            </button>
+            <button className="chip ghost" aria-label={`remove ${item.name}`} onClick={onRemove}>
+              <IconClose />
+            </button>
+          </div>
         </div>
       </div>
       {item.cost && (
@@ -192,6 +193,7 @@ function SpellSection({
 }) {
   const { t } = useTranslation();
   const patch = useCharacterStore((s) => s.patch);
+  const [adding, setAdding] = useState(false);
   const [name, setName] = useState('');
   const [cost, setCost] = useState('');
   const [attunements, setAttunements] = useState('');
@@ -220,79 +222,93 @@ function SpellSection({
   };
 
   return (
-    <section className="card">
-      <h2>
-        <FieldLabel i18nKey="sheet.spells" en="Spells" />
-      </h2>
-      {items.length === 0 && <p className="muted">—</p>}
-      <div className="card-grid">
-        {items.map((item, i) => (
-          <SpellCard
-            key={item.id}
-            item={item}
-            index={i}
-            editing={editing}
-            character={character}
-            onSave={(updated) =>
-              patch({ spells: items.map((x) => (x.id === item.id ? updated : x)) })
-            }
-            onRemove={() => patch({ spells: items.filter((x) => x.id !== item.id) })}
-            dragHandleProps={handleProps}
-            dragItemProps={itemProps}
-          />
-        ))}
-      </div>
-      {editing && (
-        <>
-          <div className="form-row">
-            <input
-              placeholder={t('sheet.namePlaceholder')}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && add()}
+    <>
+      <section className="card">
+        <h2>
+          <FieldLabel i18nKey="sheet.spells" en="Spells" />
+        </h2>
+        <div className="form-row">
+          <button className="primary" onClick={() => setAdding((v) => !v)}>
+            {adding ? <><IconClose /> {t('common.cancel')}</> : `+ ${t('sheet.add')}`}
+          </button>
+        </div>
+        <ListImportExport
+          kind="spells"
+          items={items}
+          ownerName={character.name}
+          onChange={(next) => patch({ spells: next })}
+        />
+        {adding && (
+          <>
+            <div className="form-row">
+              <input
+                placeholder={t('sheet.namePlaceholder')}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && add()}
+              />
+              <input
+                placeholder={t('spells.costPlaceholder')}
+                value={cost}
+                onChange={(e) => setCost(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && add()}
+              />
+              <input
+                className="grow"
+                placeholder={t('spells.attunementsPlaceholder')}
+                value={attunements}
+                onChange={(e) => setAttunements(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && add()}
+              />
+            </div>
+            <div className="form-row">
+              <textarea
+                className="grow"
+                rows={2}
+                placeholder={t('spells.effectPlaceholder')}
+                value={effect}
+                onChange={(e) => setEffect(e.target.value)}
+              />
+            </div>
+            <div className="form-row">
+              <textarea
+                className="grow"
+                rows={2}
+                placeholder={t('spells.advancementsPlaceholder')}
+                value={advancements}
+                onChange={(e) => setAdvancements(e.target.value)}
+              />
+              <button className="primary" onClick={add}>{t('sheet.add')}</button>
+            </div>
+          </>
+        )}
+        {items.length === 0 && <p className="muted">—</p>}
+      </section>
+      {items.length > 0 && (
+        <div className="card-grid">
+          {items.map((item, i) => (
+            <SpellCard
+              key={item.id}
+              item={item}
+              index={i}
+              editing={editing}
+              character={character}
+              onSave={(updated) =>
+                patch({ spells: items.map((x) => (x.id === item.id ? updated : x)) })
+              }
+              onRemove={() => patch({ spells: items.filter((x) => x.id !== item.id) })}
+              onDuplicate={() =>
+                patch({
+                  spells: [...items, { ...item, id: uid(), name: `${item.name}${t('common.copySuffix')}` }],
+                })
+              }
+              dragHandleProps={handleProps}
+              dragItemProps={itemProps}
             />
-            <input
-              placeholder={t('spells.costPlaceholder')}
-              value={cost}
-              onChange={(e) => setCost(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && add()}
-            />
-            <input
-              className="grow"
-              placeholder={t('spells.attunementsPlaceholder')}
-              value={attunements}
-              onChange={(e) => setAttunements(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && add()}
-            />
-          </div>
-          <div className="form-row">
-            <textarea
-              className="grow"
-              rows={2}
-              placeholder={t('spells.effectPlaceholder')}
-              value={effect}
-              onChange={(e) => setEffect(e.target.value)}
-            />
-          </div>
-          <div className="form-row">
-            <textarea
-              className="grow"
-              rows={2}
-              placeholder={t('spells.advancementsPlaceholder')}
-              value={advancements}
-              onChange={(e) => setAdvancements(e.target.value)}
-            />
-            <button onClick={add}>{t('sheet.add')}</button>
-          </div>
-        </>
+          ))}
+        </div>
       )}
-      <ListImportExport
-        kind="spells"
-        items={items}
-        ownerName={character.name}
-        onChange={(next) => patch({ spells: next })}
-      />
-    </section>
+    </>
   );
 }
 

@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCampaignStore } from '../store/campaignStore';
-import { useUiStore } from '../store/uiStore';
 import { FieldLabel } from './FieldLabel';
-import { IconCheck, IconClose, IconEdit, IconStar } from './icons';
+import { IconClose, IconCopy, IconEdit, IconStar } from './icons';
 import { TagChips } from './TagChips';
 import { ListImportExport } from './ListImportExport';
 import { SendConfirmPopover } from './SendConfirmPopover';
@@ -17,10 +16,10 @@ import type { SpellItem } from '../types/character';
 interface SpellCardProps {
   item: SpellItem;
   index: number;
-  editing: boolean;
   campaign: Campaign;
   onSave: (item: SpellItem) => void;
   onRemove: () => void;
+  onDuplicate: () => void;
   dragHandleProps: ReturnType<typeof useDragReorder<SpellItem>>['handleProps'];
   dragItemProps: ReturnType<typeof useDragReorder<SpellItem>>['itemProps'];
 }
@@ -29,10 +28,10 @@ interface SpellCardProps {
 function SpellCard({
   item,
   index,
-  editing,
   campaign,
   onSave,
   onRemove,
+  onDuplicate,
   dragHandleProps,
   dragItemProps,
 }: SpellCardProps) {
@@ -52,7 +51,7 @@ function SpellCard({
         .filter(Boolean)
         .join('\n'),
   });
-  const sendableHere = sendable.active && !editing;
+  const sendableHere = sendable.active && !open;
   const [name, setName] = useState(item.name);
   const [cost, setCost] = useState(item.cost ?? '');
   const [attunements, setAttunements] = useState(item.attunements.join(', '));
@@ -74,7 +73,7 @@ function SpellCard({
 
   const drag = dragItemProps(index);
 
-  if (editing && open) {
+  if (open) {
     return (
       <div className={`item-card editing ${drag.className}`} data-drag-index={index}>
         <div className="form-row">
@@ -130,34 +129,33 @@ function SpellCard({
     <div className={`item-card ${sendableHere ? 'sendable-active' : ''} ${drag.className}`} data-drag-index={index}>
       <div className="item-card-head">
         <div className="item-card-title">
-          {editing && <span className="drag-handle" {...dragHandleProps(index)} />}
+          <span className="drag-handle" {...dragHandleProps(index)} />
           <strong className="item-card-name">{item.name}</strong>
         </div>
         <div className="item-card-controls">
-          {!editing && (
-            <button
-              className={`chip ghost fav-toggle ${item.favorite ? 'active' : ''}`}
-              aria-label={item.favorite ? `unfavorite ${item.name}` : `favorite ${item.name}`}
-              aria-pressed={item.favorite}
-              onClick={() => onSave({ ...item, favorite: !item.favorite })}
-            >
-              <IconStar filled={item.favorite} />
+          <button
+            className={`chip ghost fav-toggle ${item.favorite ? 'active' : ''}`}
+            aria-label={item.favorite ? `unfavorite ${item.name}` : `favorite ${item.name}`}
+            aria-pressed={item.favorite}
+            onClick={() => onSave({ ...item, favorite: !item.favorite })}
+          >
+            <IconStar filled={item.favorite} />
+          </button>
+          <div className="item-card-actions">
+            <button className="chip ghost" aria-label={`duplicate ${item.name}`} onClick={onDuplicate}>
+              <IconCopy />
             </button>
-          )}
-          {editing && (
-            <div className="item-card-actions">
-              <button
-                className="chip ghost"
-                aria-label={`edit ${item.name}`}
-                onClick={() => setOpen(true)}
-              >
-                <IconEdit />
-              </button>
-              <button className="chip ghost" aria-label={`remove ${item.name}`} onClick={onRemove}>
-                <IconClose />
-              </button>
-            </div>
-          )}
+            <button
+              className="chip ghost"
+              aria-label={`edit ${item.name}`}
+              onClick={() => setOpen(true)}
+            >
+              <IconEdit />
+            </button>
+            <button className="chip ghost" aria-label={`remove ${item.name}`} onClick={onRemove}>
+              <IconClose />
+            </button>
+          </div>
         </div>
       </div>
       {item.cost && (
@@ -184,21 +182,11 @@ function SpellCard({
   );
 }
 
-/** Spells tab: the GM's own shared spell reference list, editable via its own edit toggle. */
+/** Spells tab: the GM's own shared spell reference list, laid out like the adversary templates tab. */
 export function CampaignSpellsPage({ campaign }: { campaign: Campaign }) {
   const { t } = useTranslation();
   const patch = useCampaignStore((s) => s.patch);
-  const setEditingActive = useUiStore((s) => s.setEditingActive);
-  const [editing, setEditing] = useState(false);
-  // This tab has no page-level edit toggle to piggyback on (each GM tab
-  // edits its own list independently) — mirror it into the shared
-  // editingActive flag so the send-mode toggle disables itself here too,
-  // and clear it on unmount so switching tabs mid-edit doesn't leave it
-  // stuck on.
-  useEffect(() => {
-    setEditingActive(editing);
-    return () => setEditingActive(false);
-  }, [editing, setEditingActive]);
+  const [adding, setAdding] = useState(false);
   const [name, setName] = useState('');
   const [cost, setCost] = useState('');
   const [attunements, setAttunements] = useState('');
@@ -229,33 +217,21 @@ export function CampaignSpellsPage({ campaign }: { campaign: Campaign }) {
   return (
     <div className="stack">
       <section className="card">
-        <div className="item-card-head">
-          <h2 className="grow">
-            <FieldLabel i18nKey="sheet.spells" en="Spells" />
-          </h2>
-          <button className={editing ? 'primary' : ''} onClick={() => setEditing((v) => !v)}>
-            {editing ? <><IconCheck /> {t('sheet.done')}</> : <><IconEdit /> {t('sheet.edit')}</>}
+        <h2>
+          <FieldLabel i18nKey="sheet.spells" en="Spells" />
+        </h2>
+        <div className="form-row">
+          <button className="primary" onClick={() => setAdding((v) => !v)}>
+            {adding ? <><IconClose /> {t('common.cancel')}</> : `+ ${t('sheet.add')}`}
           </button>
         </div>
-        {items.length === 0 && <p className="muted">—</p>}
-        <div className="card-grid">
-          {items.map((item, i) => (
-            <SpellCard
-              key={item.id}
-              item={item}
-              index={i}
-              editing={editing}
-              campaign={campaign}
-              onSave={(updated) =>
-                patch({ spells: items.map((x) => (x.id === item.id ? updated : x)) })
-              }
-              onRemove={() => patch({ spells: items.filter((x) => x.id !== item.id) })}
-              dragHandleProps={handleProps}
-              dragItemProps={itemProps}
-            />
-          ))}
-        </div>
-        {editing && (
+        <ListImportExport
+          kind="spells"
+          items={items}
+          ownerName={campaign.name}
+          onChange={(next) => patch({ spells: next })}
+        />
+        {adding && (
           <>
             <div className="form-row">
               <input
@@ -295,17 +271,35 @@ export function CampaignSpellsPage({ campaign }: { campaign: Campaign }) {
                 value={advancements}
                 onChange={(e) => setAdvancements(e.target.value)}
               />
-              <button onClick={add}>{t('sheet.add')}</button>
+              <button className="primary" onClick={add}>{t('sheet.add')}</button>
             </div>
-            <ListImportExport
-              kind="spells"
-              items={items}
-              ownerName={campaign.name}
-              onChange={(next) => patch({ spells: next })}
-            />
           </>
         )}
+        {items.length === 0 && <p className="muted">—</p>}
       </section>
+      {items.length > 0 && (
+        <div className="card-grid">
+          {items.map((item, i) => (
+            <SpellCard
+              key={item.id}
+              item={item}
+              index={i}
+              campaign={campaign}
+              onSave={(updated) =>
+                patch({ spells: items.map((x) => (x.id === item.id ? updated : x)) })
+              }
+              onRemove={() => patch({ spells: items.filter((x) => x.id !== item.id) })}
+              onDuplicate={() =>
+                patch({
+                  spells: [...items, { ...item, id: uid(), name: `${item.name}${t('common.copySuffix')}` }],
+                })
+              }
+              dragHandleProps={handleProps}
+              dragItemProps={itemProps}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCharacterStore } from '../store/characterStore';
 import { FieldLabel } from './FieldLabel';
-import { IconClose, IconEdit, IconStar } from './icons';
+import { IconClose, IconCopy, IconEdit, IconStar } from './icons';
 import { TagChips } from './TagChips';
 import { InjuryCard } from './CharacterSheet';
 import { ListImportExport } from './ListImportExport';
@@ -21,6 +21,7 @@ interface GearCardProps {
   character: Character;
   onSave: (item: GearItem) => void;
   onRemove: () => void;
+  onDuplicate: () => void;
   dragHandleProps: ReturnType<typeof useDragReorder<GearItem>>['handleProps'];
   dragItemProps: ReturnType<typeof useDragReorder<GearItem>>['itemProps'];
 }
@@ -33,6 +34,7 @@ function GearCard({
   character,
   onSave,
   onRemove,
+  onDuplicate,
   dragHandleProps,
   dragItemProps,
 }: GearCardProps) {
@@ -50,7 +52,7 @@ function GearCard({
         .filter(Boolean)
         .join('\n'),
   });
-  const sendableHere = sendable.active && !editing;
+  const sendableHere = sendable.active && !open;
   const [name, setName] = useState(item.name);
   const [type, setType] = useState(item.type ?? '');
   const [tags, setTags] = useState(item.tags.join(', '));
@@ -70,7 +72,7 @@ function GearCard({
 
   const drag = dragItemProps(index);
 
-  if (editing && open) {
+  if (open) {
     return (
       <div className={`item-card editing ${drag.className}`} data-drag-index={index}>
         <div className="form-row">
@@ -122,30 +124,29 @@ function GearCard({
           <strong className="item-card-name">{item.name}</strong>
         </div>
         <div className="item-card-controls">
-          {!editing && (
-            <button
-              className={`chip ghost fav-toggle ${item.favorite ? 'active' : ''}`}
-              aria-label={item.favorite ? `unfavorite ${item.name}` : `favorite ${item.name}`}
-              aria-pressed={item.favorite}
-              onClick={() => onSave({ ...item, favorite: !item.favorite })}
-            >
-              <IconStar filled={item.favorite} />
+          <button
+            className={`chip ghost fav-toggle ${item.favorite ? 'active' : ''}`}
+            aria-label={item.favorite ? `unfavorite ${item.name}` : `favorite ${item.name}`}
+            aria-pressed={item.favorite}
+            onClick={() => onSave({ ...item, favorite: !item.favorite })}
+          >
+            <IconStar filled={item.favorite} />
+          </button>
+          <div className="item-card-actions">
+            <button className="chip ghost" aria-label={`duplicate ${item.name}`} onClick={onDuplicate}>
+              <IconCopy />
             </button>
-          )}
-          {editing && (
-            <div className="item-card-actions">
-              <button
-                className="chip ghost"
-                aria-label={`edit ${item.name}`}
-                onClick={() => setOpen(true)}
-              >
-                <IconEdit />
-              </button>
-              <button className="chip ghost" aria-label={`remove ${item.name}`} onClick={onRemove}>
-                <IconClose />
-              </button>
-            </div>
-          )}
+            <button
+              className="chip ghost"
+              aria-label={`edit ${item.name}`}
+              onClick={() => setOpen(true)}
+            >
+              <IconEdit />
+            </button>
+            <button className="chip ghost" aria-label={`remove ${item.name}`} onClick={onRemove}>
+              <IconClose />
+            </button>
+          </div>
         </div>
       </div>
       {item.type && <div className="muted item-card-type">{item.type}</div>}
@@ -176,6 +177,7 @@ function GearSection({
 }) {
   const { t } = useTranslation();
   const patch = useCharacterStore((s) => s.patch);
+  const [adding, setAdding] = useState(false);
   const [name, setName] = useState('');
   const [type, setType] = useState('');
   const [tags, setTags] = useState('');
@@ -201,74 +203,88 @@ function GearSection({
   };
 
   return (
-    <section className="card">
-      <h2>
-        <FieldLabel i18nKey="sheet.gear" en="Gear" />
-      </h2>
-      {items.length === 0 && <p className="muted">—</p>}
-      <div className="card-grid">
-        {items.map((item, i) => (
-          <GearCard
-            key={item.id}
-            item={item}
-            index={i}
-            editing={editing}
-            character={character}
-            onSave={(updated) =>
-              patch({ gear: items.map((x) => (x.id === item.id ? updated : x)) })
-            }
-            onRemove={() => patch({ gear: items.filter((x) => x.id !== item.id) })}
-            dragHandleProps={handleProps}
-            dragItemProps={itemProps}
-          />
-        ))}
-      </div>
-      {editing && (
-        <>
-          <div className="form-row">
-            <input
-              className="grow"
-              placeholder={t('sheet.namePlaceholder')}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && add()}
+    <>
+      <section className="card">
+        <h2>
+          <FieldLabel i18nKey="sheet.gear" en="Gear" />
+        </h2>
+        <div className="form-row">
+          <button className="primary" onClick={() => setAdding((v) => !v)}>
+            {adding ? <><IconClose /> {t('common.cancel')}</> : `+ ${t('sheet.add')}`}
+          </button>
+        </div>
+        <ListImportExport
+          kind="gear"
+          items={items}
+          ownerName={character.name}
+          onChange={(next) => patch({ gear: next })}
+        />
+        {adding && (
+          <>
+            <div className="form-row">
+              <input
+                className="grow"
+                placeholder={t('sheet.namePlaceholder')}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && add()}
+              />
+              <input
+                className="field-narrow"
+                placeholder={t('gear.typePlaceholder')}
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && add()}
+              />
+            </div>
+            <div className="form-row">
+              <input
+                className="grow"
+                placeholder={t('gear.tagsPlaceholder')}
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && add()}
+              />
+            </div>
+            <div className="form-row">
+              <textarea
+                className="grow"
+                rows={2}
+                placeholder={t('tricks.descPlaceholder')}
+                value={desc}
+                onChange={(e) => setDesc(e.target.value)}
+              />
+              <button className="primary" onClick={add}>{t('sheet.add')}</button>
+            </div>
+          </>
+        )}
+        {items.length === 0 && <p className="muted">—</p>}
+      </section>
+      {items.length > 0 && (
+        <div className="card-grid">
+          {items.map((item, i) => (
+            <GearCard
+              key={item.id}
+              item={item}
+              index={i}
+              editing={editing}
+              character={character}
+              onSave={(updated) =>
+                patch({ gear: items.map((x) => (x.id === item.id ? updated : x)) })
+              }
+              onRemove={() => patch({ gear: items.filter((x) => x.id !== item.id) })}
+              onDuplicate={() =>
+                patch({
+                  gear: [...items, { ...item, id: uid(), name: `${item.name}${t('common.copySuffix')}` }],
+                })
+              }
+              dragHandleProps={handleProps}
+              dragItemProps={itemProps}
             />
-            <input
-              className="field-narrow"
-              placeholder={t('gear.typePlaceholder')}
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && add()}
-            />
-          </div>
-          <div className="form-row">
-            <input
-              className="grow"
-              placeholder={t('gear.tagsPlaceholder')}
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && add()}
-            />
-          </div>
-          <div className="form-row">
-            <textarea
-              className="grow"
-              rows={2}
-              placeholder={t('tricks.descPlaceholder')}
-              value={desc}
-              onChange={(e) => setDesc(e.target.value)}
-            />
-            <button onClick={add}>{t('sheet.add')}</button>
-          </div>
-        </>
+          ))}
+        </div>
       )}
-      <ListImportExport
-        kind="gear"
-        items={items}
-        ownerName={character.name}
-        onChange={(next) => patch({ gear: next })}
-      />
-    </section>
+    </>
   );
 }
 
@@ -282,7 +298,7 @@ interface GearPageProps {
 export function CharacterGearPage({ character, editing, template }: GearPageProps) {
   return (
     <div className="stack">
-      <InjuryCard character={character} template={template} variant="compact" />
+      <InjuryCard character={character} template={template} variant="compact" editing={editing} />
       <GearSection character={character} editing={editing} />
     </div>
   );

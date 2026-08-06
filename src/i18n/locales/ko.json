@@ -256,7 +256,8 @@
   },
   "common": {
     "cancel": "취소",
-    "close": "닫기"
+    "close": "닫기",
+    "copySuffix": " (사본)"
   },
   "send": {
     "yes": "디스코드로 전송",

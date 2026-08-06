@@ -4,7 +4,7 @@ import { useCharacterStore } from '../store/characterStore';
 import { uid } from '../lib/uid';
 import { useDragReorder } from '../lib/useDragReorder';
 import { FieldLabel } from './FieldLabel';
-import { IconClose, IconEdit } from './icons';
+import { IconClose, IconCopy, IconEdit } from './icons';
 import { ListImportExport } from './ListImportExport';
 import { SendConfirmPopover } from './SendConfirmPopover';
 import { TrickInfo } from './TrickInfo';
@@ -21,6 +21,7 @@ function TrickRow({
   character,
   onSave,
   onRemove,
+  onDuplicate,
   dragHandleProps,
   dragItemProps,
 }: {
@@ -30,6 +31,7 @@ function TrickRow({
   character: Character;
   onSave: (trick: CharacterTrick) => void;
   onRemove: () => void;
+  onDuplicate: () => void;
   dragHandleProps: ReturnType<typeof useDragReorder<CharacterTrick>>['handleProps'];
   dragItemProps: ReturnType<typeof useDragReorder<CharacterTrick>>['itemProps'];
 }) {
@@ -41,7 +43,7 @@ function TrickRow({
     title: `${t('send.trickItem')}: ${trick.name} · ${formatTrickCost(trick.cost)} ${t('send.hits')}`,
     buildContent: () => trick.description ?? '',
   });
-  const sendableHere = sendable.active && !editing;
+  const sendableHere = sendable.active && !open;
   const [name, setName] = useState(trick.name);
   const [cost, setCost] = useState<CharacterTrick['cost']>(trick.cost);
   const [desc, setDesc] = useState(trick.description ?? '');
@@ -54,7 +56,7 @@ function TrickRow({
 
   const drag = dragItemProps(index);
 
-  if (editing && open) {
+  if (open) {
     return (
       <li className={`named-item named-item-editing ${drag.className}`} data-drag-index={index}>
         <div className="form-row">
@@ -96,16 +98,17 @@ function TrickRow({
             · {t('tricks.cost')} {formatTrickCost(trick.cost)}
           </span>
         </span>
-        {editing && (
-          <div className="item-card-actions">
-            <button className="chip ghost" aria-label={`edit ${trick.name}`} onClick={() => setOpen(true)}>
-              <IconEdit />
-            </button>
-            <button className="chip ghost" aria-label={`remove ${trick.name}`} onClick={onRemove}>
-              <IconClose />
-            </button>
-          </div>
-        )}
+        <div className="item-card-actions">
+          <button className="chip ghost" aria-label={`duplicate ${trick.name}`} onClick={onDuplicate}>
+            <IconCopy />
+          </button>
+          <button className="chip ghost" aria-label={`edit ${trick.name}`} onClick={() => setOpen(true)}>
+            <IconEdit />
+          </button>
+          <button className="chip ghost" aria-label={`remove ${trick.name}`} onClick={onRemove}>
+            <IconClose />
+          </button>
+        </div>
       </div>
       {sendableHere && (
         <div className="sendable-overlay" onClick={sendable.openConfirm}>
@@ -133,6 +136,7 @@ export function CharacterTricksPage({
 }) {
   const { t } = useTranslation();
   const patch = useCharacterStore((s) => s.patch);
+  const [adding, setAdding] = useState(false);
   const [name, setName] = useState('');
   const [cost, setCost] = useState<CharacterTrick['cost']>(1);
   const [desc, setDesc] = useState('');
@@ -166,24 +170,18 @@ export function CharacterTricksPage({
           <FieldLabel i18nKey="tricks.title" en="Tricks" />
         </h2>
         <p className="muted hint">{t('tricks.manageHint')}</p>
-        <ul className="named-list">
-          {tricks.map((tr, i) => (
-            <TrickRow
-              key={tr.id}
-              trick={tr}
-              index={i}
-              editing={editing}
-              character={character}
-              onSave={(updated) =>
-                patch({ tricks: tricks.map((x) => (x.id === updated.id ? updated : x)) })
-              }
-              onRemove={() => patch({ tricks: tricks.filter((x) => x.id !== tr.id) })}
-              dragHandleProps={handleProps}
-              dragItemProps={itemProps}
-            />
-          ))}
-        </ul>
-        {editing && (
+        <div className="form-row">
+          <button className="primary" onClick={() => setAdding((v) => !v)}>
+            {adding ? <><IconClose /> {t('common.cancel')}</> : `+ ${t('tricks.add')}`}
+          </button>
+        </div>
+        <ListImportExport
+          kind="tricks"
+          items={tricks}
+          ownerName={character.name}
+          onChange={(next) => patch({ tricks: next })}
+        />
+        {adding && (
           <>
             <div className="form-row">
               <input
@@ -194,7 +192,7 @@ export function CharacterTricksPage({
                 onKeyDown={(e) => e.key === 'Enter' && add()}
               />
               <TrickCostSelect value={cost} onChange={setCost} />
-              <button onClick={add}>{t('tricks.add')}</button>
+              <button className="primary" onClick={add}>{t('tricks.add')}</button>
             </div>
             <div className="form-row">
               <input
@@ -207,13 +205,32 @@ export function CharacterTricksPage({
             </div>
           </>
         )}
-        <ListImportExport
-          kind="tricks"
-          items={tricks}
-          ownerName={character.name}
-          onChange={(next) => patch({ tricks: next })}
-        />
+        {tricks.length === 0 && <p className="muted">—</p>}
       </section>
+      {tricks.length > 0 && (
+        <ul className="named-list">
+          {tricks.map((tr, i) => (
+            <TrickRow
+              key={tr.id}
+              trick={tr}
+              index={i}
+              editing={editing}
+              character={character}
+              onSave={(updated) =>
+                patch({ tricks: tricks.map((x) => (x.id === updated.id ? updated : x)) })
+              }
+              onRemove={() => patch({ tricks: tricks.filter((x) => x.id !== tr.id) })}
+              onDuplicate={() =>
+                patch({
+                  tricks: [...tricks, { ...tr, id: uid(), name: `${tr.name}${t('common.copySuffix')}` }],
+                })
+              }
+              dragHandleProps={handleProps}
+              dragItemProps={itemProps}
+            />
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
