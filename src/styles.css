@@ -2326,8 +2326,8 @@ button.send-mode-toggle {
   cursor: not-allowed;
 }
 .send-mode-toggle .icon {
-  width: 1.2rem;
-  height: 1.2rem;
+  width: 1.5rem;
+  height: 1.5rem;
   color: inherit;
 }
 .send-mode-toggle-track {
