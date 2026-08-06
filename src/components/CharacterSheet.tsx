@@ -438,18 +438,13 @@ export function CurseCard({
   const { identity } = character;
   const curseCap = curseDiceCap(identity.entanglement);
 
+  // Only the momentum counter itself is sendable — not entanglement or
+  // curse dice — so only that row gets the overlay/highlight below.
   const sendable = useSendableCard({
     webhookUrl: character.webhookUrl,
     embedColor: character.embedColor,
     title: character.showNameInWebhook ? character.name : '',
-    buildContent: () =>
-      [
-        `${t('sheet.entanglement')} ${identity.entanglement}`,
-        `${t('roller.curseDice')} ${character.curseDice}/${curseCap}`,
-        !character.hideMomentum && `${t('sheet.momentum')} ${character.momentum}`,
-      ]
-        .filter(Boolean)
-        .join(' · '),
+    buildContent: () => `${t('sheet.momentum')} ${character.momentum}`,
   });
 
   const entanglementDots = (
@@ -522,7 +517,7 @@ export function CurseCard({
   const sendableHere = sendable.active && !editing;
 
   return (
-    <section className={`card ${sendableHere ? 'sendable-active' : ''}`}>
+    <section className="card">
       <div className="curse-row">
         <span className="field-label">
           <FieldLabel i18nKey="sheet.entanglement" en="Entanglement" />
@@ -536,7 +531,7 @@ export function CurseCard({
         {curseDiceControls}
       </div>
       {!character.hideMomentum && (
-        <div className="curse-row">
+        <div className={`curse-row ${sendableHere ? 'sendable-active' : ''}`}>
           <span className="field-label">
             <FieldLabel i18nKey="sheet.momentum" en="Momentum" />
           </span>
@@ -545,6 +540,18 @@ export function CurseCard({
             onChange={(n) => patch({ momentum: n })}
             ariaLabel={t('sheet.momentum')}
           />
+          {sendableHere && (
+            <div className="sendable-overlay" onClick={sendable.openConfirm}>
+              <SendConfirmPopover
+                confirm={sendable.confirm}
+                popoverRef={sendable.popoverRef}
+                cancel={sendable.cancel}
+                send={sendable.send}
+                status={sendable.status}
+                error={sendable.error}
+              />
+            </div>
+          )}
         </div>
       )}
       {editing && (
@@ -556,18 +563,6 @@ export function CurseCard({
           />
           <span>{t('sheet.hideMomentum')}</span>
         </label>
-      )}
-      {sendableHere && (
-        <div className="sendable-overlay" onClick={sendable.openConfirm}>
-          <SendConfirmPopover
-            confirm={sendable.confirm}
-            popoverRef={sendable.popoverRef}
-            cancel={sendable.cancel}
-            send={sendable.send}
-            status={sendable.status}
-            error={sendable.error}
-          />
-        </div>
       )}
     </section>
   );

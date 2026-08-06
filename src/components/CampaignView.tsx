@@ -6,9 +6,12 @@ import { useGmRollStore } from '../store/gmRollStore';
 import { useWide } from '../lib/useWide';
 import { CampaignSheet } from './CampaignSheet';
 import { MessagePanel } from './MessagePanel';
+import { SendModeToggle } from './SendModeToggle';
 import { IconBack } from './icons';
 import { CampaignPcsPage } from './CampaignPcsPage';
 import { CampaignTemplatesPage } from './CampaignTemplatesPage';
+import { CampaignGearPage } from './CampaignGearPage';
+import { CampaignSpellsPage } from './CampaignSpellsPage';
 import { CampaignTricksPage } from './CampaignTricksPage';
 import { GmRollBar } from './GmRollBar';
 import { GmRollResult } from './GmRollResult';
@@ -22,7 +25,7 @@ export function CampaignView() {
   const resetFor = useGmRollStore((s) => s.resetFor);
   const result = useGmRollStore((s) => s.result);
   const clearResult = useGmRollStore((s) => s.clearResult);
-  const [page, setPage] = useState<1 | 2 | 3 | 4>(1);
+  const [page, setPage] = useState<1 | 2 | 3 | 4 | 5 | 6>(1);
   const wide = useWide();
 
   useEffect(() => {
@@ -57,6 +60,9 @@ export function CampaignView() {
         <Link to="/gm" className="back-link">
           <IconBack /> {t('sheet.back')}
         </Link>
+        <div className="toolbar-actions">
+          <SendModeToggle />
+        </div>
       </div>
 
       <nav className="page-tabs" aria-label="campaign pages">
@@ -82,6 +88,18 @@ export function CampaignView() {
           className={`page-tab ${page === 4 ? 'active' : ''}`}
           onClick={() => setPage(4)}
         >
+          {t('sheet.gear')}
+        </button>
+        <button
+          className={`page-tab ${page === 5 ? 'active' : ''}`}
+          onClick={() => setPage(5)}
+        >
+          {t('sheet.spells')}
+        </button>
+        <button
+          className={`page-tab ${page === 6 ? 'active' : ''}`}
+          onClick={() => setPage(6)}
+        >
           {t('tricks.title')}
         </button>
       </nav>
@@ -90,7 +108,9 @@ export function CampaignView() {
         {page === 1 && <CampaignSheet campaign={active} />}
         {page === 2 && <CampaignPcsPage campaign={active} />}
         {page === 3 && <CampaignTemplatesPage campaign={active} />}
-        {page === 4 && <CampaignTricksPage campaign={active} />}
+        {page === 4 && <CampaignGearPage campaign={active} />}
+        {page === 5 && <CampaignSpellsPage campaign={active} />}
+        {page === 6 && <CampaignTricksPage campaign={active} />}
         {wide && result && <aside className="result-col stack">{resultPanel}</aside>}
       </div>
 

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSettingsStore } from '../store/settingsStore';
-import { useUiStore } from '../store/uiStore';
 import { useDragReorder } from '../lib/useDragReorder';
 import { postEmbedMessage } from '../engine/discord';
 import { uid } from '../lib/uid';
@@ -38,8 +37,6 @@ export function MessagePanel({
 }) {
   const { t } = useTranslation();
   const theme = useResolvedTheme();
-  const sendModeActive = useUiStore((s) => s.sendModeActive);
-  const toggleSendMode = useUiStore((s) => s.toggleSendMode);
   const templates = useSettingsStore((s) => s.settings.messageTemplates);
   const update = useSettingsStore((s) => s.update);
   const [open, setOpen] = useState(false);
@@ -102,12 +99,6 @@ export function MessagePanel({
       </button>
       <div className="message-panel-body stack">
         <h2>{t('message.title')}</h2>
-
-        <label className="field-check">
-          <input type="checkbox" checked={sendModeActive} onChange={toggleSendMode} />
-          <span>{t('message.sendMode')}</span>
-        </label>
-        <p className="muted hint">{t('message.sendModeHint')}</p>
 
         <input
           value={title}

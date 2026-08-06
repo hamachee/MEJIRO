@@ -330,26 +330,24 @@ function CampaignMomentumCard({ campaign }: { campaign: Campaign }) {
   const selectedPool = useGmRollStore((s) => s.selectedPool);
   const select = useGmRollStore((s) => s.select);
 
+  // Only the momentum counter itself is sendable — not the free-roll pool
+  // above it — so only that row gets the overlay/highlight below.
   const sendable = useSendableCard({
     webhookUrl: campaign.webhookUrl,
     embedColor: campaign.embedColor,
     title: campaign.name,
-    buildContent: () =>
-      [
-        `${t('gm.customPool')} ${campaign.customPool}`,
-        `${t('gm.momentum')} ${campaign.momentum}`,
-      ].join(' · '),
+    buildContent: () => `${t('gm.momentum')} ${campaign.momentum}`,
   });
 
   return (
-    <section className={`card ${sendable.active ? 'sendable-active' : ''}`}>
+    <section className="card">
       <CustomPoolControl
         value={campaign.customPool}
         selected={selectedInstanceId === null && selectedPool === 'custom'}
         onSelect={() => select(null, 'custom')}
         onChange={(n) => patch({ customPool: n })}
       />
-      <div className="curse-row momentum-row">
+      <div className={`curse-row momentum-row ${sendable.active ? 'sendable-active' : ''}`}>
         <span className="field-label">
           <FieldLabel i18nKey="gm.momentum" en="Momentum" />
         </span>
@@ -358,19 +356,19 @@ function CampaignMomentumCard({ campaign }: { campaign: Campaign }) {
           onChange={(n) => patch({ momentum: n })}
           ariaLabel={t('gm.momentum')}
         />
+        {sendable.active && (
+          <div className="sendable-overlay" onClick={sendable.openConfirm}>
+            <SendConfirmPopover
+              confirm={sendable.confirm}
+              popoverRef={sendable.popoverRef}
+              cancel={sendable.cancel}
+              send={sendable.send}
+              status={sendable.status}
+              error={sendable.error}
+            />
+          </div>
+        )}
       </div>
-      {sendable.active && (
-        <div className="sendable-overlay" onClick={sendable.openConfirm}>
-          <SendConfirmPopover
-            confirm={sendable.confirm}
-            popoverRef={sendable.popoverRef}
-            cancel={sendable.cancel}
-            send={sendable.send}
-            status={sendable.status}
-            error={sendable.error}
-          />
-        </div>
-      )}
     </section>
   );
 }

@@ -10,6 +10,7 @@ import { useLang } from '../lib/useLang';
 import { exportCharacterFile } from '../lib/exportCharacterFile';
 import { CharacterSheet } from './CharacterSheet';
 import { MessagePanel } from './MessagePanel';
+import { SendModeToggle } from './SendModeToggle';
 import { IconBack, IconCheck, IconEdit, IconExport } from './icons';
 import { CharacterGearPage } from './CharacterGearPage';
 import { CharacterSpellsPage } from './CharacterSpellsPage';
@@ -76,6 +77,7 @@ export function CharacterView() {
           <IconBack /> {t('sheet.back')}
         </Link>
         <div className="toolbar-actions">
+          <SendModeToggle />
           <button onClick={() => exportCharacterFile(active, lang)}>
             <IconExport /> {t('characters.export')}
           </button>
