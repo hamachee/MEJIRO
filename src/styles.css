@@ -188,6 +188,39 @@ body {
   color: var(--on-accent);
   background: var(--accent-2);
 }
+/* Info/Settings: icon-only, no chip/pill frame around them like the text
+   links get — just the glyph, color shifting on hover/active. */
+.app-nav a.icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: none;
+}
+.app-nav a.icon-link .icon {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+.app-nav a.icon-link:hover {
+  color: var(--text);
+  background: var(--card);
+  border-color: var(--muted);
+}
+/* Filled circle instead of just a tinted glyph — a color change alone on
+   an icon this small was too easy to miss; matches how the text links'
+   own active state (filled pill, contrasting text) already reads. */
+.app-nav a.icon-link.active {
+  color: var(--on-accent);
+  background: var(--accent-2);
+  border-color: var(--accent-2);
+}
+.app-nav a.icon-link.active:hover {
+  background: var(--accent-2);
+}
 
 .app-main {
   flex: 1;
@@ -1306,6 +1339,9 @@ span.exp-value:focus-visible {
   border-top: 1px dashed var(--divider-strong);
 }
 .momentum-hide-toggle {
+  margin-top: 0.6rem;
+}
+.hotkey-toggle {
   margin-top: 0.6rem;
 }
 /* Compact variant (Spells tab): Entanglement + Curse Dice on one line. */

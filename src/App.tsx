@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { NavLink, Route, Routes } from 'react-router-dom';
+import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSettingsStore } from './store/settingsStore';
 import { useCharacterStore } from './store/characterStore';
@@ -10,6 +10,7 @@ import { useHeaderHidden } from './lib/useHeaderHidden';
 import { useSendModeHotkey } from './lib/useSendModeHotkey';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { SendModeCursor } from './components/SendModeCursor';
+import { IconGear, IconGearFill, IconQuestion } from './components/icons';
 import { CharacterList } from './components/CharacterList';
 import { CharacterView } from './components/CharacterView';
 import { CampaignList } from './components/CampaignList';
@@ -27,6 +28,8 @@ export function App() {
   const editingActive = useUiStore((s) => s.editingActive);
   const sendModeActive = useUiStore((s) => s.sendModeActive);
   const sendModeViaHotkey = useUiStore((s) => s.sendModeViaHotkey);
+  const setSendModeActive = useUiStore((s) => s.setSendModeActive);
+  const setSendModeViaHotkey = useUiStore((s) => s.setSendModeViaHotkey);
   useSendModeHotkey();
 
   useEffect(() => {
@@ -34,6 +37,16 @@ export function App() {
     loadRoster();
     loadCampaignRoster();
   }, [loadSettings, loadRoster, loadCampaignRoster]);
+
+  // Send mode is scoped to whatever sheet it was turned on for — leaving
+  // the page (a different character/campaign, or a different section of
+  // the app entirely) always turns it back off rather than silently
+  // carrying it into a context the user never turned it on for.
+  const { pathname } = useLocation();
+  useEffect(() => {
+    setSendModeActive(false);
+    setSendModeViaHotkey(false);
+  }, [pathname, setSendModeActive, setSendModeViaHotkey]);
 
   return (
     <div
@@ -51,8 +64,17 @@ export function App() {
         <nav className="app-nav">
           <NavLink to="/">{t('nav.characters')}</NavLink>
           <NavLink to="/gm">{t('nav.gm')}</NavLink>
-          <NavLink to="/info">{t('nav.info')}</NavLink>
-          <NavLink to="/settings">{t('nav.settings')}</NavLink>
+          <NavLink to="/info" className="icon-link" aria-label={t('nav.info')} title={t('nav.info')}>
+            <IconQuestion />
+          </NavLink>
+          <NavLink
+            to="/settings"
+            className="icon-link"
+            aria-label={t('nav.settings')}
+            title={t('nav.settings')}
+          >
+            {({ isActive }) => (isActive ? <IconGearFill /> : <IconGear />)}
+          </NavLink>
           <LanguageSwitcher />
         </nav>
       </header>
