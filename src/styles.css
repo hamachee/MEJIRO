@@ -2252,14 +2252,13 @@ button.armor-box.marked:hover:not(:disabled) {
 /* Send-mode toggle: a physical left-right switch in the sheet toolbar
    (left of Export) rather than a checkbox, so flipping it reads as
    changing how clicks behave, not filling in a setting. */
-.send-mode-toggle {
+button.send-mode-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.3rem 0.55rem;
+  gap: 0.3rem;
+  padding: 0.2rem;
   background: none;
-  border: 1px solid var(--border);
-  border-radius: 999px;
+  border: none;
   color: var(--muted);
 }
 .send-mode-toggle .icon {
