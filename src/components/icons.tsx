@@ -2,9 +2,9 @@
  * Inline SVG icons, replacing the emoji glyphs the UI used before so icons
  * render identically on every platform and follow the theme via currentColor.
  * Stroke shapes adapted from Lucide (lucide.dev, ISC license); the diamond,
- * geo-alt, geo-alt-fill, question(-circle) and gear(-fill) shapes below
- * are Bootstrap Icons' "suit-diamond-fill", "geo-alt", "geo-alt-fill",
- * "question-circle" and "gear"/"gear-fill" (MIT license).
+ * geo-alt, geo-alt-fill, question-lg and gear(-fill) shapes below are
+ * Bootstrap Icons' "suit-diamond-fill", "geo-alt", "geo-alt-fill",
+ * "question-lg" and "gear"/"gear-fill" (MIT license).
  *
  * All icons are decorative (aria-hidden): buttons that show only an icon
  * carry their own aria-label.
@@ -199,14 +199,15 @@ export function IconTabHandle(props: SVGProps<SVGSVGElement>) {
 }
 
 /**
- * Bare question mark (Bootstrap Icons "question-circle"'s inner glyph,
- * ring dropped) — Info nav link. The link itself supplies the surrounding
- * circle now (see .icon-link), so the glyph doesn't carry its own ring.
+ * Bootstrap Icons "question-lg" — a bold question mark sized to stand on
+ * its own (unlike question-circle's small inner glyph, meant to share
+ * space with a ring it drew itself). The link itself supplies the
+ * surrounding circle now (see .icon-link), so the glyph doesn't need one.
  */
 export function IconQuestion(props: SVGProps<SVGSVGElement>) {
   return (
     <Icon viewBox="0 0 16 16" fill="currentColor" stroke="none" {...props}>
-      <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.242l.005-.152c.023-.617.371-.986.916-1.398.554-.42 1.101-.899 1.101-1.902 0-1.372-1.096-2.211-2.554-2.211-1.36 0-2.5.777-2.6 2.14zm2.415 8.203c.535 0 .953-.394.953-.914 0-.523-.418-.917-.953-.917-.532 0-.95.394-.95.917 0 .52.418.914.95.914z" />
+      <path d="M4.475 5.458c-.284 0-.514-.237-.47-.517C4.28 3.24 5.576 2 7.825 2c2.25 0 3.767 1.36 3.767 3.215 0 1.344-.665 2.288-1.79 2.973-1.1.659-1.414 1.118-1.414 2.01v.03a.5.5 0 0 1-.5.5h-.77a.5.5 0 0 1-.5-.495l-.003-.2c-.043-1.221.477-2.001 1.645-2.712 1.03-.632 1.397-1.135 1.397-2.028 0-.979-.758-1.698-1.926-1.698-1.009 0-1.71.529-1.938 1.402-.066.254-.278.461-.54.461h-.777zM7.996 12.6a.87.87 0 1 0 0-1.741.87.87 0 0 0 0 1.741z" />
     </Icon>
   );
 }
