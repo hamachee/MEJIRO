@@ -15,6 +15,8 @@ export interface AppSettings {
   curseColor: string;
   /** Saved messages for the webhook message panel — per device, not synced with a character/campaign. */
   messageTemplates: MessageTemplate[];
+  /** If true, holding Ctrl no longer activates send mode temporarily — only the toggle does. */
+  disableSendModeHotkey: boolean;
 }
 
 interface MejiroDB extends DBSchema {
@@ -75,4 +77,5 @@ export const DEFAULT_SETTINGS: AppSettings = {
   themeMode: 'system',
   curseColor: '',
   messageTemplates: [],
+  disableSendModeHotkey: false,
 };

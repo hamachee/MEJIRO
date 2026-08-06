@@ -2,8 +2,9 @@
  * Inline SVG icons, replacing the emoji glyphs the UI used before so icons
  * render identically on every platform and follow the theme via currentColor.
  * Stroke shapes adapted from Lucide (lucide.dev, ISC license); the diamond,
- * geo-alt and geo-alt-fill shapes below are Bootstrap Icons' "suit-diamond-
- * fill", "geo-alt" and "geo-alt-fill" (MIT license).
+ * geo-alt, geo-alt-fill, question-circle and gear-fill shapes below are
+ * Bootstrap Icons' "suit-diamond-fill", "geo-alt", "geo-alt-fill",
+ * "question-circle" and "gear-fill" (MIT license).
  *
  * All icons are decorative (aria-hidden): buttons that show only an icon
  * carry their own aria-label.
@@ -193,6 +194,25 @@ export function IconTabHandle(props: SVGProps<SVGSVGElement>) {
       <path d="M8 5v14" />
       <path d="M12 5v14" />
       <path d="M16 5v14" />
+    </Icon>
+  );
+}
+
+/** Bootstrap Icons "question-circle" — Info nav link. */
+export function IconQuestionCircle(props: SVGProps<SVGSVGElement>) {
+  return (
+    <Icon viewBox="0 0 16 16" fill="currentColor" stroke="none" {...props}>
+      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+      <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.242l.005-.152c.023-.617.371-.986.916-1.398.554-.42 1.101-.899 1.101-1.902 0-1.372-1.096-2.211-2.554-2.211-1.36 0-2.5.777-2.6 2.14zm2.415 8.203c.535 0 .953-.394.953-.914 0-.523-.418-.917-.953-.917-.532 0-.95.394-.95.917 0 .52.418.914.95.914z" />
+    </Icon>
+  );
+}
+
+/** Bootstrap Icons "gear-fill" — Settings nav link. */
+export function IconGearFill(props: SVGProps<SVGSVGElement>) {
+  return (
+    <Icon viewBox="0 0 16 16" fill="currentColor" stroke="none" {...props}>
+      <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z" />
     </Icon>
   );
 }

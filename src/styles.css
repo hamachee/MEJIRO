@@ -188,6 +188,25 @@ body {
   color: var(--on-accent);
   background: var(--accent-2);
 }
+/* Info/Settings: icon-only, no chip/pill frame around them like the text
+   links get — just the glyph, color shifting on hover/active. */
+.app-nav a.icon-link {
+  display: inline-flex;
+  padding: 0.2rem;
+  background: none;
+}
+.app-nav a.icon-link .icon {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+.app-nav a.icon-link:hover {
+  color: var(--text);
+  background: none;
+}
+.app-nav a.icon-link.active {
+  color: var(--accent);
+  background: none;
+}
 
 .app-main {
   flex: 1;

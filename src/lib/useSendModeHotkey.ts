@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useUiStore } from '../store/uiStore';
+import { useSettingsStore } from '../store/settingsStore';
 
 /** How long Ctrl must be held alone before it counts as a hold gesture, not a shortcut's modifier. */
 const HOLD_DELAY_MS = 150;
@@ -21,15 +22,20 @@ const HOLD_DELAY_MS = 150;
  * deliberate hold is comfortably longer than a shortcut's keydown gap, so
  * this filters out normal Ctrl+key use without adding perceptible lag to
  * the real gesture.
+ *
+ * Can be turned off entirely from Settings (some users just want Ctrl to
+ * keep doing whatever it already does everywhere else).
  */
 export function useSendModeHotkey() {
   const editingActive = useUiStore((s) => s.editingActive);
   const setSendModeActive = useUiStore((s) => s.setSendModeActive);
   const setSendModeViaHotkey = useUiStore((s) => s.setSendModeViaHotkey);
+  const disabled = useSettingsStore((s) => s.settings.disableSendModeHotkey);
   const pendingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const activatedByHotkey = useRef(false);
 
   useEffect(() => {
+    if (disabled) return;
     const clearPending = () => {
       if (pendingTimer.current) {
         clearTimeout(pendingTimer.current);
@@ -75,5 +81,5 @@ export function useSendModeHotkey() {
       window.removeEventListener('keyup', onKeyUp);
       window.removeEventListener('blur', deactivate);
     };
-  }, [editingActive, setSendModeActive, setSendModeViaHotkey]);
+  }, [editingActive, disabled, setSendModeActive, setSendModeViaHotkey]);
 }

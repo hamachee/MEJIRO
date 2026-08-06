@@ -30,6 +30,14 @@ export function Settings() {
             </select>
           </label>
         </div>
+        <label className="field-check">
+          <input
+            type="checkbox"
+            checked={settings.disableSendModeHotkey}
+            onChange={(e) => update({ disableSendModeHotkey: e.target.checked })}
+          />
+          <span>{t('settings.disableSendModeHotkey')}</span>
+        </label>
         <p className="muted hint">{t('settings.webhookMoved')}</p>
       </section>
 
