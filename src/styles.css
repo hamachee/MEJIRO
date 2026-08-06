@@ -36,6 +36,10 @@
   --radius: 10px;
   --radius-md: 8px;
   --radius-sm: 5px;
+  /* Discord's own brand blurple — send mode's accent, kept constant across
+     every theme (unlike --accent) so it reads as "this is Discord", not
+     "this is the app's current color scheme". */
+  --discord-blurple: #5865f2;
   color-scheme: dark;
 }
 
@@ -84,6 +88,30 @@ body {
       90deg,
       color-mix(in srgb, var(--border) 18%, transparent) 0,
       color-mix(in srgb, var(--border) 18%, transparent) 1px,
+      transparent 1px,
+      transparent 24px
+    ),
+    linear-gradient(180deg, var(--bg), var(--bg-2));
+}
+
+/* Send mode: same grid-pattern language as .app.editing above, but tinted
+   Discord blurple instead of the theme's own border color — a different
+   fixed color reads as a distinct "mode" (posting to Discord) rather than
+   another flavor of "editing", while still following the app's established
+   convention for "something table-wide is active" backgrounds. */
+.app.send-mode {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--discord-blurple) 16%, transparent) 0,
+      color-mix(in srgb, var(--discord-blurple) 16%, transparent) 1px,
+      transparent 1px,
+      transparent 24px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--discord-blurple) 16%, transparent) 0,
+      color-mix(in srgb, var(--discord-blurple) 16%, transparent) 1px,
       transparent 1px,
       transparent 24px
     ),
@@ -2117,4 +2145,91 @@ button.armor-box.marked:hover:not(:disabled) {
 .message-template-content:hover:not(:disabled) {
   background: none;
   text-decoration: underline;
+}
+
+/* Send mode: a card wired via useSendableCard gets .sendable-active while
+   the mode is on. The overlay is a direct child of the existing .card, not
+   a wrapper around it, so it can't disturb any parent grid/flex layout —
+   it just needs the card to establish a positioning context. */
+.card.sendable-active {
+  position: relative;
+}
+.card.sendable-active:hover {
+  border-color: var(--discord-blurple);
+  box-shadow: 0 0 0 1px var(--discord-blurple);
+}
+.sendable-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  border-radius: inherit;
+  cursor: pointer;
+  background: transparent;
+  transition: background 0.15s ease;
+}
+.card.sendable-active:hover .sendable-overlay {
+  background: color-mix(in srgb, var(--discord-blurple) 12%, transparent);
+}
+
+/* The Yes/No confirm that floats at the exact point a sendable card was
+   clicked. The outer box is just a fixed-position anchor at the click
+   point (no size of its own); Yes/No are absolutely placed off of that
+   same point so Yes lands squarely under the pointer that clicked it,
+   keeping the "click again to confirm" gesture in one spot. */
+.send-confirm {
+  position: fixed;
+  z-index: 45;
+}
+.send-confirm-yes,
+.send-confirm-no {
+  position: absolute;
+  top: 0;
+  width: 2.2rem;
+  height: 2.2rem;
+  padding: 0;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: 1rem;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+.send-confirm-yes {
+  left: 0;
+  background: var(--discord-blurple);
+  border: 1px solid var(--discord-blurple);
+  color: #ffffff;
+}
+.send-confirm-no {
+  left: 2.6rem;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.send-confirm-status {
+  position: absolute;
+  left: 0;
+  top: 1.8rem;
+  width: max-content;
+  max-width: 14rem;
+  font-size: 0.8rem;
+}
+
+/* Cursor-following Discord badge shown while send mode is on. Positioned
+   via direct ref/style writes on mousemove (see SendModeCursor.tsx), not
+   React state, so dragging the mouse doesn't trigger a re-render per
+   pixel; offset to the pointer's bottom-right, clear of the arrow
+   cursor's own tip. */
+.send-mode-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 41;
+  pointer-events: none;
+  color: var(--discord-blurple);
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
+}
+.send-mode-cursor .icon {
+  width: 1.1rem;
+  height: 1.1rem;
 }

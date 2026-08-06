@@ -22,6 +22,8 @@ import { label } from '../lib/localize';
 import { useLang } from '../lib/useLang';
 import { useResolvedTheme } from '../lib/useTheme';
 import { cssHex, leftBorderStyle, pickerValue } from '../lib/color';
+import { useSendableCard } from '../lib/useSendableCard';
+import { SendConfirmPopover } from './SendConfirmPopover';
 
 /** Shorten a free-text field for the summary line; full text lives in the edit form. */
 function truncate(s: string, max = 24): string {
@@ -328,8 +330,19 @@ function CampaignMomentumCard({ campaign }: { campaign: Campaign }) {
   const selectedPool = useGmRollStore((s) => s.selectedPool);
   const select = useGmRollStore((s) => s.select);
 
+  const sendable = useSendableCard({
+    webhookUrl: campaign.webhookUrl,
+    embedColor: campaign.embedColor,
+    title: campaign.name,
+    buildContent: () =>
+      [
+        `${t('gm.customPool')} ${campaign.customPool}`,
+        `${t('gm.momentum')} ${campaign.momentum}`,
+      ].join(' · '),
+  });
+
   return (
-    <section className="card">
+    <section className={`card ${sendable.active ? 'sendable-active' : ''}`}>
       <CustomPoolControl
         value={campaign.customPool}
         selected={selectedInstanceId === null && selectedPool === 'custom'}
@@ -346,6 +359,18 @@ function CampaignMomentumCard({ campaign }: { campaign: Campaign }) {
           ariaLabel={t('gm.momentum')}
         />
       </div>
+      {sendable.active && (
+        <div className="sendable-overlay" onClick={sendable.openConfirm}>
+          <SendConfirmPopover
+            confirm={sendable.confirm}
+            popoverRef={sendable.popoverRef}
+            cancel={sendable.cancel}
+            send={sendable.send}
+            status={sendable.status}
+            error={sendable.error}
+          />
+        </div>
+      )}
     </section>
   );
 }

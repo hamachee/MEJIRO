@@ -5,7 +5,9 @@ import { useRollStore } from '../store/rollStore';
 import { label } from '../lib/localize';
 import { useLang } from '../lib/useLang';
 import { useResolvedTheme } from '../lib/useTheme';
+import { useSendableCard } from '../lib/useSendableCard';
 import { cssHex, leftBorderStyle, pickerValue } from '../lib/color';
+import { SendConfirmPopover } from './SendConfirmPopover';
 import {
   MAX_ENTANGLEMENT,
   curseDiceCap,
@@ -436,6 +438,20 @@ export function CurseCard({
   const { identity } = character;
   const curseCap = curseDiceCap(identity.entanglement);
 
+  const sendable = useSendableCard({
+    webhookUrl: character.webhookUrl,
+    embedColor: character.embedColor,
+    title: character.showNameInWebhook ? character.name : '',
+    buildContent: () =>
+      [
+        `${t('sheet.entanglement')} ${identity.entanglement}`,
+        `${t('roller.curseDice')} ${character.curseDice}/${curseCap}`,
+        !character.hideMomentum && `${t('sheet.momentum')} ${character.momentum}`,
+      ]
+        .filter(Boolean)
+        .join(' · '),
+  });
+
   const entanglementDots = (
     <Dots
       value={identity.entanglement}
@@ -501,8 +517,12 @@ export function CurseCard({
     );
   }
 
+  // The send overlay only applies outside edit mode — while editing this
+  // card, its dots/checkbox need real clicks, not a click-to-send capture.
+  const sendableHere = sendable.active && !editing;
+
   return (
-    <section className="card">
+    <section className={`card ${sendableHere ? 'sendable-active' : ''}`}>
       <div className="curse-row">
         <span className="field-label">
           <FieldLabel i18nKey="sheet.entanglement" en="Entanglement" />
@@ -537,6 +557,18 @@ export function CurseCard({
           <span>{t('sheet.hideMomentum')}</span>
         </label>
       )}
+      {sendableHere && (
+        <div className="sendable-overlay" onClick={sendable.openConfirm}>
+          <SendConfirmPopover
+            confirm={sendable.confirm}
+            popoverRef={sendable.popoverRef}
+            cancel={sendable.cancel}
+            send={sendable.send}
+            status={sendable.status}
+            error={sendable.error}
+          />
+        </div>
+      )}
     </section>
   );
 }
@@ -553,6 +585,7 @@ export function InjuryCard({
   editing?: boolean;
 }) {
   const { t } = useTranslation();
+  const lang = useLang();
   const patch = useCharacterStore((s) => s.patch);
   const { injuries, armor } = character;
 
@@ -571,6 +604,33 @@ export function InjuryCard({
     ? trackLevels.reduce((sum, l, i) => sum + levelBoxes(l, i), 0)
     : injuries.boxes;
   const marked = Math.min(injuries.marked, total);
+
+  // Which structured level the deepest marked box currently falls in, for
+  // the sendable summary — mirrors the "lit" level highlighted below.
+  const currentLevelLabel = (() => {
+    let offset = 0;
+    for (const [i, level] of trackLevels.entries()) {
+      const start = offset;
+      offset += levelBoxes(level, i);
+      if (marked > start && marked <= offset) return label(level.label, lang);
+    }
+    return undefined;
+  })();
+
+  const sendable = useSendableCard({
+    webhookUrl: character.webhookUrl,
+    embedColor: character.embedColor,
+    title: character.showNameInWebhook ? character.name : '',
+    buildContent: () =>
+      [
+        `${t('sheet.injuries')} ${marked}/${total}`,
+        currentLevelLabel,
+        injuries.takenOut && terminalLevel && label(terminalLevel.label, lang),
+      ]
+        .filter(Boolean)
+        .join(' · '),
+  });
+  const sendableHere = sendable.active && !editing;
 
   const setMarked = (n: number) =>
     patch({ injuries: { ...injuries, marked: Math.max(0, Math.min(n, total)) } });
@@ -725,7 +785,9 @@ export function InjuryCard({
       );
     }
     return (
-      <section className={`card ${injuries.takenOut ? 'taken-out' : ''}`}>
+      <section
+        className={`card ${injuries.takenOut ? 'taken-out' : ''} ${sendableHere ? 'sendable-active' : ''}`}
+      >
         <div className="item-card-head">
           <h2>
             <FieldLabel i18nKey="sheet.injuries" en="Injuries" />
@@ -748,6 +810,18 @@ export function InjuryCard({
           </div>
         )}
         <div className="injury-track grouped">{groups}</div>
+        {sendableHere && (
+          <div className="sendable-overlay" onClick={sendable.openConfirm}>
+            <SendConfirmPopover
+              confirm={sendable.confirm}
+              popoverRef={sendable.popoverRef}
+              cancel={sendable.cancel}
+              send={sendable.send}
+              status={sendable.status}
+              error={sendable.error}
+            />
+          </div>
+        )}
       </section>
     );
   }
