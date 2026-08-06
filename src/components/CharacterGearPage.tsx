@@ -81,6 +81,7 @@ function GearCard({
             onChange={(e) => setName(e.target.value)}
           />
           <input
+            className="field-narrow"
             placeholder={t('gear.typePlaceholder')}
             value={type}
             onChange={(e) => setType(e.target.value)}
@@ -95,8 +96,9 @@ function GearCard({
           />
         </div>
         <div className="form-row">
-          <input
+          <textarea
             className="grow"
+            rows={2}
             placeholder={t('tricks.descPlaceholder')}
             value={desc}
             onChange={(e) => setDesc(e.target.value)}
@@ -225,17 +227,21 @@ function GearSection({
         <>
           <div className="form-row">
             <input
+              className="grow"
               placeholder={t('sheet.namePlaceholder')}
               value={name}
               onChange={(e) => setName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && add()}
             />
             <input
+              className="field-narrow"
               placeholder={t('gear.typePlaceholder')}
               value={type}
               onChange={(e) => setType(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && add()}
             />
+          </div>
+          <div className="form-row">
             <input
               className="grow"
               placeholder={t('gear.tagsPlaceholder')}
@@ -245,12 +251,12 @@ function GearSection({
             />
           </div>
           <div className="form-row">
-            <input
+            <textarea
               className="grow"
+              rows={2}
               placeholder={t('tricks.descPlaceholder')}
               value={desc}
               onChange={(e) => setDesc(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && add()}
             />
             <button onClick={add}>{t('sheet.add')}</button>
           </div>

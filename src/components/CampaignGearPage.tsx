@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCampaignStore } from '../store/campaignStore';
 import { useUiStore } from '../store/uiStore';
@@ -81,6 +81,7 @@ function GearCard({
             onChange={(e) => setName(e.target.value)}
           />
           <input
+            className="field-narrow"
             placeholder={t('gear.typePlaceholder')}
             value={type}
             onChange={(e) => setType(e.target.value)}
@@ -95,8 +96,9 @@ function GearCard({
           />
         </div>
         <div className="form-row">
-          <input
+          <textarea
             className="grow"
+            rows={2}
             placeholder={t('tricks.descPlaceholder')}
             value={desc}
             onChange={(e) => setDesc(e.target.value)}
@@ -169,16 +171,17 @@ function GearCard({
 export function CampaignGearPage({ campaign }: { campaign: Campaign }) {
   const { t } = useTranslation();
   const patch = useCampaignStore((s) => s.patch);
-  const setSendModeActive = useUiStore((s) => s.setSendModeActive);
+  const setEditingActive = useUiStore((s) => s.setEditingActive);
   const [editing, setEditing] = useState(false);
-  // This tab has no global edit toggle to piggyback on (each GM tab edits
-  // its own list independently), so entering edit mode forces send mode
-  // off directly rather than through useUiStore's editingActive path.
-  const toggleEditing = () =>
-    setEditing((v) => {
-      if (!v) setSendModeActive(false);
-      return !v;
-    });
+  // This tab has no page-level edit toggle to piggyback on (each GM tab
+  // edits its own list independently) — mirror it into the shared
+  // editingActive flag so the send-mode toggle disables itself here too,
+  // and clear it on unmount so switching tabs mid-edit doesn't leave it
+  // stuck on.
+  useEffect(() => {
+    setEditingActive(editing);
+    return () => setEditingActive(false);
+  }, [editing, setEditingActive]);
   const [name, setName] = useState('');
   const [type, setType] = useState('');
   const [tags, setTags] = useState('');
@@ -210,7 +213,7 @@ export function CampaignGearPage({ campaign }: { campaign: Campaign }) {
           <h2 className="grow">
             <FieldLabel i18nKey="sheet.gear" en="Gear" />
           </h2>
-          <button className={editing ? 'primary' : ''} onClick={toggleEditing}>
+          <button className={editing ? 'primary' : ''} onClick={() => setEditing((v) => !v)}>
             {editing ? <><IconCheck /> {t('sheet.done')}</> : <><IconEdit /> {t('sheet.edit')}</>}
           </button>
         </div>
@@ -236,17 +239,21 @@ export function CampaignGearPage({ campaign }: { campaign: Campaign }) {
           <>
             <div className="form-row">
               <input
+                className="grow"
                 placeholder={t('sheet.namePlaceholder')}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && add()}
               />
               <input
+                className="field-narrow"
                 placeholder={t('gear.typePlaceholder')}
                 value={type}
                 onChange={(e) => setType(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && add()}
               />
+            </div>
+            <div className="form-row">
               <input
                 className="grow"
                 placeholder={t('gear.tagsPlaceholder')}
@@ -256,12 +263,12 @@ export function CampaignGearPage({ campaign }: { campaign: Campaign }) {
               />
             </div>
             <div className="form-row">
-              <input
+              <textarea
                 className="grow"
+                rows={2}
                 placeholder={t('tricks.descPlaceholder')}
                 value={desc}
                 onChange={(e) => setDesc(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && add()}
               />
               <button onClick={add}>{t('sheet.add')}</button>
             </div>

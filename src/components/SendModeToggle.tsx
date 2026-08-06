@@ -13,6 +13,7 @@ import { IconDiscord } from './icons';
 export function SendModeToggle() {
   const { t } = useTranslation();
   const active = useUiStore((s) => s.sendModeActive);
+  const editingActive = useUiStore((s) => s.editingActive);
   const toggle = useUiStore((s) => s.toggleSendMode);
 
   return (
@@ -21,9 +22,10 @@ export function SendModeToggle() {
       role="switch"
       aria-checked={active}
       aria-label={t('message.sendMode')}
-      title={t('message.sendModeHint')}
+      title={editingActive ? t('message.sendModeDisabledHint') : t('message.sendModeHint')}
       className={`send-mode-toggle ${active ? 'on' : ''}`}
       onClick={toggle}
+      disabled={editingActive}
     >
       <IconDiscord />
       <span className="send-mode-toggle-track">

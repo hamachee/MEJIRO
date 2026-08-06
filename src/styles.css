@@ -292,6 +292,12 @@ body {
   flex: 1;
   min-width: 0;
 }
+/* A field that's normally just a word or two (gear's "type") — shrunk so
+   it doesn't crowd out the fields around it that actually need the room. */
+.field-narrow {
+  flex: none;
+  width: 7rem;
+}
 /* Per-list import/export toolbar, set off from the add-entry form above it. */
 .list-io {
   margin-top: 0.8rem;
@@ -2278,6 +2284,10 @@ button.send-mode-toggle {
   border-radius: 999px;
   color: var(--muted);
   transition: border-color 0.15s ease;
+}
+.send-mode-toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 .send-mode-toggle .icon {
   width: 1rem;
