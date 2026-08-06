@@ -39,10 +39,17 @@ Source: <https://github.com/twbs/bootstrap-icons>
 
 ## Lucide (ISC)
 
-`IconClose`, `IconEdit`, `IconCheck`, `IconWarning`, `IconCopy`,
-`IconExport`, `IconImport`, `IconTrash`, `IconBack`, `IconLink`, and
-`IconUndo` are loosely adapted from — not copied verbatim from — Lucide's
-stroke icon designs (simplified/redrawn to fit this app's icon style).
+`IconClose`, `IconCheck`, `IconTrash`, `IconBack`, and `IconLink` copy path
+data from Lucide's `x`, `check`, `trash`, `arrow-left`, and `link` icons
+respectively (identical geometry — some just restructure the `<path>`
+elements or use relative vs. absolute coordinates). `IconWarning`'s
+exclamation mark (the vertical line and dot) also copies Lucide's
+`triangle-alert`, though its triangle outline does not.
+
+`IconEdit`, `IconWarning`'s triangle outline, `IconCopy`, `IconExport`,
+`IconImport`, and `IconUndo` are original/simplified redraws — not copied
+from Lucide's current versions of those icons — included here anyway since
+they're visually in the same stroke-icon style.
 
 ```
 ISC License
