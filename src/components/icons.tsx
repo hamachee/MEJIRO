@@ -1,10 +1,10 @@
 /**
  * Inline SVG icons, replacing the emoji glyphs the UI used before so icons
  * render identically on every platform and follow the theme via currentColor.
- * A few (the diamond, geo-alt, geo-alt-fill, question-lg, gear(-fill) and
- * Discord shapes) copy path data from Bootstrap Icons, Lucide and Simple
- * Icons rather than being original — see THIRD_PARTY_NOTICES.md at the repo
- * root for exactly which icons and their full license text.
+ * Most copy path data from Bootstrap Icons rather than being original — see
+ * THIRD_PARTY_NOTICES.md at the repo root for exactly which and its license
+ * text (kept to one source on purpose, rather than mixing in icons copied
+ * from other sets, so that file only needs the one license).
  *
  * All icons are decorative (aria-hidden): buttons that show only an icon
  * carry their own aria-label.
@@ -36,83 +36,91 @@ function Icon({
   );
 }
 
-/** ✕ — close / remove / cancel */
+/** Bootstrap Icons "x-lg" — close / remove / cancel */
 export function IconClose(props: SVGProps<SVGSVGElement>) {
   return (
-    <Icon {...props}>
-      <path d="M18 6 6 18M6 6l12 12" />
+    <Icon viewBox="0 0 16 16" fill="currentColor" stroke="none" {...props}>
+      <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
     </Icon>
   );
 }
 
-/** ✏️ — edit */
+/** Bootstrap Icons "pencil-fill" — edit */
 export function IconEdit(props: SVGProps<SVGSVGElement>) {
   return (
-    <Icon {...props}>
-      <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+    <Icon viewBox="0 0 16 16" fill="currentColor" stroke="none" {...props}>
+      <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" />
     </Icon>
   );
 }
 
-/** ✓ — done / confirm */
+/** Bootstrap Icons "check-lg" — done / confirm */
 export function IconCheck(props: SVGProps<SVGSVGElement>) {
   return (
-    <Icon {...props}>
-      <path d="m20 6-11 11-5-5" />
+    <Icon viewBox="0 0 16 16" fill="currentColor" stroke="none" {...props}>
+      <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z" />
     </Icon>
   );
 }
 
-/** ⚠ — warning */
+/** Bootstrap Icons "exclamation-triangle-fill" — warning */
 export function IconWarning(props: SVGProps<SVGSVGElement>) {
   return (
-    <Icon {...props}>
-      <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-      <path d="M12 9v4" />
-      <path d="M12 17h.01" />
+    <Icon viewBox="0 0 16 16" fill="currentColor" stroke="none" {...props}>
+      <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
     </Icon>
   );
 }
 
-/** 📋 — duplicate / copy */
+/** Bootstrap Icons "copy" — duplicate / copy */
 export function IconCopy(props: SVGProps<SVGSVGElement>) {
   return (
-    <Icon {...props}>
-      <rect x="9" y="9" width="13" height="13" rx="2" />
-      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+    <Icon viewBox="0 0 16 16" fill="currentColor" stroke="none" {...props}>
+      <path
+        fillRule="evenodd"
+        d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"
+      />
     </Icon>
   );
 }
 
-/** 📤 — export / share out */
+/** Bootstrap Icons "box-arrow-up" — export / share out */
 export function IconExport(props: SVGProps<SVGSVGElement>) {
   return (
-    <Icon {...props}>
-      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-      <path d="m16 6-4-4-4 4" />
-      <path d="M12 2v13" />
+    <Icon viewBox="0 0 16 16" fill="currentColor" stroke="none" {...props}>
+      <path
+        fillRule="evenodd"
+        d="M3.5 6a.5.5 0 0 0-.5.5v8a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-8a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 1 0-1h2A1.5 1.5 0 0 1 14 6.5v8a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 14.5v-8A1.5 1.5 0 0 1 3.5 5h2a.5.5 0 0 1 0 1z"
+      />
+      <path
+        fillRule="evenodd"
+        d="M7.646.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 1.707V10.5a.5.5 0 0 1-1 0V1.707L5.354 3.854a.5.5 0 1 1-.708-.708z"
+      />
     </Icon>
   );
 }
 
-/** 📥 — import / bring in */
+/** Bootstrap Icons "box-arrow-in-down" — import / bring in */
 export function IconImport(props: SVGProps<SVGSVGElement>) {
   return (
-    <Icon {...props}>
-      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-      <path d="m8 11 4 4 4-4" />
-      <path d="M12 2v13" />
+    <Icon viewBox="0 0 16 16" fill="currentColor" stroke="none" {...props}>
+      <path
+        fillRule="evenodd"
+        d="M3.5 6a.5.5 0 0 0-.5.5v8a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-8a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 1 0-1h2A1.5 1.5 0 0 1 14 6.5v8a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 14.5v-8A1.5 1.5 0 0 1 3.5 5h2a.5.5 0 0 1 0 1z"
+      />
+      <path
+        fillRule="evenodd"
+        d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"
+      />
     </Icon>
   );
 }
 
-/** 🗑 — clear / delete all */
+/** Bootstrap Icons "trash3-fill" — clear / delete all */
 export function IconTrash(props: SVGProps<SVGSVGElement>) {
   return (
-    <Icon {...props}>
-      <path d="M3 6h18" />
-      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-      <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+    <Icon viewBox="0 0 16 16" fill="currentColor" stroke="none" {...props}>
+      <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
     </Icon>
   );
 }
@@ -129,32 +137,37 @@ export function IconStar({ filled = false, ...props }: SVGProps<SVGSVGElement> &
   );
 }
 
-/** ← — back navigation */
+/** Bootstrap Icons "arrow-left" — back navigation */
 export function IconBack(props: SVGProps<SVGSVGElement>) {
   return (
-    <Icon {...props}>
-      <path d="M19 12H5" />
-      <path d="m12 19-7-7 7-7" />
+    <Icon viewBox="0 0 16 16" fill="currentColor" stroke="none" {...props}>
+      <path
+        fillRule="evenodd"
+        d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"
+      />
     </Icon>
   );
 }
 
-/** 🔗 — external link */
+/** Bootstrap Icons "link-45deg" — external link */
 export function IconLink(props: SVGProps<SVGSVGElement>) {
   return (
-    <Icon {...props}>
-      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+    <Icon viewBox="0 0 16 16" fill="currentColor" stroke="none" {...props}>
+      <path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1 1 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4 4 0 0 1-.128-1.287z" />
+      <path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243z" />
     </Icon>
   );
 }
 
-/** ↺ — undo */
+/** Bootstrap Icons "arrow-counterclockwise" — undo */
 export function IconUndo(props: SVGProps<SVGSVGElement>) {
   return (
-    <Icon {...props}>
-      <path d="M1 4v6h6" />
-      <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+    <Icon viewBox="0 0 16 16" fill="currentColor" stroke="none" {...props}>
+      <path
+        fillRule="evenodd"
+        d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z"
+      />
+      <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466" />
     </Icon>
   );
 }
@@ -234,11 +247,11 @@ export function IconGearFill(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-/** Discord's own mark — send-mode cursor badge and card-send affordances. */
+/** Bootstrap Icons "discord" — send-mode cursor badge and card-send affordances. */
 export function IconDiscord(props: SVGProps<SVGSVGElement>) {
   return (
-    <Icon viewBox="0 0 24 24" fill="currentColor" stroke="none" {...props}>
-      <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" />
+    <Icon viewBox="0 0 16 16" fill="currentColor" stroke="none" {...props}>
+      <path d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059l-.018-.011a9 9 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019q.127-.095.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007q.121.1.248.195a.05.05 0 0 1-.004.085 8 8 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612" />
     </Icon>
   );
 }

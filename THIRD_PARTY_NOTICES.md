@@ -1,15 +1,15 @@
 # Third-Party Notices
 
 MEJIRO's own code is MIT licensed (see [LICENSE](LICENSE)). The icons in
-`src/components/icons.tsx` are inline SVGs; most are original or loosely
-adapted, but a few reproduce path data from other open-source icon sets.
-Their license terms are reproduced below, as required.
+`src/components/icons.tsx` are inline SVGs; `IconStar` and `IconTabHandle`
+are original, and every other icon copies path data from Bootstrap Icons
+(`x-lg`, `pencil-fill`, `check-lg`, `exclamation-triangle-fill`, `copy`,
+`box-arrow-up`, `box-arrow-in-down`, `trash3-fill`, `arrow-left`,
+`link-45deg`, `arrow-counterclockwise`, `discord`, `suit-diamond-fill`,
+`geo-alt`, `geo-alt-fill`, `question-lg`, `gear`, `gear-fill`). Its license
+is reproduced below, as required.
 
 ## Bootstrap Icons (MIT)
-
-`IconDiamond`, `IconGeoAlt`, `IconGeoAltFill`, `IconQuestion`, `IconGear`,
-and `IconGearFill` copy path data from Bootstrap Icons ("suit-diamond-fill",
-"geo-alt", "geo-alt-fill", "question-lg", "gear", "gear-fill").
 
 ```
 The MIT License (MIT)
@@ -37,48 +37,11 @@ THE SOFTWARE.
 
 Source: <https://github.com/twbs/bootstrap-icons>
 
-## Lucide (ISC)
+### Discord mark
 
-`IconClose`, `IconCheck`, `IconTrash`, `IconBack`, and `IconLink` copy path
-data from Lucide's `x`, `check`, `trash`, `arrow-left`, and `link` icons
-respectively (identical geometry — some just restructure the `<path>`
-elements or use relative vs. absolute coordinates). `IconWarning`'s
-exclamation mark (the vertical line and dot) also copies Lucide's
-`triangle-alert`, though its triangle outline does not.
-
-`IconEdit`, `IconWarning`'s triangle outline, `IconCopy`, `IconExport`,
-`IconImport`, and `IconUndo` are original/simplified redraws — not copied
-from Lucide's current versions of those icons — included here anyway since
-they're visually in the same stroke-icon style.
-
-```
-ISC License
-
-Copyright (c) 2026 Lucide Icons and Contributors
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-```
-
-Source: <https://lucide.dev>
-
-## Simple Icons (CC0-1.0) — Discord mark
-
-`IconDiscord` copies the Discord glyph from Simple Icons. Simple Icons'
-icon artwork is dedicated to the public domain under CC0 1.0 Universal, so
-no attribution is legally required for the SVG itself — noted here for
-completeness. Separately, "Discord" and the Discord logo are trademarks of
-Discord Inc.; MEJIRO is not affiliated with or endorsed by Discord, and use
-of the mark is limited to indicating the webhook integration it represents,
-not as a claim of any relationship with Discord.
-
-Source: <https://simpleicons.org>
+`IconDiscord` uses Bootstrap Icons' own `discord` glyph (covered by the MIT
+license above, same as every other icon here) rather than an official asset
+from Discord. "Discord" and the Discord logo are trademarks of Discord Inc.;
+MEJIRO is not affiliated with or endorsed by Discord, and use of the mark is
+limited to indicating the webhook integration it represents, not a claim of
+any relationship with Discord.
