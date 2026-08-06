@@ -6,9 +6,11 @@ import { IconClose, IconEdit, IconStar } from './icons';
 import { TagChips } from './TagChips';
 import { InjuryCard } from './CharacterSheet';
 import { ListImportExport } from './ListImportExport';
+import { SendConfirmPopover } from './SendConfirmPopover';
 import { uid } from '../lib/uid';
 import { parseTags } from '../lib/tags';
 import { useDragReorder } from '../lib/useDragReorder';
+import { useSendableCard } from '../lib/useSendableCard';
 import type { Character, GearItem } from '../types/character';
 import type { SystemTemplate } from '../types/template';
 
@@ -16,6 +18,7 @@ interface GearCardProps {
   item: GearItem;
   index: number;
   editing: boolean;
+  character: Character;
   onSave: (item: GearItem) => void;
   onRemove: () => void;
   dragHandleProps: ReturnType<typeof useDragReorder<GearItem>>['handleProps'];
@@ -27,6 +30,7 @@ function GearCard({
   item,
   index,
   editing,
+  character,
   onSave,
   onRemove,
   dragHandleProps,
@@ -34,6 +38,21 @@ function GearCard({
 }: GearCardProps) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const sendable = useSendableCard({
+    webhookUrl: character.webhookUrl,
+    embedColor: character.embedColor,
+    title: item.name,
+    buildContent: () =>
+      [
+        character.showNameInWebhook && character.name,
+        item.type,
+        item.tags.length > 0 && item.tags.join(', '),
+        item.description,
+      ]
+        .filter(Boolean)
+        .join(' · '),
+  });
+  const sendableHere = sendable.active && !editing;
   const [name, setName] = useState(item.name);
   const [type, setType] = useState(item.type ?? '');
   const [tags, setTags] = useState(item.tags.join(', '));
@@ -96,7 +115,7 @@ function GearCard({
   }
 
   return (
-    <div className={`item-card ${drag.className}`} data-drag-index={index}>
+    <div className={`item-card ${sendableHere ? 'sendable-active' : ''} ${drag.className}`} data-drag-index={index}>
       <div className="item-card-head">
         <div className="item-card-title">
           {editing && <span className="drag-handle" {...dragHandleProps(index)} />}
@@ -132,6 +151,18 @@ function GearCard({
       {item.type && <div className="muted item-card-type">{item.type}</div>}
       <TagChips tags={item.tags} />
       {item.description && <p className="muted item-card-desc">{item.description}</p>}
+      {sendableHere && (
+        <div className="sendable-overlay" onClick={sendable.openConfirm}>
+          <SendConfirmPopover
+            confirm={sendable.confirm}
+            popoverRef={sendable.popoverRef}
+            cancel={sendable.cancel}
+            send={sendable.send}
+            status={sendable.status}
+            error={sendable.error}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -182,6 +213,7 @@ function GearSection({
             item={item}
             index={i}
             editing={editing}
+            character={character}
             onSave={(updated) =>
               patch({ gear: items.map((x) => (x.id === item.id ? updated : x)) })
             }

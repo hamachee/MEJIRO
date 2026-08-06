@@ -5,9 +5,11 @@ import { FieldLabel } from './FieldLabel';
 import { IconCheck, IconClose, IconEdit, IconStar } from './icons';
 import { TagChips } from './TagChips';
 import { ListImportExport } from './ListImportExport';
+import { SendConfirmPopover } from './SendConfirmPopover';
 import { uid } from '../lib/uid';
 import { parseTags } from '../lib/tags';
 import { useDragReorder } from '../lib/useDragReorder';
+import { useSendableCard } from '../lib/useSendableCard';
 import type { Campaign } from '../types/campaign';
 import type { SpellItem } from '../types/character';
 
@@ -15,6 +17,7 @@ interface SpellCardProps {
   item: SpellItem;
   index: number;
   editing: boolean;
+  campaign: Campaign;
   onSave: (item: SpellItem) => void;
   onRemove: () => void;
   dragHandleProps: ReturnType<typeof useDragReorder<SpellItem>>['handleProps'];
@@ -26,6 +29,7 @@ function SpellCard({
   item,
   index,
   editing,
+  campaign,
   onSave,
   onRemove,
   dragHandleProps,
@@ -33,6 +37,22 @@ function SpellCard({
 }: SpellCardProps) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const sendable = useSendableCard({
+    webhookUrl: campaign.webhookUrl,
+    embedColor: campaign.embedColor,
+    title: item.name,
+    buildContent: () =>
+      [
+        campaign.name,
+        item.cost && `${t('spells.cost')}: ${item.cost}`,
+        item.attunements.length > 0 && item.attunements.join(', '),
+        item.effect,
+        item.advancements,
+      ]
+        .filter(Boolean)
+        .join(' · '),
+  });
+  const sendableHere = sendable.active && !editing;
   const [name, setName] = useState(item.name);
   const [cost, setCost] = useState(item.cost ?? '');
   const [attunements, setAttunements] = useState(item.attunements.join(', '));
@@ -107,7 +127,7 @@ function SpellCard({
   }
 
   return (
-    <div className={`item-card ${drag.className}`} data-drag-index={index}>
+    <div className={`item-card ${sendableHere ? 'sendable-active' : ''} ${drag.className}`} data-drag-index={index}>
       <div className="item-card-head">
         <div className="item-card-title">
           {editing && <span className="drag-handle" {...dragHandleProps(index)} />}
@@ -148,6 +168,18 @@ function SpellCard({
       <TagChips tags={item.attunements} />
       {item.effect && <p className="muted item-card-desc">{item.effect}</p>}
       {item.advancements && <p className="muted item-card-desc">{item.advancements}</p>}
+      {sendableHere && (
+        <div className="sendable-overlay" onClick={sendable.openConfirm}>
+          <SendConfirmPopover
+            confirm={sendable.confirm}
+            popoverRef={sendable.popoverRef}
+            cancel={sendable.cancel}
+            send={sendable.send}
+            status={sendable.status}
+            error={sendable.error}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -203,6 +235,7 @@ export function CampaignSpellsPage({ campaign }: { campaign: Campaign }) {
               item={item}
               index={i}
               editing={editing}
+              campaign={campaign}
               onSave={(updated) =>
                 patch({ spells: items.map((x) => (x.id === item.id ? updated : x)) })
               }

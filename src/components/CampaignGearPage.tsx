@@ -5,9 +5,11 @@ import { FieldLabel } from './FieldLabel';
 import { IconCheck, IconClose, IconEdit, IconStar } from './icons';
 import { TagChips } from './TagChips';
 import { ListImportExport } from './ListImportExport';
+import { SendConfirmPopover } from './SendConfirmPopover';
 import { uid } from '../lib/uid';
 import { parseTags } from '../lib/tags';
 import { useDragReorder } from '../lib/useDragReorder';
+import { useSendableCard } from '../lib/useSendableCard';
 import type { Campaign } from '../types/campaign';
 import type { GearItem } from '../types/character';
 
@@ -15,6 +17,7 @@ interface GearCardProps {
   item: GearItem;
   index: number;
   editing: boolean;
+  campaign: Campaign;
   onSave: (item: GearItem) => void;
   onRemove: () => void;
   dragHandleProps: ReturnType<typeof useDragReorder<GearItem>>['handleProps'];
@@ -26,6 +29,7 @@ function GearCard({
   item,
   index,
   editing,
+  campaign,
   onSave,
   onRemove,
   dragHandleProps,
@@ -33,6 +37,16 @@ function GearCard({
 }: GearCardProps) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const sendable = useSendableCard({
+    webhookUrl: campaign.webhookUrl,
+    embedColor: campaign.embedColor,
+    title: item.name,
+    buildContent: () =>
+      [campaign.name, item.type, item.tags.length > 0 && item.tags.join(', '), item.description]
+        .filter(Boolean)
+        .join(' · '),
+  });
+  const sendableHere = sendable.active && !editing;
   const [name, setName] = useState(item.name);
   const [type, setType] = useState(item.type ?? '');
   const [tags, setTags] = useState(item.tags.join(', '));
@@ -95,7 +109,7 @@ function GearCard({
   }
 
   return (
-    <div className={`item-card ${drag.className}`} data-drag-index={index}>
+    <div className={`item-card ${sendableHere ? 'sendable-active' : ''} ${drag.className}`} data-drag-index={index}>
       <div className="item-card-head">
         <div className="item-card-title">
           {editing && <span className="drag-handle" {...dragHandleProps(index)} />}
@@ -131,6 +145,18 @@ function GearCard({
       {item.type && <div className="muted item-card-type">{item.type}</div>}
       <TagChips tags={item.tags} />
       {item.description && <p className="muted item-card-desc">{item.description}</p>}
+      {sendableHere && (
+        <div className="sendable-overlay" onClick={sendable.openConfirm}>
+          <SendConfirmPopover
+            confirm={sendable.confirm}
+            popoverRef={sendable.popoverRef}
+            cancel={sendable.cancel}
+            send={sendable.send}
+            status={sendable.status}
+            error={sendable.error}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -183,6 +209,7 @@ export function CampaignGearPage({ campaign }: { campaign: Campaign }) {
               item={item}
               index={i}
               editing={editing}
+              campaign={campaign}
               onSave={(updated) =>
                 patch({ gear: items.map((x) => (x.id === item.id ? updated : x)) })
               }
