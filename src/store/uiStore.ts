@@ -13,11 +13,17 @@ interface UiStoreState {
   setEditingActive: (active: boolean) => void;
   sendModeActive: boolean;
   toggleSendMode: () => void;
+  setSendModeActive: (active: boolean) => void;
 }
 
 export const useUiStore = create<UiStoreState>((set, get) => ({
   editingActive: false,
-  setEditingActive: (active) => set({ editingActive: active }),
+  // Editing and send mode are mutually exclusive — every sendable overlay
+  // already turns itself off while its own card is editing, but forcing
+  // the table-wide toggle off too (instead of leaving it lit with nothing
+  // to do) means re-entering play mode never silently resumes send mode.
+  setEditingActive: (active) => set({ editingActive: active, ...(active ? { sendModeActive: false } : {}) }),
   sendModeActive: false,
   toggleSendMode: () => set({ sendModeActive: !get().sendModeActive }),
+  setSendModeActive: (active) => set({ sendModeActive: active }),
 }));

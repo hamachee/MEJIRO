@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCampaignStore } from '../store/campaignStore';
+import { useUiStore } from '../store/uiStore';
 import { FieldLabel } from './FieldLabel';
 import { IconCheck, IconClose, IconEdit, IconStar } from './icons';
 import { TagChips } from './TagChips';
@@ -187,7 +188,16 @@ function SpellCard({
 export function CampaignSpellsPage({ campaign }: { campaign: Campaign }) {
   const { t } = useTranslation();
   const patch = useCampaignStore((s) => s.patch);
+  const setSendModeActive = useUiStore((s) => s.setSendModeActive);
   const [editing, setEditing] = useState(false);
+  // This tab has no global edit toggle to piggyback on (each GM tab edits
+  // its own list independently), so entering edit mode forces send mode
+  // off directly rather than through useUiStore's editingActive path.
+  const toggleEditing = () =>
+    setEditing((v) => {
+      if (!v) setSendModeActive(false);
+      return !v;
+    });
   const [name, setName] = useState('');
   const [cost, setCost] = useState('');
   const [attunements, setAttunements] = useState('');
@@ -222,7 +232,7 @@ export function CampaignSpellsPage({ campaign }: { campaign: Campaign }) {
           <h2 className="grow">
             <FieldLabel i18nKey="sheet.spells" en="Spells" />
           </h2>
-          <button className={editing ? 'primary' : ''} onClick={() => setEditing((v) => !v)}>
+          <button className={editing ? 'primary' : ''} onClick={toggleEditing}>
             {editing ? <><IconCheck /> {t('sheet.done')}</> : <><IconEdit /> {t('sheet.edit')}</>}
           </button>
         </div>
