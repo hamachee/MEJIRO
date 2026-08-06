@@ -3,7 +3,7 @@ import { useUiStore } from '../store/uiStore';
 import { useSettingsStore } from '../store/settingsStore';
 
 /** How long Ctrl must be held alone before it counts as a hold gesture, not a shortcut's modifier. */
-const HOLD_DELAY_MS = 620;
+const HOLD_DELAY_MS = 500;
 
 /**
  * Holding Ctrl activates send mode for as long as it's held, without
