@@ -14,6 +14,15 @@ interface UiStoreState {
   sendModeActive: boolean;
   toggleSendMode: () => void;
   setSendModeActive: (active: boolean) => void;
+  /**
+   * True only while send mode is active purely because Ctrl is being held
+   * (see useSendModeHotkey), as opposed to the toggle being switched on.
+   * The app-wide background pattern reads this to skip itself for a
+   * momentary hold — cards still glow and the cursor badge still shows,
+   * but the full-page flicker is reserved for a deliberate toggle-on.
+   */
+  sendModeViaHotkey: boolean;
+  setSendModeViaHotkey: (viaHotkey: boolean) => void;
 }
 
 export const useUiStore = create<UiStoreState>((set, get) => ({
@@ -22,8 +31,14 @@ export const useUiStore = create<UiStoreState>((set, get) => ({
   // already turns itself off while its own card is editing, but forcing
   // the table-wide toggle off too (instead of leaving it lit with nothing
   // to do) means re-entering play mode never silently resumes send mode.
-  setEditingActive: (active) => set({ editingActive: active, ...(active ? { sendModeActive: false } : {}) }),
+  setEditingActive: (active) =>
+    set({
+      editingActive: active,
+      ...(active ? { sendModeActive: false, sendModeViaHotkey: false } : {}),
+    }),
   sendModeActive: false,
   toggleSendMode: () => set({ sendModeActive: !get().sendModeActive }),
   setSendModeActive: (active) => set({ sendModeActive: active }),
+  sendModeViaHotkey: false,
+  setSendModeViaHotkey: (viaHotkey) => set({ sendModeViaHotkey: viaHotkey }),
 }));

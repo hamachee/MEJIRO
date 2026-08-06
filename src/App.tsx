@@ -26,6 +26,7 @@ export function App() {
   const headerHidden = useHeaderHidden();
   const editingActive = useUiStore((s) => s.editingActive);
   const sendModeActive = useUiStore((s) => s.sendModeActive);
+  const sendModeViaHotkey = useUiStore((s) => s.sendModeViaHotkey);
   useSendModeHotkey();
 
   useEffect(() => {
@@ -35,7 +36,9 @@ export function App() {
   }, [loadSettings, loadRoster, loadCampaignRoster]);
 
   return (
-    <div className={`app ${editingActive ? 'editing' : ''} ${sendModeActive ? 'send-mode' : ''}`}>
+    <div
+      className={`app ${editingActive ? 'editing' : ''} ${sendModeActive && !sendModeViaHotkey ? 'send-mode' : ''}`}
+    >
       <SendModeCursor />
       <header className={`app-header ${headerHidden ? 'hidden' : ''}`}>
         <NavLink to="/" className="brand">
