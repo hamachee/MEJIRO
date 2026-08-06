@@ -1,10 +1,10 @@
 /**
  * Inline SVG icons, replacing the emoji glyphs the UI used before so icons
  * render identically on every platform and follow the theme via currentColor.
- * Stroke shapes adapted from Lucide (lucide.dev, ISC license); the diamond,
- * geo-alt, geo-alt-fill, question-lg and gear(-fill) shapes below are
- * Bootstrap Icons' "suit-diamond-fill", "geo-alt", "geo-alt-fill",
- * "question-lg" and "gear"/"gear-fill" (MIT license).
+ * A few (the diamond, geo-alt, geo-alt-fill, question-lg, gear(-fill) and
+ * Discord shapes) copy path data from Bootstrap Icons, Lucide and Simple
+ * Icons rather than being original — see THIRD_PARTY_NOTICES.md at the repo
+ * root for exactly which icons and their full license text.
  *
  * All icons are decorative (aria-hidden): buttons that show only an icon
  * carry their own aria-label.
