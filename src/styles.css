@@ -2331,8 +2331,8 @@ button.send-mode-toggle {
   cursor: not-allowed;
 }
 .send-mode-toggle .icon {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.2rem;
+  height: 1.2rem;
   color: inherit;
 }
 .send-mode-toggle-track {
@@ -2349,8 +2349,8 @@ button.send-mode-toggle {
   position: absolute;
   top: 1px;
   left: 1px;
-  width: calc(1.2rem - 4px);
-  height: calc(1.2rem - 4px);
+  width: calc(1.5rem - 4px);
+  height: calc(1.5rem - 4px);
   border-radius: 50%;
   background: var(--muted);
   transition: transform 0.15s ease, background 0.15s ease;
