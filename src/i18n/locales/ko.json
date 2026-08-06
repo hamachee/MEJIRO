@@ -237,6 +237,8 @@
   },
   "message": {
     "title": "메시지",
+    "sendMode": "전송 모드",
+    "sendModeHint": "켜져 있는 동안 전송 가능한 카드를 클릭하면 평소 동작 대신 현재 내용을 디스코드로 전송합니다. Ctrl 키를 누르고 있으면 토글 없이 일시적으로 켤 수 있습니다.",
     "titlePlaceholder": "제목 (선택)",
     "placeholder": "디스코드로 보낼 메시지를 입력하세요…",
     "colorLabel": "색상",
@@ -254,6 +256,16 @@
   "common": {
     "cancel": "취소",
     "close": "닫기"
+  },
+  "send": {
+    "yes": "디스코드로 전송",
+    "no": "취소",
+    "posting": "전송 중…",
+    "error": "전송 실패: {{message}}",
+    "noWebhook": "이 시트에 설정된 웹훅이 없습니다.",
+    "spellItem": "주문",
+    "trickItem": "트릭",
+    "hits": "히트"
   },
   "info": {
     "title": "정보 & 도움말",

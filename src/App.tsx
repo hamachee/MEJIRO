@@ -7,7 +7,9 @@ import { useCampaignStore } from './store/campaignStore';
 import { useUiStore } from './store/uiStore';
 import { useTheme } from './lib/useTheme';
 import { useHeaderHidden } from './lib/useHeaderHidden';
+import { useSendModeHotkey } from './lib/useSendModeHotkey';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
+import { SendModeCursor } from './components/SendModeCursor';
 import { CharacterList } from './components/CharacterList';
 import { CharacterView } from './components/CharacterView';
 import { CampaignList } from './components/CampaignList';
@@ -23,6 +25,9 @@ export function App() {
   useTheme();
   const headerHidden = useHeaderHidden();
   const editingActive = useUiStore((s) => s.editingActive);
+  const sendModeActive = useUiStore((s) => s.sendModeActive);
+  const sendModeViaHotkey = useUiStore((s) => s.sendModeViaHotkey);
+  useSendModeHotkey();
 
   useEffect(() => {
     loadSettings();
@@ -31,7 +36,10 @@ export function App() {
   }, [loadSettings, loadRoster, loadCampaignRoster]);
 
   return (
-    <div className={`app ${editingActive ? 'editing' : ''}`}>
+    <div
+      className={`app ${editingActive ? 'editing' : ''} ${sendModeActive && !sendModeViaHotkey ? 'send-mode' : ''}`}
+    >
+      <SendModeCursor />
       <header className={`app-header ${headerHidden ? 'hidden' : ''}`}>
         <NavLink to="/" className="brand">
           <span className="brand-mark">目</span>

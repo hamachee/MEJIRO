@@ -1,14 +1,17 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCampaignStore } from '../store/campaignStore';
+import { useUiStore } from '../store/uiStore';
 import { uid } from '../lib/uid';
 import { useDragReorder } from '../lib/useDragReorder';
 import { FieldLabel } from './FieldLabel';
 import { IconCheck, IconClose, IconEdit } from './icons';
 import { ListImportExport } from './ListImportExport';
+import { SendConfirmPopover } from './SendConfirmPopover';
 import { TrickInfo } from './TrickInfo';
 import { TrickCostSelect } from './TrickCostSelect';
 import { formatTrickCost } from '../lib/trickCost';
+import { useSendableCard } from '../lib/useSendableCard';
 import type { Campaign } from '../types/campaign';
 import type { CharacterTrick } from '../types/character';
 
@@ -17,6 +20,7 @@ function TrickRow({
   trick,
   index,
   editing,
+  campaign,
   onSave,
   onRemove,
   dragHandleProps,
@@ -25,6 +29,7 @@ function TrickRow({
   trick: CharacterTrick;
   index: number;
   editing: boolean;
+  campaign: Campaign;
   onSave: (trick: CharacterTrick) => void;
   onRemove: () => void;
   dragHandleProps: ReturnType<typeof useDragReorder<CharacterTrick>>['handleProps'];
@@ -32,6 +37,13 @@ function TrickRow({
 }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const sendable = useSendableCard({
+    webhookUrl: campaign.webhookUrl,
+    embedColor: campaign.embedColor,
+    title: `${t('send.trickItem')}: ${trick.name} · ${formatTrickCost(trick.cost)} ${t('send.hits')}`,
+    buildContent: () => trick.description ?? '',
+  });
+  const sendableHere = sendable.active && !editing;
   const [name, setName] = useState(trick.name);
   const [cost, setCost] = useState<CharacterTrick['cost']>(trick.cost);
   const [desc, setDesc] = useState(trick.description ?? '');
@@ -77,7 +89,7 @@ function TrickRow({
   }
 
   return (
-    <li className={`named-item ${drag.className}`} data-drag-index={index}>
+    <li className={`named-item ${sendableHere ? 'sendable-active' : ''} ${drag.className}`} data-drag-index={index}>
       <div className="named-item-row">
         {editing && <span className="drag-handle" {...dragHandleProps(index)} />}
         <span className="trick-name-cost">
@@ -97,6 +109,18 @@ function TrickRow({
           </div>
         )}
       </div>
+      {sendableHere && (
+        <div className="sendable-overlay" onClick={sendable.openConfirm}>
+          <SendConfirmPopover
+            confirm={sendable.confirm}
+            popoverRef={sendable.popoverRef}
+            cancel={sendable.cancel}
+            send={sendable.send}
+            status={sendable.status}
+            error={sendable.error}
+          />
+        </div>
+      )}
     </li>
   );
 }
@@ -105,7 +129,16 @@ function TrickRow({
 export function CampaignTricksPage({ campaign }: { campaign: Campaign }) {
   const { t } = useTranslation();
   const patch = useCampaignStore((s) => s.patch);
+  const setSendModeActive = useUiStore((s) => s.setSendModeActive);
   const [editing, setEditing] = useState(false);
+  // This tab has no global edit toggle to piggyback on (each GM tab edits
+  // its own list independently), so entering edit mode forces send mode
+  // off directly rather than through useUiStore's editingActive path.
+  const toggleEditing = () =>
+    setEditing((v) => {
+      if (!v) setSendModeActive(false);
+      return !v;
+    });
   const [name, setName] = useState('');
   const [cost, setCost] = useState<CharacterTrick['cost']>(1);
   const [desc, setDesc] = useState('');
@@ -139,7 +172,7 @@ export function CampaignTricksPage({ campaign }: { campaign: Campaign }) {
           <h2 className="grow">
             <FieldLabel i18nKey="tricks.title" en="Tricks" />
           </h2>
-          <button className={editing ? 'primary' : ''} onClick={() => setEditing((v) => !v)}>
+          <button className={editing ? 'primary' : ''} onClick={toggleEditing}>
             {editing ? <><IconCheck /> {t('sheet.done')}</> : <><IconEdit /> {t('sheet.edit')}</>}
           </button>
         </div>
@@ -151,6 +184,7 @@ export function CampaignTricksPage({ campaign }: { campaign: Campaign }) {
               trick={tr}
               index={i}
               editing={editing}
+              campaign={campaign}
               onSave={(updated) =>
                 patch({ tricks: tricks.map((x) => (x.id === updated.id ? updated : x)) })
               }

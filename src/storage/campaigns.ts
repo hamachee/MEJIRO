@@ -30,6 +30,8 @@ export function newCampaign(
     instances: [],
     pcs: [],
     tricks,
+    gear: [],
+    spells: [],
     round: 1,
     turnId: null,
     createdAt: now,
@@ -72,6 +74,8 @@ export function normalizeCampaign(
     ),
     pcs: (raw.pcs ?? []).map((pc) => ({ ...blankAccursedPC(pc.id, pc.name), ...pc })),
     tricks: raw.tricks ?? [],
+    gear: raw.gear ?? [],
+    spells: raw.spells ?? [],
     round: raw.round ?? 1,
     turnId: raw.turnId ?? null,
   };

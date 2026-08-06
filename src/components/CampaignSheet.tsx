@@ -22,6 +22,8 @@ import { label } from '../lib/localize';
 import { useLang } from '../lib/useLang';
 import { useResolvedTheme } from '../lib/useTheme';
 import { cssHex, leftBorderStyle, pickerValue } from '../lib/color';
+import { useSendableCard } from '../lib/useSendableCard';
+import { SendConfirmPopover } from './SendConfirmPopover';
 
 /** Shorten a free-text field for the summary line; full text lives in the edit form. */
 function truncate(s: string, max = 24): string {
@@ -328,6 +330,17 @@ function CampaignMomentumCard({ campaign }: { campaign: Campaign }) {
   const selectedPool = useGmRollStore((s) => s.selectedPool);
   const select = useGmRollStore((s) => s.select);
 
+  // Only the momentum counter itself is sendable — not the free-roll pool
+  // above it — so only that row gets the overlay/highlight below. A fixed
+  // "Momentum" title (not the campaign's name) since the number by itself
+  // is the whole point of the message.
+  const sendable = useSendableCard({
+    webhookUrl: campaign.webhookUrl,
+    embedColor: campaign.embedColor,
+    title: t('gm.momentum'),
+    buildContent: () => `# ${campaign.momentum}`,
+  });
+
   return (
     <section className="card">
       <CustomPoolControl
@@ -336,7 +349,7 @@ function CampaignMomentumCard({ campaign }: { campaign: Campaign }) {
         onSelect={() => select(null, 'custom')}
         onChange={(n) => patch({ customPool: n })}
       />
-      <div className="curse-row momentum-row">
+      <div className={`curse-row momentum-row ${sendable.active ? 'sendable-active' : ''}`}>
         <span className="field-label">
           <FieldLabel i18nKey="gm.momentum" en="Momentum" />
         </span>
@@ -345,6 +358,18 @@ function CampaignMomentumCard({ campaign }: { campaign: Campaign }) {
           onChange={(n) => patch({ momentum: n })}
           ariaLabel={t('gm.momentum')}
         />
+        {sendable.active && (
+          <div className="sendable-overlay" onClick={sendable.openConfirm}>
+            <SendConfirmPopover
+              confirm={sendable.confirm}
+              popoverRef={sendable.popoverRef}
+              cancel={sendable.cancel}
+              send={sendable.send}
+              status={sendable.status}
+              error={sendable.error}
+            />
+          </div>
+        )}
       </div>
     </section>
   );

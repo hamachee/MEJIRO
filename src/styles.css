@@ -36,6 +36,10 @@
   --radius: 10px;
   --radius-md: 8px;
   --radius-sm: 5px;
+  /* Discord's own brand blurple — send mode's accent, kept constant across
+     every theme (unlike --accent) so it reads as "this is Discord", not
+     "this is the app's current color scheme". */
+  --discord-blurple: #5865f2;
   color-scheme: dark;
 }
 
@@ -84,6 +88,30 @@ body {
       90deg,
       color-mix(in srgb, var(--border) 18%, transparent) 0,
       color-mix(in srgb, var(--border) 18%, transparent) 1px,
+      transparent 1px,
+      transparent 24px
+    ),
+    linear-gradient(180deg, var(--bg), var(--bg-2));
+}
+
+/* Send mode: same grid-pattern language as .app.editing above, but tinted
+   Discord blurple instead of the theme's own border color — a different
+   fixed color reads as a distinct "mode" (posting to Discord) rather than
+   another flavor of "editing", while still following the app's established
+   convention for "something table-wide is active" backgrounds. */
+.app.send-mode {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--discord-blurple) 16%, transparent) 0,
+      color-mix(in srgb, var(--discord-blurple) 16%, transparent) 1px,
+      transparent 1px,
+      transparent 24px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--discord-blurple) 16%, transparent) 0,
+      color-mix(in srgb, var(--discord-blurple) 16%, transparent) 1px,
       transparent 1px,
       transparent 24px
     ),
@@ -2117,4 +2145,174 @@ button.armor-box.marked:hover:not(:disabled) {
 .message-template-content:hover:not(:disabled) {
   background: none;
   text-decoration: underline;
+}
+
+/* Send mode: an element wired via useSendableCard gets .sendable-active
+   while the mode is on — either the whole .card (a card that sends all of
+   its own content) or a single inner row like .curse-row (a card where
+   only one section, e.g. momentum, is meant to be sent on its own). The
+   overlay is a direct child of that same element, not a wrapper around
+   it, so it can't disturb any parent grid/flex layout — the element just
+   needs to establish its own positioning context. */
+.card.sendable-active,
+.curse-row.sendable-active,
+.item-card.sendable-active,
+.named-item.sendable-active {
+  position: relative;
+}
+.card.sendable-active:hover,
+.curse-row.sendable-active:hover,
+.item-card.sendable-active:hover {
+  border-color: var(--discord-blurple);
+  box-shadow: 0 0 0 1px var(--discord-blurple);
+}
+/* .curse-row has no border/padding of its own — give the highlight some
+   room to breathe instead of hugging the counter pixel-for-pixel, and
+   keep a transparent border at rest so hovering doesn't shift layout. */
+.curse-row.sendable-active {
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 0.3rem 0.5rem;
+  margin: -0.3rem -0.5rem;
+}
+/* .named-item is a plain list row (dashed bottom divider, no side
+   padding) — a box-shadow ring reads oddly against that, so it gets a
+   background tint instead, same as the overlay would give it, with room
+   to breathe like .curse-row above. */
+.named-item.sendable-active {
+  border-radius: var(--radius-sm);
+  padding: 0.3rem 0.5rem;
+  margin: 0 -0.5rem;
+}
+.named-item.sendable-active:hover {
+  background: color-mix(in srgb, var(--discord-blurple) 10%, transparent);
+}
+.sendable-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  border-radius: inherit;
+  cursor: pointer;
+  background: transparent;
+  transition: background 0.15s ease;
+}
+.card.sendable-active:hover .sendable-overlay,
+.curse-row.sendable-active:hover .sendable-overlay,
+.item-card.sendable-active:hover .sendable-overlay {
+  background: color-mix(in srgb, var(--discord-blurple) 12%, transparent);
+}
+
+/* The Yes/No confirm that floats at the exact point a sendable card was
+   clicked. The outer box is just a fixed-position anchor at the click
+   point (no size of its own); Yes/No are absolutely placed off of that
+   same point so Yes lands squarely under the pointer that clicked it,
+   keeping the "click again to confirm" gesture in one spot. */
+.send-confirm {
+  position: fixed;
+  z-index: 45;
+}
+.send-confirm-yes,
+.send-confirm-no {
+  position: absolute;
+  top: 0;
+  width: 2.2rem;
+  height: 2.2rem;
+  padding: 0;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: 1rem;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+.send-confirm-yes {
+  left: 0;
+  background: var(--discord-blurple);
+  border: 1px solid var(--discord-blurple);
+  color: #ffffff;
+}
+.send-confirm-no {
+  left: 2.6rem;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.send-confirm-status {
+  position: absolute;
+  left: 0;
+  top: 1.8rem;
+  width: max-content;
+  max-width: 14rem;
+  font-size: 0.8rem;
+}
+
+/* Cursor-following Discord badge shown while send mode is on. Positioned
+   via direct ref/style writes on mousemove (see SendModeCursor.tsx), not
+   React state, so dragging the mouse doesn't trigger a re-render per
+   pixel; offset to the pointer's bottom-right, clear of the arrow
+   cursor's own tip. */
+.send-mode-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 41;
+  pointer-events: none;
+  color: var(--discord-blurple);
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
+}
+.send-mode-cursor .icon {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+/* Send-mode toggle: a physical left-right switch in the sheet toolbar
+   (left of Export) rather than a checkbox, so flipping it reads as
+   changing how clicks behave, not filling in a setting. */
+button.send-mode-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.5rem;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  transition: border-color 0.15s ease;
+}
+.send-mode-toggle .icon {
+  width: 1rem;
+  height: 1rem;
+  color: inherit;
+}
+.send-mode-toggle-track {
+  position: relative;
+  display: inline-block;
+  width: 2.1rem;
+  height: 1.2rem;
+  border-radius: 999px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.send-mode-toggle-thumb {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: calc(1.2rem - 4px);
+  height: calc(1.2rem - 4px);
+  border-radius: 50%;
+  background: var(--muted);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.send-mode-toggle.on {
+  color: var(--discord-blurple);
+  border-color: var(--discord-blurple);
+}
+.send-mode-toggle.on .send-mode-toggle-track {
+  background: color-mix(in srgb, var(--discord-blurple) 35%, var(--bg-2));
+  border-color: var(--discord-blurple);
+}
+.send-mode-toggle.on .send-mode-toggle-thumb {
+  transform: translateX(0.9rem);
+  background: var(--discord-blurple);
 }

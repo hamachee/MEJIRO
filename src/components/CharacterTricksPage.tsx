@@ -6,9 +6,11 @@ import { useDragReorder } from '../lib/useDragReorder';
 import { FieldLabel } from './FieldLabel';
 import { IconClose, IconEdit } from './icons';
 import { ListImportExport } from './ListImportExport';
+import { SendConfirmPopover } from './SendConfirmPopover';
 import { TrickInfo } from './TrickInfo';
 import { TrickCostSelect } from './TrickCostSelect';
 import { formatTrickCost } from '../lib/trickCost';
+import { useSendableCard } from '../lib/useSendableCard';
 import type { Character, CharacterTrick } from '../types/character';
 
 /** A single trick row: read-only, or an inline edit form when opened. */
@@ -16,6 +18,7 @@ function TrickRow({
   trick,
   index,
   editing,
+  character,
   onSave,
   onRemove,
   dragHandleProps,
@@ -24,6 +27,7 @@ function TrickRow({
   trick: CharacterTrick;
   index: number;
   editing: boolean;
+  character: Character;
   onSave: (trick: CharacterTrick) => void;
   onRemove: () => void;
   dragHandleProps: ReturnType<typeof useDragReorder<CharacterTrick>>['handleProps'];
@@ -31,6 +35,13 @@ function TrickRow({
 }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const sendable = useSendableCard({
+    webhookUrl: character.webhookUrl,
+    embedColor: character.embedColor,
+    title: `${t('send.trickItem')}: ${trick.name} · ${formatTrickCost(trick.cost)} ${t('send.hits')}`,
+    buildContent: () => trick.description ?? '',
+  });
+  const sendableHere = sendable.active && !editing;
   const [name, setName] = useState(trick.name);
   const [cost, setCost] = useState<CharacterTrick['cost']>(trick.cost);
   const [desc, setDesc] = useState(trick.description ?? '');
@@ -76,7 +87,7 @@ function TrickRow({
   }
 
   return (
-    <li className={`named-item ${drag.className}`} data-drag-index={index}>
+    <li className={`named-item ${sendableHere ? 'sendable-active' : ''} ${drag.className}`} data-drag-index={index}>
       <div className="named-item-row">
         {editing && <span className="drag-handle" {...dragHandleProps(index)} />}
         <span className="trick-name-cost">
@@ -96,6 +107,18 @@ function TrickRow({
           </div>
         )}
       </div>
+      {sendableHere && (
+        <div className="sendable-overlay" onClick={sendable.openConfirm}>
+          <SendConfirmPopover
+            confirm={sendable.confirm}
+            popoverRef={sendable.popoverRef}
+            cancel={sendable.cancel}
+            send={sendable.send}
+            status={sendable.status}
+            error={sendable.error}
+          />
+        </div>
+      )}
     </li>
   );
 }
@@ -150,6 +173,7 @@ export function CharacterTricksPage({
               trick={tr}
               index={i}
               editing={editing}
+              character={character}
               onSave={(updated) =>
                 patch({ tricks: tricks.map((x) => (x.id === updated.id ? updated : x)) })
               }

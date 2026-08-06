@@ -1,23 +1,24 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useCharacterStore } from '../store/characterStore';
+import { useCampaignStore } from '../store/campaignStore';
+import { useUiStore } from '../store/uiStore';
 import { FieldLabel } from './FieldLabel';
-import { IconClose, IconEdit, IconStar } from './icons';
+import { IconCheck, IconClose, IconEdit, IconStar } from './icons';
 import { TagChips } from './TagChips';
-import { CurseCard } from './CharacterSheet';
 import { ListImportExport } from './ListImportExport';
 import { SendConfirmPopover } from './SendConfirmPopover';
 import { uid } from '../lib/uid';
 import { parseTags } from '../lib/tags';
 import { useDragReorder } from '../lib/useDragReorder';
 import { useSendableCard } from '../lib/useSendableCard';
-import type { Character, SpellItem } from '../types/character';
+import type { Campaign } from '../types/campaign';
+import type { SpellItem } from '../types/character';
 
 interface SpellCardProps {
   item: SpellItem;
   index: number;
   editing: boolean;
-  character: Character;
+  campaign: Campaign;
   onSave: (item: SpellItem) => void;
   onRemove: () => void;
   dragHandleProps: ReturnType<typeof useDragReorder<SpellItem>>['handleProps'];
@@ -29,7 +30,7 @@ function SpellCard({
   item,
   index,
   editing,
-  character,
+  campaign,
   onSave,
   onRemove,
   dragHandleProps,
@@ -38,8 +39,8 @@ function SpellCard({
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const sendable = useSendableCard({
-    webhookUrl: character.webhookUrl,
-    embedColor: character.embedColor,
+    webhookUrl: campaign.webhookUrl,
+    embedColor: campaign.embedColor,
     title: `${t('send.spellItem')}: ${item.name}`,
     buildContent: () =>
       [
@@ -183,21 +184,26 @@ function SpellCard({
   );
 }
 
-function SpellSection({
-  character,
-  editing,
-}: {
-  character: Character;
-  editing: boolean;
-}) {
+/** Spells tab: the GM's own shared spell reference list, editable via its own edit toggle. */
+export function CampaignSpellsPage({ campaign }: { campaign: Campaign }) {
   const { t } = useTranslation();
-  const patch = useCharacterStore((s) => s.patch);
+  const patch = useCampaignStore((s) => s.patch);
+  const setSendModeActive = useUiStore((s) => s.setSendModeActive);
+  const [editing, setEditing] = useState(false);
+  // This tab has no global edit toggle to piggyback on (each GM tab edits
+  // its own list independently), so entering edit mode forces send mode
+  // off directly rather than through useUiStore's editingActive path.
+  const toggleEditing = () =>
+    setEditing((v) => {
+      if (!v) setSendModeActive(false);
+      return !v;
+    });
   const [name, setName] = useState('');
   const [cost, setCost] = useState('');
   const [attunements, setAttunements] = useState('');
   const [effect, setEffect] = useState('');
   const [advancements, setAdvancements] = useState('');
-  const items = character.spells;
+  const items = campaign.spells;
   const { handleProps, itemProps } = useDragReorder(items, (next) => patch({ spells: next }), 'grid');
 
   const add = () => {
@@ -220,93 +226,85 @@ function SpellSection({
   };
 
   return (
-    <section className="card">
-      <h2>
-        <FieldLabel i18nKey="sheet.spells" en="Spells" />
-      </h2>
-      {items.length === 0 && <p className="muted">—</p>}
-      <div className="card-grid">
-        {items.map((item, i) => (
-          <SpellCard
-            key={item.id}
-            item={item}
-            index={i}
-            editing={editing}
-            character={character}
-            onSave={(updated) =>
-              patch({ spells: items.map((x) => (x.id === item.id ? updated : x)) })
-            }
-            onRemove={() => patch({ spells: items.filter((x) => x.id !== item.id) })}
-            dragHandleProps={handleProps}
-            dragItemProps={itemProps}
-          />
-        ))}
-      </div>
-      {editing && (
-        <>
-          <div className="form-row">
-            <input
-              placeholder={t('sheet.namePlaceholder')}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && add()}
-            />
-            <input
-              placeholder={t('spells.costPlaceholder')}
-              value={cost}
-              onChange={(e) => setCost(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && add()}
-            />
-            <input
-              className="grow"
-              placeholder={t('spells.attunementsPlaceholder')}
-              value={attunements}
-              onChange={(e) => setAttunements(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && add()}
-            />
-          </div>
-          <div className="form-row">
-            <textarea
-              className="grow"
-              rows={2}
-              placeholder={t('spells.effectPlaceholder')}
-              value={effect}
-              onChange={(e) => setEffect(e.target.value)}
-            />
-          </div>
-          <div className="form-row">
-            <textarea
-              className="grow"
-              rows={2}
-              placeholder={t('spells.advancementsPlaceholder')}
-              value={advancements}
-              onChange={(e) => setAdvancements(e.target.value)}
-            />
-            <button onClick={add}>{t('sheet.add')}</button>
-          </div>
-        </>
-      )}
-      <ListImportExport
-        kind="spells"
-        items={items}
-        ownerName={character.name}
-        onChange={(next) => patch({ spells: next })}
-      />
-    </section>
-  );
-}
-
-interface SpellsPageProps {
-  character: Character;
-  editing: boolean;
-}
-
-/** Spells tab: curse dice/entanglement up top (spending curse dice fuels spell effects), then the spell list. */
-export function CharacterSpellsPage({ character, editing }: SpellsPageProps) {
-  return (
     <div className="stack">
-      <CurseCard character={character} editing={editing} variant="compact" />
-      <SpellSection character={character} editing={editing} />
+      <section className="card">
+        <div className="item-card-head">
+          <h2 className="grow">
+            <FieldLabel i18nKey="sheet.spells" en="Spells" />
+          </h2>
+          <button className={editing ? 'primary' : ''} onClick={toggleEditing}>
+            {editing ? <><IconCheck /> {t('sheet.done')}</> : <><IconEdit /> {t('sheet.edit')}</>}
+          </button>
+        </div>
+        {items.length === 0 && <p className="muted">—</p>}
+        <div className="card-grid">
+          {items.map((item, i) => (
+            <SpellCard
+              key={item.id}
+              item={item}
+              index={i}
+              editing={editing}
+              campaign={campaign}
+              onSave={(updated) =>
+                patch({ spells: items.map((x) => (x.id === item.id ? updated : x)) })
+              }
+              onRemove={() => patch({ spells: items.filter((x) => x.id !== item.id) })}
+              dragHandleProps={handleProps}
+              dragItemProps={itemProps}
+            />
+          ))}
+        </div>
+        {editing && (
+          <>
+            <div className="form-row">
+              <input
+                placeholder={t('sheet.namePlaceholder')}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && add()}
+              />
+              <input
+                placeholder={t('spells.costPlaceholder')}
+                value={cost}
+                onChange={(e) => setCost(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && add()}
+              />
+              <input
+                className="grow"
+                placeholder={t('spells.attunementsPlaceholder')}
+                value={attunements}
+                onChange={(e) => setAttunements(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && add()}
+              />
+            </div>
+            <div className="form-row">
+              <textarea
+                className="grow"
+                rows={2}
+                placeholder={t('spells.effectPlaceholder')}
+                value={effect}
+                onChange={(e) => setEffect(e.target.value)}
+              />
+            </div>
+            <div className="form-row">
+              <textarea
+                className="grow"
+                rows={2}
+                placeholder={t('spells.advancementsPlaceholder')}
+                value={advancements}
+                onChange={(e) => setAdvancements(e.target.value)}
+              />
+              <button onClick={add}>{t('sheet.add')}</button>
+            </div>
+            <ListImportExport
+              kind="spells"
+              items={items}
+              ownerName={campaign.name}
+              onChange={(next) => patch({ spells: next })}
+            />
+          </>
+        )}
+      </section>
     </div>
   );
 }

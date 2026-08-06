@@ -1,24 +1,24 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useCharacterStore } from '../store/characterStore';
+import { useCampaignStore } from '../store/campaignStore';
+import { useUiStore } from '../store/uiStore';
 import { FieldLabel } from './FieldLabel';
-import { IconClose, IconEdit, IconStar } from './icons';
+import { IconCheck, IconClose, IconEdit, IconStar } from './icons';
 import { TagChips } from './TagChips';
-import { InjuryCard } from './CharacterSheet';
 import { ListImportExport } from './ListImportExport';
 import { SendConfirmPopover } from './SendConfirmPopover';
 import { uid } from '../lib/uid';
 import { parseTags } from '../lib/tags';
 import { useDragReorder } from '../lib/useDragReorder';
 import { useSendableCard } from '../lib/useSendableCard';
-import type { Character, GearItem } from '../types/character';
-import type { SystemTemplate } from '../types/template';
+import type { Campaign } from '../types/campaign';
+import type { GearItem } from '../types/character';
 
 interface GearCardProps {
   item: GearItem;
   index: number;
   editing: boolean;
-  character: Character;
+  campaign: Campaign;
   onSave: (item: GearItem) => void;
   onRemove: () => void;
   dragHandleProps: ReturnType<typeof useDragReorder<GearItem>>['handleProps'];
@@ -30,7 +30,7 @@ function GearCard({
   item,
   index,
   editing,
-  character,
+  campaign,
   onSave,
   onRemove,
   dragHandleProps,
@@ -39,8 +39,8 @@ function GearCard({
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const sendable = useSendableCard({
-    webhookUrl: character.webhookUrl,
-    embedColor: character.embedColor,
+    webhookUrl: campaign.webhookUrl,
+    embedColor: campaign.embedColor,
     title: `${t('sheet.gear')}: ${item.name}`,
     buildContent: () =>
       [
@@ -165,20 +165,25 @@ function GearCard({
   );
 }
 
-function GearSection({
-  character,
-  editing,
-}: {
-  character: Character;
-  editing: boolean;
-}) {
+/** Gear tab: the GM's own shared gear reference list, editable via its own edit toggle. */
+export function CampaignGearPage({ campaign }: { campaign: Campaign }) {
   const { t } = useTranslation();
-  const patch = useCharacterStore((s) => s.patch);
+  const patch = useCampaignStore((s) => s.patch);
+  const setSendModeActive = useUiStore((s) => s.setSendModeActive);
+  const [editing, setEditing] = useState(false);
+  // This tab has no global edit toggle to piggyback on (each GM tab edits
+  // its own list independently), so entering edit mode forces send mode
+  // off directly rather than through useUiStore's editingActive path.
+  const toggleEditing = () =>
+    setEditing((v) => {
+      if (!v) setSendModeActive(false);
+      return !v;
+    });
   const [name, setName] = useState('');
   const [type, setType] = useState('');
   const [tags, setTags] = useState('');
   const [desc, setDesc] = useState('');
-  const items = character.gear;
+  const items = campaign.gear;
   const { handleProps, itemProps } = useDragReorder(items, (next) => patch({ gear: next }), 'grid');
 
   const add = () => {
@@ -199,85 +204,76 @@ function GearSection({
   };
 
   return (
-    <section className="card">
-      <h2>
-        <FieldLabel i18nKey="sheet.gear" en="Gear" />
-      </h2>
-      {items.length === 0 && <p className="muted">—</p>}
-      <div className="card-grid">
-        {items.map((item, i) => (
-          <GearCard
-            key={item.id}
-            item={item}
-            index={i}
-            editing={editing}
-            character={character}
-            onSave={(updated) =>
-              patch({ gear: items.map((x) => (x.id === item.id ? updated : x)) })
-            }
-            onRemove={() => patch({ gear: items.filter((x) => x.id !== item.id) })}
-            dragHandleProps={handleProps}
-            dragItemProps={itemProps}
-          />
-        ))}
-      </div>
-      {editing && (
-        <>
-          <div className="form-row">
-            <input
-              placeholder={t('sheet.namePlaceholder')}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && add()}
-            />
-            <input
-              placeholder={t('gear.typePlaceholder')}
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && add()}
-            />
-            <input
-              className="grow"
-              placeholder={t('gear.tagsPlaceholder')}
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && add()}
-            />
-          </div>
-          <div className="form-row">
-            <input
-              className="grow"
-              placeholder={t('tricks.descPlaceholder')}
-              value={desc}
-              onChange={(e) => setDesc(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && add()}
-            />
-            <button onClick={add}>{t('sheet.add')}</button>
-          </div>
-        </>
-      )}
-      <ListImportExport
-        kind="gear"
-        items={items}
-        ownerName={character.name}
-        onChange={(next) => patch({ gear: next })}
-      />
-    </section>
-  );
-}
-
-interface GearPageProps {
-  character: Character;
-  editing: boolean;
-  template: SystemTemplate;
-}
-
-/** Gear tab: a compact injuries tracker up top, then the gear list. */
-export function CharacterGearPage({ character, editing, template }: GearPageProps) {
-  return (
     <div className="stack">
-      <InjuryCard character={character} template={template} variant="compact" />
-      <GearSection character={character} editing={editing} />
+      <section className="card">
+        <div className="item-card-head">
+          <h2 className="grow">
+            <FieldLabel i18nKey="sheet.gear" en="Gear" />
+          </h2>
+          <button className={editing ? 'primary' : ''} onClick={toggleEditing}>
+            {editing ? <><IconCheck /> {t('sheet.done')}</> : <><IconEdit /> {t('sheet.edit')}</>}
+          </button>
+        </div>
+        {items.length === 0 && <p className="muted">—</p>}
+        <div className="card-grid">
+          {items.map((item, i) => (
+            <GearCard
+              key={item.id}
+              item={item}
+              index={i}
+              editing={editing}
+              campaign={campaign}
+              onSave={(updated) =>
+                patch({ gear: items.map((x) => (x.id === item.id ? updated : x)) })
+              }
+              onRemove={() => patch({ gear: items.filter((x) => x.id !== item.id) })}
+              dragHandleProps={handleProps}
+              dragItemProps={itemProps}
+            />
+          ))}
+        </div>
+        {editing && (
+          <>
+            <div className="form-row">
+              <input
+                placeholder={t('sheet.namePlaceholder')}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && add()}
+              />
+              <input
+                placeholder={t('gear.typePlaceholder')}
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && add()}
+              />
+              <input
+                className="grow"
+                placeholder={t('gear.tagsPlaceholder')}
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && add()}
+              />
+            </div>
+            <div className="form-row">
+              <input
+                className="grow"
+                placeholder={t('tricks.descPlaceholder')}
+                value={desc}
+                onChange={(e) => setDesc(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && add()}
+              />
+              <button onClick={add}>{t('sheet.add')}</button>
+            </div>
+            <ListImportExport
+              kind="gear"
+              items={items}
+              ownerName={campaign.name}
+              onChange={(next) => patch({ gear: next })}
+            />
+          </>
+        )}
+      </section>
     </div>
   );
 }
