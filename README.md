@@ -65,6 +65,20 @@ BASE_PATH=/ npm run build
 every push to `main`. Enable Pages for the repository (Settings → Pages →
 Source: GitHub Actions) once and pushes deploy automatically.
 
+## Portable build
+
+```bash
+npm run build:portable   # emits dist-portable/MEJIRO.html — one file, nothing else
+```
+
+A single self-contained HTML file with every script/style inlined — no
+server, no install, works fully offline by just double-clicking it (all data
+still lives in the browser's IndexedDB, same as the hosted app). This is a
+separate build target (`vite.config.portable.ts`, `MEJIRO.html`) from the
+GitHub Pages deploy above, not something `deploy.yml` publishes — it skips
+the PWA/service worker (which can't register under `file://` anyway) and
+uses relative asset paths instead of the `/MEJIRO/` sub-path.
+
 ## System templates
 
 A system is described by a single JSON file under `src/templates/`
