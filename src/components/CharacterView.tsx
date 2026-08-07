@@ -12,6 +12,7 @@ import { CharacterSheet } from './CharacterSheet';
 import { MessagePanel } from './MessagePanel';
 import { SendModeToggle } from './SendModeToggle';
 import { SendModeHint } from './SendModeHint';
+import { TranslationDisclaimer } from './TranslationDisclaimer';
 import { IconBack, IconCheck, IconEdit, IconExport } from './icons';
 import { CharacterGearPage } from './CharacterGearPage';
 import { CharacterSpellsPage } from './CharacterSpellsPage';
@@ -133,6 +134,8 @@ export function CharacterView() {
         {page === 4 && <CharacterTricksPage character={active} editing={editing} />}
         {wide && result && <aside className="result-col stack">{resultPanel}</aside>}
       </div>
+
+      <TranslationDisclaimer templateId={active.templateId} />
 
       {editing ? <ExpTracker character={active} /> : <RollBar character={active} template={template} />}
 

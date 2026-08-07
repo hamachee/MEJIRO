@@ -462,6 +462,11 @@ button.danger:hover:not(:disabled) {
   max-width: 40rem;
   margin: 0 auto;
 }
+/* Own card, full-opacity text (not .muted/.disclaimer's faded small print)
+   so it actually reads as a notice, not a footnote. */
+.translation-notice {
+  text-align: center;
+}
 .ok {
   color: var(--success);
   align-self: center;

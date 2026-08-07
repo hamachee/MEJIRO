@@ -8,6 +8,7 @@ import { CampaignSheet } from './CampaignSheet';
 import { MessagePanel } from './MessagePanel';
 import { SendModeToggle } from './SendModeToggle';
 import { SendModeHint } from './SendModeHint';
+import { TranslationDisclaimer } from './TranslationDisclaimer';
 import { IconBack } from './icons';
 import { CampaignPcsPage } from './CampaignPcsPage';
 import { CampaignTemplatesPage } from './CampaignTemplatesPage';
@@ -115,6 +116,8 @@ export function CampaignView() {
         {page === 6 && <CampaignTricksPage campaign={active} />}
         {wide && result && <aside className="result-col stack">{resultPanel}</aside>}
       </div>
+
+      <TranslationDisclaimer templateId={active.templateId} />
 
       <GmRollBar campaign={active} />
 

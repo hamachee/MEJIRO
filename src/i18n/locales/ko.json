@@ -242,7 +242,8 @@
   "common": {
     "cancel": "취소",
     "close": "닫기",
-    "copySuffix": " (사본)"
+    "copySuffix": " (사본)",
+    "translationDisclaimer": "이 시스템에 사용된 모든 한국어 용어는 공식 번역이 아닙니다."
   },
   "send": {
     "yes": "디스코드로 전송",

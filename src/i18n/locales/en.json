@@ -242,7 +242,8 @@
   "common": {
     "cancel": "Cancel",
     "close": "Close",
-    "copySuffix": " (Copy)"
+    "copySuffix": " (Copy)",
+    "translationDisclaimer": "All Korean terms used in this system are unofficial fan translations."
   },
   "send": {
     "yes": "Send to Discord",
