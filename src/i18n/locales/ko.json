@@ -263,6 +263,7 @@
   "send": {
     "yes": "디스코드로 전송",
     "no": "취소",
+    "confirmPrompt": "디스코드로 보낼까요?",
     "posting": "전송 중…",
     "error": "전송 실패: {{message}}",
     "noWebhook": "이 시트에 설정된 웹훅이 없습니다.",

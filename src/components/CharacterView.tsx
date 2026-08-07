@@ -11,6 +11,7 @@ import { exportCharacterFile } from '../lib/exportCharacterFile';
 import { CharacterSheet } from './CharacterSheet';
 import { MessagePanel } from './MessagePanel';
 import { SendModeToggle } from './SendModeToggle';
+import { SendModeHint } from './SendModeHint';
 import { IconBack, IconCheck, IconEdit, IconExport } from './icons';
 import { CharacterGearPage } from './CharacterGearPage';
 import { CharacterSpellsPage } from './CharacterSpellsPage';
@@ -89,6 +90,7 @@ export function CharacterView() {
           </button>
         </div>
       </div>
+      <SendModeHint />
 
       {/* Bookmark-style tabs on the left margin switch sheet pages. */}
       <nav className="page-tabs" aria-label="sheet pages">

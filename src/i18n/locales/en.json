@@ -263,6 +263,7 @@
   "send": {
     "yes": "Send to Discord",
     "no": "Cancel",
+    "confirmPrompt": "Send to Discord?",
     "posting": "Sending…",
     "error": "Could not send: {{message}}",
     "noWebhook": "No webhook set for this sheet.",

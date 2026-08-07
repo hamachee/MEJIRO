@@ -2292,6 +2292,25 @@ button.armor-box.marked:hover:not(:disabled) {
   max-width: 14rem;
   font-size: 0.8rem;
 }
+/* "Send to Discord?" — floats above the Yes/No pair, centered over both,
+   so the question reads before the buttons that answer it. */
+.send-confirm-prompt {
+  position: absolute;
+  left: 1.3rem;
+  top: -0.5rem;
+  transform: translate(-50%, -100%);
+  width: max-content;
+  max-width: 12rem;
+  padding: 0.25rem 0.5rem;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  font-size: 0.78rem;
+  color: var(--text);
+  text-align: center;
+  pointer-events: none;
+}
 
 /* Cursor-following Discord badge shown while send mode is on. Positioned
    via direct ref/style writes on mousemove (see SendModeCursor.tsx), not
@@ -2315,17 +2334,16 @@ button.armor-box.marked:hover:not(:disabled) {
 /* Send-mode toggle: a physical left-right switch, in the sheet toolbar
    (left of Export) rather than a checkbox, so flipping it reads as
    changing how clicks behave, not filling in a setting. */
-.send-mode-toggle-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
 /* Explains send mode once it's on, in place of the hover-only tooltip
    shown before — a switch that changes how clicks behave elsewhere on the
-   page shouldn't rely on hover to be understood while it's active. */
+   page shouldn't rely on hover to be understood while it's active. Sits
+   below the whole toolbar (not just the toggle) as one centered line
+   spanning its width, so it reads as a page-level notice rather than a
+   caption tucked under one button. */
 .send-mode-hint {
   display: block;
-  max-width: 18rem;
+  margin: 0.4rem 0 0;
+  text-align: center;
   font-size: 0.78rem;
   color: var(--muted);
 }

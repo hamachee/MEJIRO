@@ -17,23 +17,20 @@ export function SendModeToggle() {
   const toggle = useUiStore((s) => s.toggleSendMode);
 
   return (
-    <div className="send-mode-toggle-wrap">
-      <button
-        type="button"
-        role="switch"
-        aria-checked={active}
-        aria-label={t('message.sendMode')}
-        title={active ? undefined : editingActive ? t('message.sendModeDisabledHint') : t('message.sendModeHint')}
-        className={`send-mode-toggle ${active ? 'on' : ''}`}
-        onClick={toggle}
-        disabled={editingActive}
-      >
-        <IconInfoCircle />
-        <span className="send-mode-toggle-track">
-          <span className="send-mode-toggle-thumb" />
-        </span>
-      </button>
-      {active && <span className="send-mode-hint">{t('message.sendModeHintActive')}</span>}
-    </div>
+    <button
+      type="button"
+      role="switch"
+      aria-checked={active}
+      aria-label={t('message.sendMode')}
+      title={active ? undefined : editingActive ? t('message.sendModeDisabledHint') : t('message.sendModeHint')}
+      className={`send-mode-toggle ${active ? 'on' : ''}`}
+      onClick={toggle}
+      disabled={editingActive}
+    >
+      <IconInfoCircle />
+      <span className="send-mode-toggle-track">
+        <span className="send-mode-toggle-thumb" />
+      </span>
+    </button>
   );
 }
