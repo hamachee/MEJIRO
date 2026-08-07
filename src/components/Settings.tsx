@@ -59,9 +59,6 @@ export function Settings() {
             </select>
           </label>
         </div>
-        {settings.themeMode === 'curseborne' && (
-          <p className="muted hint">{t('theme.curseborneHint')}</p>
-        )}
 
         <div className="form-row">
           <label className="field grow">
