@@ -83,10 +83,10 @@ export function GmRollBar({ campaign }: Props) {
         <label className="field-check">
           <input
             type="checkbox"
-            checked={campaign.autoPostToDiscord}
-            onChange={(e) => patch({ autoPostToDiscord: e.target.checked })}
+            checked={!campaign.autoPostToDiscord}
+            onChange={(e) => patch({ autoPostToDiscord: !e.target.checked })}
           />
-          <span>{t('gm.autoPostToDiscord')}</span>
+          <span>{t('gm.secretRoll')}</span>
         </label>
         <Stepper
           label={t('roller.difficulty')}

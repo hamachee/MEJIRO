@@ -158,7 +158,11 @@ export interface Campaign {
   webhookUrl: string;
   /** Hex color (e.g. "#5B4B8A") for this campaign's embed left border. Empty uses the app default. */
   embedColor: string;
-  /** If false, rolls wait for the GM to press "post" instead of posting immediately. */
+  /**
+   * If false, rolls wait for the GM to press "post" instead of posting
+   * immediately. Surfaced in the GM roll bar inverted, as a "secret roll"
+   * checkbox — checking it sets this to false.
+   */
   autoPostToDiscord: boolean;
   /** Ad-hoc dice pool for a one-off roll that doesn't fit any adversary's pools — shared by the whole campaign. */
   customPool: number;
