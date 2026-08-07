@@ -4,6 +4,8 @@
 
 <sub>*(a.k.a. **M**y **E**xcellent **J**ournal for **I**ncredible **R**olling **O**nline)*</sub>
 
+
+
 A local-first, no-backend Progressive Web App for non-D&D tabletop RPGs: a
 character sheet editor, a dice-pool builder, and a roller that posts formatted
 results to Discord via webhooks. Free, open source, no account, no server —
