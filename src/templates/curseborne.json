@@ -26,7 +26,7 @@
     { "id": "culture", "label": { "en": "Culture", "ko": "문화" } },
     { "id": "empathy", "label": { "en": "Empathy", "ko": "공감" } },
     { "id": "enigmas", "label": { "en": "Enigmas", "ko": "수수께끼" } },
-    { "id": "esoterica", "label": { "en": "Esoterica", "ko": "비학" } },
+    { "id": "esoterica", "label": { "en": "Esoterica", "ko": "신비학" } },
     { "id": "larceny", "label": { "en": "Larceny", "ko": "도둑질" } },
     { "id": "leadership", "label": { "en": "Leadership", "ko": "지휘" } },
     { "id": "medicine", "label": { "en": "Medicine", "ko": "의학" } },
