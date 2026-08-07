@@ -19,7 +19,6 @@
     "import": "가져오기",
     "export": "내보내기",
     "delete": "삭제",
-    "open": "열기",
     "confirmDelete": "이 캐릭터를 삭제할까요? 되돌릴 수 없습니다.",
     "importError": "파일을 가져올 수 없습니다: {{message}}"
   },
@@ -28,7 +27,6 @@
     "skills": "기술",
     "resources": "자원",
     "back": "뒤로",
-    "saved": "저장됨",
     "rename": "이름",
     "edit": "시트 편집",
     "done": "완료",
@@ -43,7 +41,6 @@
     "armor": "장갑",
     "takenOut": "탈락",
     "extraBoxes": "추가 박스",
-    "box": "칸",
     "edges": "엣지",
     "conditions": "상태 효과",
     "contacts": "인맥",
@@ -74,16 +71,11 @@
     "showNameInWebhook": "웹훅 메시지에 캐릭터 이름 표시"
   },
   "roller": {
-    "title": "주사위 풀",
-    "attribute": "능력치",
-    "skill": "기술",
     "enhancement": "강화",
     "difficulty": "난이도",
     "curseDice": "저주 주사위",
     "bonusDice": "추가 주사위",
-    "pool": "풀",
-    "roll": "굴리기",
-    "none": "없음"
+    "roll": "굴리기"
   },
   "result": {
     "title": "결과",
@@ -93,9 +85,6 @@
     "cruel": "잔혹한 실패",
     "botch": "대실패",
     "successes": "히트",
-    "threshold": "초과 히트",
-    "dice": "주사위",
-    "postToDiscord": "디스코드에 전송",
     "posting": "디스코드에 전송 중…",
     "posted": "디스코드에 전송됨",
     "postError": "디스코드 전송 실패: {{message}}",
@@ -103,12 +92,10 @@
   },
   "tricks": {
     "title": "트릭",
-    "budget": "예산",
     "remaining": "잔여",
     "cost": "비용",
     "postTricks": "트릭 전송",
     "none": "아직 이 캐릭터에 트릭이 없습니다. 시트에서 추가하세요.",
-    "overBudget": "예산 초과",
     "manageHint": "사용하는 트릭의 이름과 비용을 직접 추가하세요.",
     "complication": "컴플리케이션",
     "severity": {
@@ -191,9 +178,7 @@
     "advancementsPlaceholder": "발전 단계"
   },
   "resource": {
-    "undo": "실행 취소",
-    "log": "변경 기록",
-    "empty": "아직 변경 사항이 없습니다."
+    "undo": "실행 취소"
   },
   "theme": {
     "label": "색상 테마",
@@ -212,14 +197,6 @@
     "title": "설정",
     "appearance": "화면",
     "uiLanguage": "인터페이스 언어",
-    "webhooks": "디스코드 웹훅",
-    "webhookLabel": "이름표",
-    "webhookUrl": "웹훅 URL",
-    "addWebhook": "웹훅 추가",
-    "removeWebhook": "제거",
-    "activeWebhook": "활성 웹훅",
-    "noWebhooks": "아직 웹훅이 없습니다.",
-    "save": "저장",
     "disableSendModeHotkey": "Ctrl 홀드로 전송 모드 켜기 비활성화",
     "fanDisclaimer": "MEJIRO는 비공식·무료·비상업 팬 도구이며, 어떤 게임 출판사와도 제휴하거나 승인을 받지 않았습니다. 게임 시스템 이름은 각 권리자의 소유입니다."
   },

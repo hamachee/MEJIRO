@@ -19,7 +19,6 @@
     "import": "Import",
     "export": "Export",
     "delete": "Delete",
-    "open": "Open",
     "confirmDelete": "Delete this character? This cannot be undone.",
     "importError": "Could not import file: {{message}}"
   },
@@ -28,7 +27,6 @@
     "skills": "Skills",
     "resources": "Resources",
     "back": "Back",
-    "saved": "Saved",
     "rename": "Name",
     "edit": "Edit sheet",
     "done": "Done",
@@ -43,7 +41,6 @@
     "armor": "Armor",
     "takenOut": "Taken Out",
     "extraBoxes": "Extra boxes",
-    "box": "box",
     "edges": "Edges",
     "conditions": "Status Effects",
     "contacts": "Contacts",
@@ -74,16 +71,11 @@
     "showNameInWebhook": "Show character name in webhook messages"
   },
   "roller": {
-    "title": "Dice Pool",
-    "attribute": "Attribute",
-    "skill": "Skill",
     "enhancement": "Enhancement",
     "difficulty": "Difficulty",
     "curseDice": "Curse dice",
     "bonusDice": "Bonus dice",
-    "pool": "Pool",
-    "roll": "Roll",
-    "none": "None"
+    "roll": "Roll"
   },
   "result": {
     "title": "Result",
@@ -93,9 +85,6 @@
     "cruel": "Cruel Failure",
     "botch": "Botch",
     "successes": "Hits",
-    "threshold": "Extra hits",
-    "dice": "Dice",
-    "postToDiscord": "Post to Discord",
     "posting": "Posting to Discord…",
     "posted": "Posted to Discord",
     "postError": "Discord post failed: {{message}}",
@@ -103,12 +92,10 @@
   },
   "tricks": {
     "title": "Tricks",
-    "budget": "Budget",
     "remaining": "Remaining",
     "cost": "Cost",
     "postTricks": "Post tricks",
     "none": "No tricks on this character yet. Add them on the sheet.",
-    "overBudget": "Over budget",
     "manageHint": "Your own list — add the tricks you use with their hit costs.",
     "complication": "Complication",
     "severity": {
@@ -191,9 +178,7 @@
     "advancementsPlaceholder": "Advancements (free text, multiple lines)"
   },
   "resource": {
-    "undo": "Undo",
-    "log": "Change log",
-    "empty": "No changes yet."
+    "undo": "Undo"
   },
   "theme": {
     "label": "Color scheme",
@@ -212,14 +197,6 @@
     "title": "Settings",
     "appearance": "Appearance",
     "uiLanguage": "Interface language",
-    "webhooks": "Discord webhooks",
-    "webhookLabel": "Label",
-    "webhookUrl": "Webhook URL",
-    "addWebhook": "Add webhook",
-    "removeWebhook": "Remove",
-    "activeWebhook": "Active webhook",
-    "noWebhooks": "No webhooks yet.",
-    "save": "Save",
     "disableSendModeHotkey": "Disable the hold-Ctrl send mode shortcut",
     "fanDisclaimer": "MEJIRO is an unofficial, free, non-commercial fan tool and is not affiliated with or endorsed by any game publisher. Game system names are the property of their respective owners."
   },
