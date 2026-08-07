@@ -1479,11 +1479,14 @@ p.fold-readonly {
   font-size: 0.88rem;
 }
 
-/* Sheet page tabs — bookmark-style on the left margin */
+/* Sheet page tabs — bookmark-style on the left margin, vertically centered
+   regardless of window height or how many tabs there are (top: 50% alone
+   would only align the tab group's own top edge to the middle). */
 .page-tabs {
   position: fixed;
   left: 0;
-  top: 40%;
+  top: 50%;
+  transform: translateY(-50%);
   z-index: 15;
   display: flex;
   flex-direction: column;
