@@ -4,6 +4,7 @@ import { SUPPORTED_LANGUAGES } from '../i18n';
 import { THEME_MODES, type ThemeMode } from '../lib/theme';
 import { useResolvedTheme } from '../lib/useTheme';
 import { pickerValue } from '../lib/color';
+import { BackupSection } from './BackupSection';
 
 export function Settings() {
   const { t } = useTranslation();
@@ -101,6 +102,8 @@ export function Settings() {
           </div>
         </div>
       </section>
+
+      <BackupSection />
 
       <p className="muted disclaimer">{t('settings.fanDisclaimer')}</p>
     </div>

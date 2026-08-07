@@ -23,7 +23,7 @@ export const SUNSET_THEME: Theme = {
   success: '#...',
   failure: '#...',
   danger: '#...',
-  curse: '#...',
+  special: '#...',
   ...DARK_EXTRAS, // 또는 LIGHT_EXTRAS
 };
 ```
@@ -90,7 +90,7 @@ switch (mode) {
 
 ## 여기까지가 끝인 이유
 
-저주 주사위 색상 오버라이드(`curseColor`)는 모드와 무관하게 `resolveTheme`
+특수 주사위 색상 오버라이드(`specialColor`)는 모드와 무관하게 `resolveTheme`
 마지막 단계에서 한 번 더 적용되므로, 새 테마를 추가해도 자동으로 적용됩니다.
 별도 처리가 필요 없습니다.
 

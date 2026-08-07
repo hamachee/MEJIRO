@@ -198,6 +198,14 @@
     "appearance": "화면",
     "uiLanguage": "인터페이스 언어",
     "disableSendModeHotkey": "Ctrl 홀드로 전송 모드 켜기 비활성화",
+    "backup": "데이터 백업",
+    "backupHint": "모든 캐릭터, 캠페인, 설정을 하나의 JSON 파일로 내보내거나 불러올 수 있습니다. 디스코드 웹훅 URL은 내보낼 때 항상 제외됩니다.",
+    "backupExport": "내보내기",
+    "backupImport": "가져오기 (전체 교체)",
+    "backupClear": "모두 지우기",
+    "confirmBackupReplace": "가져온 파일로 모든 캐릭터, 캠페인, 설정을 교체할까요? 기존 데이터는 삭제됩니다.",
+    "confirmBackupClear": "모든 캐릭터와 캠페인을 삭제할까요? 되돌릴 수 없습니다.",
+    "backupImportError": "가져오기 실패: {{message}}",
     "fanDisclaimer": "MEJIRO는 비공식·무료·비상업 팬 도구이며, 어떤 게임 출판사와도 제휴하거나 승인을 받지 않았습니다. 게임 시스템 이름은 각 권리자의 소유입니다."
   },
   "listIO": {

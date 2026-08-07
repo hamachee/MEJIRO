@@ -4,6 +4,9 @@ import { HashRouter } from 'react-router-dom';
 import './i18n';
 import './styles.css';
 import { App } from './App';
+import { loadCustomCss } from './lib/loadCustomCss';
+
+loadCustomCss();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

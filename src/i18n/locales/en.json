@@ -198,6 +198,14 @@
     "appearance": "Appearance",
     "uiLanguage": "Interface language",
     "disableSendModeHotkey": "Disable the hold-Ctrl send mode shortcut",
+    "backup": "Data backup",
+    "backupHint": "Export or import every character, campaign, and setting as one JSON file. Discord webhook URLs are always stripped on export.",
+    "backupExport": "Export",
+    "backupImport": "Import (replace all)",
+    "backupClear": "Clear all",
+    "confirmBackupReplace": "Replace every character, campaign, and setting with this file? Existing data will be deleted.",
+    "confirmBackupClear": "Delete every character and campaign? This cannot be undone.",
+    "backupImportError": "Could not import: {{message}}",
     "fanDisclaimer": "MEJIRO is an unofficial, free, non-commercial fan tool and is not affiliated with or endorsed by any game publisher. Game system names are the property of their respective owners."
   },
   "listIO": {
