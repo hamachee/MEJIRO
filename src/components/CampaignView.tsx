@@ -7,6 +7,7 @@ import { useWide } from '../lib/useWide';
 import { CampaignSheet } from './CampaignSheet';
 import { MessagePanel } from './MessagePanel';
 import { SendModeToggle } from './SendModeToggle';
+import { SendModeHint } from './SendModeHint';
 import { IconBack } from './icons';
 import { CampaignPcsPage } from './CampaignPcsPage';
 import { CampaignTemplatesPage } from './CampaignTemplatesPage';
@@ -64,6 +65,7 @@ export function CampaignView() {
           <SendModeToggle />
         </div>
       </div>
+      <SendModeHint />
 
       <nav className="page-tabs" aria-label="campaign pages">
         <button

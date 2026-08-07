@@ -175,7 +175,7 @@
     "copySuffix": " (Copy)",
     "webhook": "Discord webhook URL",
     "embedColor": "Embed color",
-    "autoPostToDiscord": "Discord sync",
+    "secretRoll": "Secret roll",
     "postToDiscord": "Post to Discord",
     "noWebhook": "No webhook set for this campaign."
   },
@@ -239,6 +239,7 @@
     "title": "Message",
     "sendMode": "Send mode",
     "sendModeHint": "While on, clicking a sendable card posts its current contents to Discord instead of its usual action. Hold Ctrl to activate it temporarily without toggling.",
+    "sendModeHintActive": "While send mode is on, some items on the sheet can be sent straight to Discord. Holding Ctrl also works.",
     "sendModeDisabledHint": "Unavailable while editing.",
     "titlePlaceholder": "Title (optional)",
     "placeholder": "Type a message to send to Discord…",
@@ -262,6 +263,7 @@
   "send": {
     "yes": "Send to Discord",
     "no": "Cancel",
+    "confirmPrompt": "Send to Discord?",
     "posting": "Sending…",
     "error": "Could not send: {{message}}",
     "noWebhook": "No webhook set for this sheet.",

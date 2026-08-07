@@ -32,6 +32,7 @@ export function SendConfirmPopover({
       style={{ left: confirm.x, top: confirm.y }}
       onClick={(e) => e.stopPropagation()}
     >
+      <span className="send-confirm-prompt">{t('send.confirmPrompt')}</span>
       <button
         type="button"
         className="send-confirm-yes"

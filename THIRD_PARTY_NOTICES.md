@@ -6,7 +6,8 @@ are original, and every other icon copies path data from Bootstrap Icons
 (`x-lg`, `pencil-fill`, `check-lg`, `exclamation-triangle-fill`, `copy`,
 `box-arrow-up`, `box-arrow-in-down`, `trash3-fill`, `arrow-left`,
 `link-45deg`, `arrow-counterclockwise`, `discord`, `suit-diamond-fill`,
-`geo-alt`, `geo-alt-fill`, `question-lg`, `gear`, `gear-fill`). Its license
+`geo-alt`, `geo-alt-fill`, `question-lg`, `gear`, `gear-fill`,
+`info-circle`). Its license
 is reproduced below, as required.
 
 ## Bootstrap Icons (MIT)

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useUiStore } from '../store/uiStore';
-import { IconDiscord } from './icons';
+import { IconInfoCircle } from './icons';
 
 /**
  * The table-wide send-mode switch, lived in the message panel until it
@@ -22,12 +22,12 @@ export function SendModeToggle() {
       role="switch"
       aria-checked={active}
       aria-label={t('message.sendMode')}
-      title={editingActive ? t('message.sendModeDisabledHint') : t('message.sendModeHint')}
+      title={active ? undefined : editingActive ? t('message.sendModeDisabledHint') : t('message.sendModeHint')}
       className={`send-mode-toggle ${active ? 'on' : ''}`}
       onClick={toggle}
       disabled={editingActive}
     >
-      <IconDiscord />
+      <IconInfoCircle />
       <span className="send-mode-toggle-track">
         <span className="send-mode-toggle-thumb" />
       </span>
