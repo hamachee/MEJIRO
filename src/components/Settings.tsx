@@ -62,34 +62,35 @@ export function Settings() {
 
         <div className="form-row">
           <label className="field grow">
-            <span className="field-label">{t('theme.curseColor')}</span>
+            <span className="field-label">{t('theme.specialColor')}</span>
             <span className="color-field-row">
               <input
                 type="color"
-                // Falls back to the active scheme's own curse color (not a
-                // fixed default) — that's the color actually in effect when
-                // this field is empty, whichever theme happens to be picked.
-                value={pickerValue(settings.curseColor, theme.curse)}
-                onChange={(e) => update({ curseColor: e.target.value })}
+                // Falls back to the active scheme's own special color (not
+                // a fixed default) — that's the color actually in effect
+                // when this field is empty, whichever theme happens to be
+                // picked.
+                value={pickerValue(settings.specialColor, theme.special)}
+                onChange={(e) => update({ specialColor: e.target.value })}
               />
               <input
-                key={settings.curseColor}
+                key={settings.specialColor}
                 className="color-input"
                 placeholder="#B44AE0"
-                defaultValue={settings.curseColor}
-                onBlur={(e) => update({ curseColor: e.target.value.trim() })}
+                defaultValue={settings.specialColor}
+                onBlur={(e) => update({ specialColor: e.target.value.trim() })}
               />
               <button
                 type="button"
-                disabled={!settings.curseColor}
-                onClick={() => update({ curseColor: '' })}
+                disabled={!settings.specialColor}
+                onClick={() => update({ specialColor: '' })}
               >
                 {t('theme.reset')}
               </button>
             </span>
           </label>
         </div>
-        <p className="muted hint">{t('theme.curseColorHint')}</p>
+        <p className="muted hint">{t('theme.specialColorHint')}</p>
 
         <span className="field-label">{t('theme.preview')}</span>
         <div className="theme-preview">

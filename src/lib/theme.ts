@@ -11,8 +11,11 @@
  *    colors instead of the app's own purple.
  *
  * On top of whichever mode is active, the user can independently recolor
- * the curse dice (and their hit/border shades) via a single hex value that
- * persists across every mode — it isn't a "theme" of its own.
+ * the special dice (and their hit/border shades) via a single hex value
+ * that persists across every mode — it isn't a "theme" of its own. Named
+ * generically rather than after Curseborne's own "curse dice" term, since
+ * other bundled systems down the line may have their own special die that
+ * isn't called that.
  *
  * A theme is a flat map of CSS custom properties applied to <html>, so
  * styles.css only ever reads variables. The `:root` block in styles.css
@@ -39,7 +42,8 @@ export const THEME_MODES: ThemeMode[] = [
 
 /**
  * Tokens that make up a color scheme (translucent bars, dividers, readable
- * text tints, curse violet — everything styles.css reads as a CSS var).
+ * text tints, the special die's violet — everything styles.css reads as a
+ * CSS var).
  */
 export interface Theme {
   bg: string;
@@ -54,7 +58,7 @@ export interface Theme {
   success: string;
   failure: string;
   danger: string;
-  curse: string;
+  special: string;
   headerBg: string;
   barBg: string;
   scrim: string;
@@ -66,9 +70,9 @@ export interface Theme {
   dangerText: string;
   failureBright: string;
   failureTerminal: string;
-  curseStrong: string;
-  curseHitBorder: string;
-  curseText: string;
+  specialStrong: string;
+  specialHitBorder: string;
+  specialText: string;
   wickedText: string;
   cruelText: string;
   /** Value for the CSS `color-scheme` property (native widgets, scrollbars). */
@@ -77,19 +81,19 @@ export interface Theme {
 
 /**
  * A resolved theme adds text-contrast tokens computed at resolve time from
- * whichever danger/failure/curseStrong ended up active — including a
- * curse-color override, which can be any hex a user picks. Those three
+ * whichever danger/failure/specialStrong ended up active — including a
+ * special-color override, which can be any hex a user picks. Those three
  * backgrounds previously borrowed `onAccent` (chosen for contrast against
  * `accent`/`accent2`, an unrelated color), which silently broke legibility
  * whenever a theme's or override's own color had different lightness than
  * the accent it was borrowing text from. Deriving instead of hand-picking
- * means a new palette (or any curse-color override) gets correct contrast
+ * means a new palette (or any special-color override) gets correct contrast
  * for free, with no per-theme bookkeeping.
  */
 export interface ResolvedTheme extends Theme {
   onDanger: string;
   onFailure: string;
-  onCurseStrong: string;
+  onSpecialStrong: string;
 }
 
 const DARK_EXTRAS = {
@@ -104,9 +108,9 @@ const DARK_EXTRAS = {
   dangerText: '#f0b8ac',
   failureBright: '#ff9a9a',
   failureTerminal: '#ff6b6b',
-  curseStrong: '#7d2ea8',
-  curseHitBorder: '#cf6cf2',
-  curseText: '#dfa2f5',
+  specialStrong: '#7d2ea8',
+  specialHitBorder: '#cf6cf2',
+  specialText: '#dfa2f5',
   wickedText: '#dfa2f5',
   cruelText: '#f08cc0',
 };
@@ -123,9 +127,9 @@ const LIGHT_EXTRAS = {
   dangerText: '#a53c24',
   failureBright: '#c22f2f',
   failureTerminal: '#8a1a1a',
-  curseStrong: '#7d2ea8',
-  curseHitBorder: '#b44ae0',
-  curseText: '#7d2ea8',
+  specialStrong: '#7d2ea8',
+  specialHitBorder: '#b44ae0',
+  specialText: '#7d2ea8',
   wickedText: '#8a2eb8',
   cruelText: '#a03470',
 };
@@ -145,7 +149,7 @@ export const DARK_THEME: Theme = {
   success: '#4caf7d',
   failure: '#b05454',
   danger: '#c0563f',
-  curse: '#b44ae0',
+  special: '#b44ae0',
   ...DARK_EXTRAS,
 };
 
@@ -164,7 +168,7 @@ export const LIGHT_THEME: Theme = {
   success: '#2c8a5c',
   failure: '#b04545',
   danger: '#b5482f',
-  curse: '#a13ecf',
+  special: '#a13ecf',
   ...LIGHT_EXTRAS,
 };
 
@@ -183,7 +187,7 @@ export const CURSEBORNE_THEME: Theme = {
   success: '#4caf7d',
   failure: '#b05454',
   danger: '#c0563f',
-  curse: '#b44ae0',
+  special: '#b44ae0',
   ...DARK_EXTRAS,
   headerBg: 'rgba(20, 20, 31, 0.9)',
   barBg: 'rgba(28, 28, 43, 0.95)',
@@ -195,8 +199,8 @@ export const CURSEBORNE_THEME: Theme = {
  * (ink), 545454, 7d7d7d, cfcfcf (paper shadow). The extra in-between shades
  * below (454545, 6a6a6a, 3a3a3a, 2f2f2f, 5a5a5a) are hand-picked mixes of
  * those four, not new hues — R = G = B. The one deliberate exception is the
- * curse dice: a stamped-in-red-ink accent (981010, with -30%/+30% mixes for
- * the hit-state shades), the same way an editor's red pen breaks the
+ * special dice: a stamped-in-red-ink accent (981010, with -30%/+30% mixes
+ * for the hit-state shades), the same way an editor's red pen breaks the
  * grayscale on an otherwise black-and-white page.
  */
 export const NEWSPAPER_THEME: Theme = {
@@ -213,7 +217,7 @@ export const NEWSPAPER_THEME: Theme = {
   success: '#545454',
   failure: '#7d7d7d',
   danger: '#252525',
-  curse: '#981010',
+  special: '#981010',
   headerBg: 'rgba(255, 255, 255, 0.9)',
   barBg: 'rgba(240, 240, 240, 0.95)',
   scrim: 'rgba(37, 37, 37, 0.45)',
@@ -225,9 +229,9 @@ export const NEWSPAPER_THEME: Theme = {
   dangerText: '#252525',
   failureBright: '#5a5a5a',
   failureTerminal: '#2f2f2f',
-  curseStrong: '#6a0b0b',
-  curseHitBorder: '#b75858',
-  curseText: '#6a0b0b',
+  specialStrong: '#6a0b0b',
+  specialHitBorder: '#b75858',
+  specialText: '#6a0b0b',
   wickedText: '#6a0b0b',
   cruelText: '#6a6a6a',
 };
@@ -237,7 +241,7 @@ export const NEWSPAPER_THEME: Theme = {
  * and greens carrying every accent (FFD500/FDC500 for the bright highlights,
  * 3A7D44/1E4F2A/01200F for success/failure/danger). Bright yellow reads
  * poorly as text on white, so `onAccent` leans on the darker greens instead
- * of the usual white-on-accent pattern. The curse dice use that same dark
+ * of the usual white-on-accent pattern. The special dice use that same dark
  * green (01200F) rather than the bright yellow — deliberately closer to
  * "rotten" than "ripe" — with -30%/+30% mixes for the hit-state shades.
  */
@@ -255,7 +259,7 @@ export const PINEAPPLE_THEME: Theme = {
   success: '#3a7d44',
   failure: '#1e4f2a',
   danger: '#01200f',
-  curse: '#01200f',
+  special: '#01200f',
   headerBg: 'rgba(255, 253, 245, 0.9)',
   barBg: 'rgba(255, 246, 220, 0.95)',
   scrim: 'rgba(30, 79, 42, 0.45)',
@@ -267,18 +271,18 @@ export const PINEAPPLE_THEME: Theme = {
   dangerText: '#01200f',
   failureBright: '#4f8f57',
   failureTerminal: '#0f2e18',
-  curseStrong: '#01160b',
-  curseHitBorder: '#4d6357',
-  curseText: '#01200f',
+  specialStrong: '#01160b',
+  specialHitBorder: '#4d6357',
+  specialText: '#01200f',
   wickedText: '#01200f',
   cruelText: '#2f6636',
 };
 
 /**
  * "#rrggbb" mixed toward black (amount < 0) or white (amount > 0) by
- * |amount| (0-1). Used to derive the curse-hit shades from the single
- * user-picked curse color, the same way the built-in themes hand-pick a
- * darker/lighter pair around their own curse hue.
+ * |amount| (0-1). Used to derive the special-die hit shades from the
+ * single user-picked special color, the same way the built-in themes
+ * hand-pick a darker/lighter pair around their own special hue.
  */
 function shadeHex(hex: string, amount: number): string {
   const m = /^#([0-9a-f]{6})$/i.exec(hex.trim());
@@ -316,14 +320,14 @@ function readableTextOn(hex: string): string {
 }
 
 /**
- * Resolve the theme to render. A valid `curseColor` overrides the curse die
- * and its derived hit/border shades on top of whichever base was picked —
- * it applies the same way in every mode, dark/light/curseborne/system alike.
- * `onDanger`/`onFailure`/`onCurseStrong` are then derived from whatever
- * danger/failure/curseStrong ended up active, so they're always correct
- * even for a curse color no theme author ever picked.
+ * Resolve the theme to render. A valid `specialColor` overrides the special
+ * die and its derived hit/border shades on top of whichever base was
+ * picked — it applies the same way in every mode, dark/light/curseborne/
+ * system alike. `onDanger`/`onFailure`/`onSpecialStrong` are then derived
+ * from whatever danger/failure/specialStrong ended up active, so they're
+ * always correct even for a special color no theme author ever picked.
  */
-export function resolveTheme(mode: ThemeMode, curseColor: string): ResolvedTheme {
+export function resolveTheme(mode: ThemeMode, specialColor: string): ResolvedTheme {
   const base = (() => {
     switch (mode) {
       case 'light':
@@ -342,19 +346,19 @@ export function resolveTheme(mode: ThemeMode, curseColor: string): ResolvedTheme
     }
   })();
 
-  const curseOverride = cssHex(curseColor);
-  const curse = curseOverride ?? base.curse;
-  const curseStrong = curseOverride ? shadeHex(curseOverride, -0.3) : base.curseStrong;
-  const curseHitBorder = curseOverride ? shadeHex(curseOverride, 0.3) : base.curseHitBorder;
+  const specialOverride = cssHex(specialColor);
+  const special = specialOverride ?? base.special;
+  const specialStrong = specialOverride ? shadeHex(specialOverride, -0.3) : base.specialStrong;
+  const specialHitBorder = specialOverride ? shadeHex(specialOverride, 0.3) : base.specialHitBorder;
 
   return {
     ...base,
-    curse,
-    curseStrong,
-    curseHitBorder,
+    special,
+    specialStrong,
+    specialHitBorder,
     onDanger: readableTextOn(base.danger),
     onFailure: readableTextOn(base.failure),
-    onCurseStrong: readableTextOn(curseStrong),
+    onSpecialStrong: readableTextOn(specialStrong),
   };
 }
 
@@ -379,16 +383,16 @@ const CSS_VARS: Record<Exclude<keyof ResolvedTheme, 'scheme'>, string> = {
   onAccent: '--on-accent',
   onDanger: '--on-danger',
   onFailure: '--on-failure',
-  onCurseStrong: '--on-curse-strong',
+  onSpecialStrong: '--on-special-strong',
   successText: '--success-text',
   failureText: '--failure-text',
   dangerText: '--danger-text',
   failureBright: '--failure-bright',
   failureTerminal: '--failure-terminal',
-  curse: '--curse',
-  curseStrong: '--curse-strong',
-  curseHitBorder: '--curse-hit-border',
-  curseText: '--curse-text',
+  special: '--special',
+  specialStrong: '--special-strong',
+  specialHitBorder: '--special-hit-border',
+  specialText: '--special-text',
   wickedText: '--wicked-text',
   cruelText: '--cruel-text',
 };

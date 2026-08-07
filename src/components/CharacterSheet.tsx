@@ -1144,7 +1144,7 @@ function ConditionsCard({ character }: { character: Character }) {
   return (
     <section className="card">
       <h2>
-        <FieldLabel i18nKey="sheet.conditions" en="Conditions" />
+        <FieldLabel i18nKey="sheet.conditions" en="Status Effects" />
       </h2>
       <div className="condition-chips">
         {conditions.length === 0 && <span className="muted">—</span>}

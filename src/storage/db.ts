@@ -11,8 +11,8 @@ export interface AppSettings {
   uiLang: string;
   /** Color scheme mode: dark, light, system, or by game rule. */
   themeMode: ThemeMode;
-  /** Hex color for the curse dice, overriding the active scheme's own — applies in every mode. Empty uses the scheme default. */
-  curseColor: string;
+  /** Hex color for the special dice, overriding the active scheme's own — applies in every mode. Empty uses the scheme default. */
+  specialColor: string;
   /** Saved messages for the webhook message panel — per device, not synced with a character/campaign. */
   messageTemplates: MessageTemplate[];
   /** If true, holding Ctrl no longer activates send mode temporarily — only the toggle does. */
@@ -75,7 +75,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   id: 'app',
   uiLang: 'ko',
   themeMode: 'system',
-  curseColor: '',
+  specialColor: '',
   messageTemplates: [],
   disableSendModeHotkey: false,
 };

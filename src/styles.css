@@ -21,16 +21,16 @@
   --on-accent: #ffffff;
   --on-danger: #ffffff;
   --on-failure: #ffffff;
-  --on-curse-strong: #ffffff;
+  --on-special-strong: #ffffff;
   --success-text: #7ee0ac;
   --failure-text: #f0a0a0;
   --danger-text: #f0b8ac;
   --failure-bright: #ff9a9a;
   --failure-terminal: #ff6b6b;
-  --curse: #b44ae0;
-  --curse-strong: #7d2ea8;
-  --curse-hit-border: #cf6cf2;
-  --curse-text: #dfa2f5;
+  --special: #b44ae0;
+  --special-strong: #7d2ea8;
+  --special-hit-border: #cf6cf2;
+  --special-text: #dfa2f5;
   --wicked-text: #dfa2f5;
   --cruel-text: #f08cc0;
   --radius: 10px;
@@ -634,9 +634,9 @@ button.danger:hover:not(:disabled) {
   border-color: var(--failure-terminal);
 }
 .badge.wicked {
-  background: color-mix(in srgb, var(--curse) 20%, transparent);
+  background: color-mix(in srgb, var(--special) 20%, transparent);
   color: var(--wicked-text);
-  border-color: var(--curse);
+  border-color: var(--special);
 }
 .badge.cruel {
   background: color-mix(in srgb, var(--cruel-text) 30%, transparent);
@@ -697,21 +697,21 @@ button.danger:hover:not(:disabled) {
   background: var(--accent-2);
 }
 .die.d10.curse {
-  background: var(--curse);
+  background: var(--special);
   box-shadow: none;
 }
 .die.d10.curse::before {
   background: var(--bg-2);
 }
 .die.d10.curse.hit {
-  background: var(--curse-hit-border);
-  /* The digit sits over ::before's fill (curse-strong), not this element's
-     own background (curse-hit-border, only visible as the thin outer ring)
+  background: var(--special-hit-border);
+  /* The digit sits over ::before's fill (special-strong), not this element's
+     own background (special-hit-border, only visible as the thin outer ring)
      — pick contrast against the layer actually behind the text. */
-  color: var(--on-curse-strong);
+  color: var(--on-special-strong);
 }
 .die.d10.curse.hit::before {
-  background: var(--curse-strong);
+  background: var(--special-strong);
 }
 .die.d10.exploded {
   box-shadow: none;
@@ -915,7 +915,7 @@ button.danger:hover:not(:disabled) {
   padding: 0.35rem 0.5rem;
 }
 
-/* Tiny live sample of the curse dice color, sat on the page background so
+/* Tiny live sample of the special dice color, sat on the page background so
    it reads against both dark and light schemes without scrolling. */
 .theme-preview {
   margin-top: 0.35rem;
@@ -1121,7 +1121,7 @@ button.sheet-stat:hover:not(.selected) {
   margin-left: 0.2em;
   vertical-align: middle;
   margin-top: -2px;
-  color: var(--curse);
+  color: var(--special);
 }
 .sheet-stat.selected .diamond-icon {
   color: var(--on-accent);
@@ -1420,27 +1420,27 @@ p.fold-readonly {
   border-radius: var(--radius-sm);
 }
 .curse-dots .dot {
-  border-color: var(--curse);
+  border-color: var(--special);
 }
 .curse-dots .dot.filled {
-  background: var(--curse);
+  background: var(--special);
 }
 .curse-dots button.dot:hover {
-  background: var(--curse-strong);
+  background: var(--special-strong);
 }
 .curse-dots button.dot.filled:hover {
-  background: var(--curse);
+  background: var(--special);
 }
 
 /* Curse dice — vivid violet, clearly not the failure red */
 .die.curse {
-  border-color: var(--curse);
-  box-shadow: inset 0 0 0 1px var(--curse);
+  border-color: var(--special);
+  box-shadow: inset 0 0 0 1px var(--special);
 }
 .die.curse.hit {
-  background: var(--curse-strong);
-  border-color: var(--curse-hit-border);
-  color: var(--on-curse-strong);
+  background: var(--special-strong);
+  border-color: var(--special-hit-border);
+  color: var(--on-special-strong);
 }
 
 /* English sublabel for unofficial translations */
