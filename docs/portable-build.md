@@ -12,7 +12,7 @@ npm run build:portable   # dist-portable/MEJIRO.html — 파일 이거 딱 하�
 ```
 
 - 엔트리포인트는 `index.html`이 아니라 루트의 `MEJIRO.html`입니다. 파비콘도
-  `public/favicon.svg`를 참조하지 않고 base64 데이터 URI로 직접 박아뒀습니다
+  `public/favicon.svg`를 참조하지 않고 base64 데이터 URI로 하드코딩되어 있습니다.
   (`vite-plugin-singlefile`은 `public/` 파일은 인라인하지 않으므로, 그대로 두면
   파비콘 하나 때문에 산출물이 파일 두 개가 됩니다).
 - 설정은 `vite.config.portable.ts`에 따로 있습니다 (메인 `vite.config.ts`와
