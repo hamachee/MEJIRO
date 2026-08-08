@@ -879,7 +879,7 @@ button.danger:hover:not(:disabled) {
 }
 .chip {
   padding: 0.3rem 0.55rem;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   border-radius: 999px;
 }
 .chip.ghost {
