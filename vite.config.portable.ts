@@ -15,6 +15,14 @@ export default defineConfig({
   // MEJIRO.html directly) — disable Vite's default public/ copy so the
   // build output is truly just the one file, not the file plus sidecars.
   publicDir: false,
+  resolve: {
+    alias: {
+      react: 'preact/compat',
+      'react-dom/test-utils': 'preact/test-utils',
+      'react-dom': 'preact/compat',
+      'react/jsx-runtime': 'preact/jsx-runtime',
+    },
+  },
   plugins: [react(), viteSingleFile()],
   build: {
     outDir: 'dist-portable',

@@ -11,6 +11,17 @@ const base = process.env.BASE_PATH ?? '/MEJIRO/';
 
 export default defineConfig({
   base,
+  // React itself is never imported directly (all app code just writes JSX/
+  // hooks) — aliasing it to preact/compat swaps the runtime for a much
+  // smaller one without touching a single component.
+  resolve: {
+    alias: {
+      react: 'preact/compat',
+      'react-dom/test-utils': 'preact/test-utils',
+      'react-dom': 'preact/compat',
+      'react/jsx-runtime': 'preact/jsx-runtime',
+    },
+  },
   plugins: [
     react(),
     VitePWA({
