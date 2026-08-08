@@ -2311,8 +2311,8 @@ button.armor-box.marked:hover:not(:disabled) {
    so the question reads before the buttons that answer it. */
 .send-confirm-prompt {
   position: absolute;
-  left: 1.3rem;
-  top: -1.2rem;
+  left: 1.2rem;
+  top: -1.5rem;
   transform: translate(-50%, -100%);
   width: max-content;
   max-width: 12rem;
