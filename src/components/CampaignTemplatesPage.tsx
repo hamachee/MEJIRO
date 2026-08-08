@@ -5,35 +5,40 @@ import { uid } from '../lib/uid';
 import { useDragReorder } from '../lib/useDragReorder';
 import { blankAdversaryStats, type AdversaryStats, type AdversaryTemplate, type Campaign } from '../types/campaign';
 import { AdversaryStatBody, AdversaryStatsFields } from './AdversaryCard';
+import { FieldLabel } from './FieldLabel';
 import { IconClose, IconCopy, IconEdit } from './icons';
 import { ListImportExport } from './ListImportExport';
 
 /** Shared form fields for creating or editing an adversary template. */
 function AdversaryTemplateForm({
   initialName = '',
+  initialDrive = '',
   initialStats,
   onSave,
   onCancel,
   saveLabel,
 }: {
   initialName?: string;
+  initialDrive?: string;
   initialStats?: AdversaryStats;
-  onSave: (name: string, stats: AdversaryStats) => void;
+  onSave: (name: string, drive: string, stats: AdversaryStats) => void;
   onCancel?: () => void;
   saveLabel: string;
 }) {
   const { t } = useTranslation();
   const [name, setName] = useState(initialName);
+  const [drive, setDrive] = useState(initialDrive);
   const [stats, setStats] = useState<AdversaryStats>(initialStats ?? blankAdversaryStats());
   const set = <K extends keyof AdversaryStats>(key: K, value: AdversaryStats[K]) =>
     setStats((s) => ({ ...s, [key]: value }));
 
   const save = () => {
     if (!name.trim()) return;
-    onSave(name.trim(), stats);
+    onSave(name.trim(), drive.trim(), stats);
     // Always clear: an edit form unmounts right after (its caller closes it),
     // and clearing lets the add-template form stay open for the next entry.
     setName('');
+    setDrive('');
     setStats(blankAdversaryStats());
   };
 
@@ -46,6 +51,17 @@ function AdversaryTemplateForm({
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
+      </div>
+      <div className="form-row">
+        <label className="field grow">
+          <span className="field-label"><FieldLabel i18nKey="gm.drive" en="Drive" /></span>
+          <input
+            className="grow"
+            placeholder={t('gm.drivePlaceholder')}
+            value={drive}
+            onChange={(e) => setDrive(e.target.value)}
+          />
+        </label>
       </div>
       <AdversaryStatsFields stats={stats} onChange={set} />
       <div className="form-row">
@@ -89,11 +105,12 @@ function TemplateRow({
       <div className="item-card adversary-card editing" data-drag-index={index}>
         <AdversaryTemplateForm
           initialName={template.name}
+          initialDrive={template.drive}
           initialStats={template.stats}
           saveLabel={t('sheet.save')}
           onCancel={() => setOpen(false)}
-          onSave={(name, stats) => {
-            onSave({ ...template, name, stats });
+          onSave={(name, drive, stats) => {
+            onSave({ ...template, name, drive, stats });
             setOpen(false);
           }}
         />
@@ -120,6 +137,7 @@ function TemplateRow({
           </button>
         </div>
       </div>
+      {template.drive && <p className="muted adversary-drive">{template.drive}</p>}
       <AdversaryStatBody stats={template.stats} />
     </div>
   );
@@ -156,8 +174,8 @@ export function CampaignTemplatesPage({ campaign }: { campaign: Campaign }) {
           <AdversaryTemplateForm
             saveLabel={t('gm.addTemplate')}
             onCancel={() => setAdding(false)}
-            onSave={(name, stats) =>
-              patch({ templates: [...templates, { id: uid(), name, stats }] })
+            onSave={(name, drive, stats) =>
+              patch({ templates: [...templates, { id: uid(), name, drive, stats }] })
             }
           />
         )}
@@ -183,7 +201,7 @@ export function CampaignTemplatesPage({ campaign }: { campaign: Campaign }) {
                 patch({
                   templates: [
                     ...templates,
-                    { id: uid(), name: `${tpl.name}${t('gm.copySuffix')}`, stats: { ...tpl.stats } },
+                    { id: uid(), name: `${tpl.name}${t('gm.copySuffix')}`, drive: tpl.drive, stats: { ...tpl.stats } },
                   ],
                 })
               }

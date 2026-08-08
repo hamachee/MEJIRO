@@ -101,6 +101,7 @@ export const normalizeEntry = {
     return {
       id: uid(),
       name: entryName(raw),
+      drive: typeof r.drive === 'string' ? r.drive : '',
       stats: { ...blankAdversaryStats(), ...(typeof r.stats === 'object' ? r.stats : {}) },
     };
   },

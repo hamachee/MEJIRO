@@ -21,11 +21,14 @@ function PoolButton({
   rating,
   selected,
   onClick,
+  title,
 }: {
   label: ReactNode;
   rating: number;
   selected?: boolean;
   onClick?: () => void;
+  /** Hover tooltip, e.g. what this pool represents — omitted when blank. */
+  title?: string;
 }) {
   if (rating <= 0) return null;
   const content = (
@@ -35,10 +38,19 @@ function PoolButton({
     </>
   );
   if (!onClick) {
-    return <span className="sheet-stat">{content}</span>;
+    return (
+      <span className="sheet-stat" title={title || undefined}>
+        {content}
+      </span>
+    );
   }
   return (
-    <button className={`sheet-stat ${selected ? 'selected' : ''}`} onClick={onClick} aria-pressed={selected}>
+    <button
+      className={`sheet-stat ${selected ? 'selected' : ''}`}
+      onClick={onClick}
+      aria-pressed={selected}
+      title={title || undefined}
+    >
       {content}
     </button>
   );
@@ -107,6 +119,20 @@ export function AdversaryStatsFields({
           <span className="field-label"><FieldLabel i18nKey="gm.desperationPool" en="Desperation" /></span>
           <span className="stat-value">{desperationPool(stats.primaryPool)}</span>
         </div>
+      </div>
+      <div className="form-row">
+        <input
+          className="grow"
+          placeholder={t('gm.primaryPoolDescPlaceholder')}
+          value={stats.primaryPoolDesc}
+          onChange={(e) => onChange('primaryPoolDesc', e.target.value)}
+        />
+        <input
+          className="grow"
+          placeholder={t('gm.secondaryPoolDescPlaceholder')}
+          value={stats.secondaryPoolDesc}
+          onChange={(e) => onChange('secondaryPoolDesc', e.target.value)}
+        />
       </div>
       <div className="form-row">
         <label className="field grow">
@@ -325,12 +351,14 @@ export function AdversaryStatBody({
           rating={stats.primaryPool}
           selected={pools?.isSelected('primary')}
           onClick={pools && (() => pools.onSelect('primary'))}
+          title={stats.primaryPoolDesc}
         />
         <PoolButton
           label={<FieldLabel i18nKey="gm.secondaryPool" en="Secondary" />}
           rating={stats.secondaryPool}
           selected={pools?.isSelected('secondary')}
           onClick={pools && (() => pools.onSelect('secondary'))}
+          title={stats.secondaryPoolDesc}
         />
         <PoolButton
           label={<FieldLabel i18nKey="gm.desperationPool" en="Desperation" />}

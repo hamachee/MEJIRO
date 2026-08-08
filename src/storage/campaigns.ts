@@ -59,6 +59,7 @@ export function normalizeCampaign(
     momentum: raw.momentum ?? 0,
     templates: (raw.templates ?? []).map((tpl) => ({
       ...tpl,
+      drive: tpl.drive ?? '',
       stats: { ...blankAdversaryStats(), ...tpl.stats },
     })),
     instances: (raw.instances ?? []).map((i) =>

@@ -11,6 +11,10 @@ import type { CharacterTrick, ConditionItem, GearItem, SpellItem } from './chara
 export interface AdversaryStats {
   primaryPool: number;
   secondaryPool: number;
+  /** Free-text note on what the Primary pool represents — shown as a tooltip on its badge outside editing. */
+  primaryPoolDesc: string;
+  /** Free-text note on what the Secondary pool represents — shown as a tooltip on its badge outside editing. */
+  secondaryPoolDesc: string;
   /**
    * Free-text reference note — nothing applies this automatically. Like a
    * character's Enhancement, it's added by hand after the dice are seen,
@@ -40,6 +44,8 @@ export function blankAdversaryStats(): AdversaryStats {
   return {
     primaryPool: 0,
     secondaryPool: 0,
+    primaryPoolDesc: '',
+    secondaryPoolDesc: '',
     enhancement: '',
     defense: 1,
     integrity: 1,
@@ -57,6 +63,8 @@ export function blankAdversaryStats(): AdversaryStats {
 export interface AdversaryTemplate {
   id: string;
   name: string;
+  /** Short motivation phrase (Curseborne's "Drive") — shown as hint text under the name, template list only. */
+  drive: string;
   stats: AdversaryStats;
 }
 

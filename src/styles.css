@@ -1149,6 +1149,13 @@ button.sheet-stat:hover:not(.selected) {
   font-size: 0.82rem;
   margin: 0.5rem 0 0;
 }
+/* Sits right under the adversary template's name, so it reads as part of
+   that line rather than a separate section — tighter than .hint's usual
+   0.5rem gap meant for setting a hint off from unrelated content above. */
+.adversary-drive {
+  font-size: 0.82rem;
+  margin: 0.15rem 0 0;
+}
 
 /* Sticky roll bar */
 .roll-bar {
