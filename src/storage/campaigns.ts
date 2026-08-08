@@ -71,6 +71,7 @@ export function normalizeCampaign(
             stats: { ...blankAdversaryStats(), ...i.stats },
             conditions: i.conditions ?? [],
             armorMarked: i.armorMarked ?? 0,
+            usedDreadPowers: i.usedDreadPowers ?? [],
           },
     ),
     pcs: (raw.pcs ?? []).map((pc) => ({ ...blankAccursedPC(pc.id, pc.name), ...pc })),

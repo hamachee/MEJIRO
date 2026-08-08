@@ -87,6 +87,8 @@ export interface AdversaryInstance {
   /** Boxes filled on the armor track; capped at this card's stats.armorRating. */
   armorMarked: number;
   takenOut: boolean;
+  /** Dread power tags (from stats.dreadPower) crossed off as used this fight, by exact tag text. */
+  usedDreadPowers: string[];
 }
 
 /**

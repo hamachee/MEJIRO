@@ -141,6 +141,8 @@
     "armorTagsPlaceholder": "장갑 태그 (쉼표로 구분)",
     "qualities": "기능",
     "dreadPower": "공포의 힘",
+    "dreadPowerPlaceholder": "공포의 힘 태그 (쉼표로 구분)",
+    "resetDreadPower": "사용 완료 표시 모두 지우기",
     "special": "특수",
     "details": "세부 사항",
     "memoPlaceholder": "메모 (선택)",

@@ -2014,6 +2014,30 @@ button.armor-box.marked:hover:not(:disabled) {
   font-size: 0.75rem;
   color: var(--muted);
 }
+.tag-chip-toggle {
+  cursor: pointer;
+}
+.tag-chip-toggle.used {
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+.tag-chip-reset {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  padding: 0;
+  border-radius: 999px;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+.tag-chip-reset svg {
+  width: 0.85rem;
+  height: 0.85rem;
+}
 
 /* Drag-to-reorder (gear, spells, tricks) — pure CSS grip icon, no font/emoji
    dependency. Built on Pointer Events so it works with touch, not just mouse. */

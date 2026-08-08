@@ -216,6 +216,7 @@ function AddInstanceRow({ campaign }: { campaign: Campaign }) {
           marked: 0,
           armorMarked: 0,
           takenOut: false,
+          usedDreadPowers: [],
         },
       ],
     });
@@ -525,6 +526,7 @@ export function CampaignSheet({ campaign }: Props) {
                           marked: 0,
                           armorMarked: 0,
                           takenOut: false,
+                          usedDreadPowers: [],
                         },
                       ],
                     });

@@ -6,7 +6,7 @@ import { desperationPool, type AdversaryInstance, type AdversaryStats } from '..
 import type { useDragReorder } from '../lib/useDragReorder';
 import { ConditionEditor } from './ConditionEditor';
 import { FieldLabel } from './FieldLabel';
-import { IconCheck, IconClose, IconCopy, IconEdit } from './icons';
+import { IconArrowClockwise, IconCheck, IconClose, IconCopy, IconEdit } from './icons';
 import { Stepper } from './Stepper';
 import { TagChips } from './TagChips';
 import { TurnMarker } from './TurnMarker';
@@ -82,6 +82,54 @@ function TextLine({ label, text }: { label: ReactNode; text: string }) {
     <div className="card-line">
       <span className="field-label">{label}</span>
       <span className="stat-value">{text}</span>
+    </div>
+  );
+}
+
+/**
+ * Dread powers as tags (comma-separated in `raw`, same convention as armor
+ * tags). Plain read-only badges for a template — nothing there is ever "in
+ * play". On a deployed card, `usage` makes each tag clickable to cross off
+ * as used this fight (dimmed + struck through) and adds a reset-all arrow
+ * at the right end once anything's marked, so the GM doesn't have to
+ * click every tag back individually between fights.
+ */
+function DreadPowerTags({
+  raw,
+  usage,
+}: {
+  raw: string;
+  usage?: { used: string[]; onToggle: (tag: string) => void; onResetAll: () => void };
+}) {
+  const { t } = useTranslation();
+  const tags = parseTags(raw);
+  if (tags.length === 0) return null;
+  if (!usage) return <TagChips tags={tags} />;
+  const usedSet = new Set(usage.used);
+  return (
+    <div className="tag-chips">
+      {tags.map((tag, i) => (
+        <button
+          key={i}
+          type="button"
+          className={`tag-chip tag-chip-toggle ${usedSet.has(tag) ? 'used' : ''}`}
+          aria-pressed={usedSet.has(tag)}
+          onClick={() => usage.onToggle(tag)}
+        >
+          {tag}
+        </button>
+      ))}
+      {usedSet.size > 0 && (
+        <button
+          type="button"
+          className="tag-chip-reset"
+          aria-label={t('gm.resetDreadPower')}
+          title={t('gm.resetDreadPower')}
+          onClick={usage.onResetAll}
+        >
+          <IconArrowClockwise />
+        </button>
+      )}
     </div>
   );
 }
@@ -192,31 +240,38 @@ export function AdversaryStatsFields({
         </div>
       )}
       <div className="form-row">
-        <textarea
-          className="grow"
-          rows={2}
-          placeholder={t('gm.qualities')}
-          value={stats.qualities}
-          onChange={(e) => onChange('qualities', e.target.value)}
-        />
+        <label className="field grow">
+          <span className="field-label"><FieldLabel i18nKey="gm.qualities" en="Qualities" /></span>
+          <textarea
+            className="grow"
+            rows={2}
+            value={stats.qualities}
+            onChange={(e) => onChange('qualities', e.target.value)}
+          />
+        </label>
       </div>
       <div className="form-row">
-        <textarea
-          className="grow"
-          rows={2}
-          placeholder={t('gm.dreadPower')}
-          value={stats.dreadPower}
-          onChange={(e) => onChange('dreadPower', e.target.value)}
-        />
+        <label className="field grow">
+          <span className="field-label"><FieldLabel i18nKey="gm.dreadPower" en="Dread power" /></span>
+          <textarea
+            className="grow"
+            rows={2}
+            placeholder={t('gm.dreadPowerPlaceholder')}
+            value={stats.dreadPower}
+            onChange={(e) => onChange('dreadPower', e.target.value)}
+          />
+        </label>
       </div>
       <div className="form-row">
-        <textarea
-          className="grow"
-          rows={2}
-          placeholder={t('gm.special')}
-          value={stats.special}
-          onChange={(e) => onChange('special', e.target.value)}
-        />
+        <label className="field grow">
+          <span className="field-label"><FieldLabel i18nKey="gm.special" en="Special" /></span>
+          <textarea
+            className="grow"
+            rows={2}
+            value={stats.special}
+            onChange={(e) => onChange('special', e.target.value)}
+          />
+        </label>
       </div>
     </>
   );
@@ -320,6 +375,7 @@ export function AdversaryStatBody({
   stats,
   pools,
   track,
+  dreadPowerUsage,
 }: {
   stats: AdversaryStats;
   pools?: { isSelected: (pool: AdversaryPool) => boolean; onSelect: (pool: AdversaryPool) => void };
@@ -331,6 +387,8 @@ export function AdversaryStatBody({
     onToggleArmorMarked: (n: number) => void;
     onToggleTakenOut: () => void;
   };
+  /** Click-to-cross-off dread power tags — a deployed card only, never a template. */
+  dreadPowerUsage?: { used: string[]; onToggle: (tag: string) => void; onResetAll: () => void };
 }) {
   const { t } = useTranslation();
   const armorTags = stats.hasArmor ? parseTags(stats.armorTags) : [];
@@ -339,7 +397,6 @@ export function AdversaryStatBody({
     text.trim() ? { key, label, text } : null;
   const details = [
     detailRow('qualities', stats.qualities, <FieldLabel i18nKey="gm.qualities" en="Qualities" />),
-    detailRow('dreadPower', stats.dreadPower, <FieldLabel i18nKey="gm.dreadPower" en="Dread power" />),
     detailRow('special', stats.special, <FieldLabel i18nKey="gm.special" en="Special" />),
   ].filter((d): d is DetailRow => d !== null);
 
@@ -382,6 +439,15 @@ export function AdversaryStatBody({
             <FieldLabel i18nKey="gm.armor" en="Armor" />
           </span>
           <TagChips tags={armorTags} />
+        </div>
+      )}
+
+      {parseTags(stats.dreadPower).length > 0 && (
+        <div className="card-line dread-power-line">
+          <span className="field-label">
+            <FieldLabel i18nKey="gm.dreadPower" en="Dread power" />
+          </span>
+          <DreadPowerTags raw={stats.dreadPower} usage={dreadPowerUsage} />
         </div>
       )}
 
@@ -510,6 +576,17 @@ export function AdversaryCard({
             onToggleMarked: setMarked,
             onToggleArmorMarked: setArmorMarked,
             onToggleTakenOut: () => onChange({ ...instance, takenOut: !instance.takenOut }),
+          }}
+          dreadPowerUsage={{
+            used: instance.usedDreadPowers,
+            onToggle: (tag) =>
+              onChange({
+                ...instance,
+                usedDreadPowers: instance.usedDreadPowers.includes(tag)
+                  ? instance.usedDreadPowers.filter((t) => t !== tag)
+                  : [...instance.usedDreadPowers, tag],
+              }),
+            onResetAll: () => onChange({ ...instance, usedDreadPowers: [] }),
           }}
         />
       )}

@@ -141,6 +141,8 @@
     "armorTagsPlaceholder": "Armor tags (comma separated)",
     "qualities": "Qualities",
     "dreadPower": "Dread power",
+    "dreadPowerPlaceholder": "Dread power tags (comma separated)",
+    "resetDreadPower": "Clear all used dread powers",
     "special": "Special",
     "details": "Details",
     "memoPlaceholder": "Note (optional)",
