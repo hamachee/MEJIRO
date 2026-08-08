@@ -469,6 +469,13 @@ button.danger:hover:not(:disabled) {
   max-width: 40rem;
   margin: 0 auto;
 }
+/* Sits right after .play-layout as a plain sibling, outside the .stack
+   that spaces the sheet's own cards (gap: 0.5rem) — .stack's gap doesn't
+   reach it, so it needs the same 0.5rem for itself, same idea as
+   .toolbar's own margin-bottom just above. */
+.translation-disclaimer {
+  margin-top: 0.5rem;
+}
 /* Own card, full-opacity text (not .muted/.disclaimer's faded small print)
    so it actually reads as a notice, not a footnote. */
 .translation-notice {

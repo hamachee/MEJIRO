@@ -12,7 +12,7 @@ export function TranslationDisclaimer({ templateId }: { templateId: string }) {
   const lang = useLang();
   if (lang !== 'ko' || templateId !== 'curseborne') return null;
   return (
-    <section className="card">
+    <section className="card translation-disclaimer">
       <p className="translation-notice">{t('common.translationDisclaimer')}</p>
     </section>
   );
