@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSettingsStore } from './store/settingsStore';
 import { useCharacterStore } from './store/characterStore';
 import { useCampaignStore } from './store/campaignStore';
 import { useUiStore } from './store/uiStore';
+import { getDB } from './storage/db';
 import { useTheme } from './lib/useTheme';
 import { useHeaderHidden } from './lib/useHeaderHidden';
 import { useSendModeHotkey } from './lib/useSendModeHotkey';
@@ -32,10 +33,28 @@ export function App() {
   const setSendModeViaHotkey = useUiStore((s) => s.setSendModeViaHotkey);
   useSendModeHotkey();
 
+  // Portable builds can end up opened out of order (an older MEJIRO.html
+  // reopened after a newer one already bumped the on-disk schema in this
+  // same browser) — IndexedDB refuses to open at a lower version than what
+  // it already has, rejecting with VersionError instead of the usual
+  // upgrade path. Caught here, once, before the normal load calls (which
+  // would otherwise fail the same way but silently, leaving the app just
+  // looking empty) so there's a real explanation instead.
+  const [outdatedBuild, setOutdatedBuild] = useState(false);
   useEffect(() => {
-    loadSettings();
-    loadRoster();
-    loadCampaignRoster();
+    getDB()
+      .then(() => {
+        loadSettings();
+        loadRoster();
+        loadCampaignRoster();
+      })
+      .catch((err) => {
+        if (err instanceof Error && err.name === 'VersionError') {
+          setOutdatedBuild(true);
+        } else {
+          throw err;
+        }
+      });
   }, [loadSettings, loadRoster, loadCampaignRoster]);
 
   // Send mode is scoped to whatever sheet it was turned on for — leaving
@@ -47,6 +66,19 @@ export function App() {
     setSendModeActive(false);
     setSendModeViaHotkey(false);
   }, [pathname, setSendModeActive, setSendModeViaHotkey]);
+
+  if (outdatedBuild) {
+    return (
+      <div className="app">
+        <main className="app-main">
+          <section className="card outdated-build">
+            <h1>{t('app.outdatedTitle')}</h1>
+            <p>{t('app.outdatedBody')}</p>
+          </section>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div

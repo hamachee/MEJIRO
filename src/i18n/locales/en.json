@@ -1,7 +1,9 @@
 {
   "app": {
     "title": "MEJIRO",
-    "tagline": "TTRPG Sheet & Roller"
+    "tagline": "TTRPG Sheet & Roller",
+    "outdatedTitle": "This file is an older version",
+    "outdatedBody": "This browser already has data saved by a newer MEJIRO. Please get the latest MEJIRO.html and open that instead — your data hasn't been lost, it'll be right there once you open the newer file."
   },
   "nav": {
     "characters": "Characters",

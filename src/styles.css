@@ -251,6 +251,13 @@ body {
   margin: 0 0 0.75rem;
   font-size: 1.1rem;
 }
+/* Blocks the whole app instead of a normal page — an older portable build
+   reopened after a newer one already touched this browser's IndexedDB. */
+.outdated-build {
+  max-width: 32rem;
+  margin: 3rem auto;
+  text-align: center;
+}
 
 /* Repeated Q&A blocks stacked inside a single card (Info page): tighter,
    document-like spacing instead of the .card h2 heading gap meant for a
