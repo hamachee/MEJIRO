@@ -52,7 +52,7 @@ function StatLinePair({ items }: { items: { label: ReactNode; value: number }[] 
   const visible = items.filter((i) => i.value > 0);
   if (visible.length === 0) return null;
   return (
-    <div className="curse-line">
+    <div className="card-line">
       {visible.map((i, idx) => (
         <span className="stat-pair" key={idx}>
           <span className="field-label">{i.label}</span>
@@ -67,7 +67,7 @@ function StatLinePair({ items }: { items: { label: ReactNode; value: number }[] 
 function TextLine({ label, text }: { label: ReactNode; text: string }) {
   if (!text.trim()) return null;
   return (
-    <div className="curse-line">
+    <div className="card-line">
       <span className="field-label">{label}</span>
       <span className="stat-value">{text}</span>
     </div>
@@ -349,7 +349,7 @@ export function AdversaryStatBody({
       />
 
       {stats.hasArmor && armorTags.length > 0 && (
-        <div className="curse-line">
+        <div className="card-line">
           <span className="field-label">
             <FieldLabel i18nKey="gm.armor" en="Armor" />
           </span>

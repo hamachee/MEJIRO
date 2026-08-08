@@ -569,7 +569,7 @@ export function CurseCard({
   );
 
   const curseDiceControls = (
-    <div className="curse-controls">
+    <div className="stepper-controls">
       <button
         aria-label={`− ${t('roller.curseDice')}`}
         disabled={character.curseDice <= 0}
@@ -598,12 +598,12 @@ export function CurseCard({
   if (variant === 'compact') {
     return (
       <section className="card compact-tracker">
-        <div className="curse-line">
+        <div className="card-line">
           <span className="field-label">
             <FieldLabel i18nKey="sheet.entanglement" en="Entanglement" />
           </span>
           {entanglementDots}
-          <span className="curse-line-divider" aria-hidden="true">
+          <span className="card-line-divider" aria-hidden="true">
             |
           </span>
           <span className="field-label">
@@ -622,20 +622,20 @@ export function CurseCard({
 
   return (
     <section className="card">
-      <div className="curse-row">
+      <div className="card-row">
         <span className="field-label">
           <FieldLabel i18nKey="sheet.entanglement" en="Entanglement" />
         </span>
         {entanglementDots}
       </div>
-      <div className="curse-row">
+      <div className="card-row">
         <span className="field-label">
           <FieldLabel i18nKey="roller.curseDice" en="Curse dice" />
         </span>
         {curseDiceControls}
       </div>
       {!character.hideMomentum && (
-        <div className={`curse-row ${sendableHere ? 'sendable-active' : ''}`}>
+        <div className={`card-row ${sendableHere ? 'sendable-active' : ''}`}>
           <span className="field-label">
             <FieldLabel i18nKey="sheet.momentum" en="Momentum" />
           </span>
@@ -813,7 +813,7 @@ export function InjuryCard({
         <span className="field-label">
           <FieldLabel i18nKey="sheet.armor" en="Armor" />
         </span>
-        <div className="curse-controls">
+        <div className="stepper-controls">
           <button
             aria-label={`− ${t('sheet.armor')}`}
             disabled={armor.rating <= 0}

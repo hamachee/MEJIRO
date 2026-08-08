@@ -287,7 +287,7 @@ export function PcTableCard({
           </button>
         </div>
       </div>
-      <div className="curse-line">
+      <div className="card-line">
         <Stepper
           label={<FieldLabel i18nKey="gm.initiative" en="Initiative" />}
           ariaLabel={t('gm.initiative')}

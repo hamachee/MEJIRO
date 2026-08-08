@@ -134,7 +134,7 @@ function CustomPoolControl({
       <span className="field-label">
         <FieldLabel i18nKey="gm.customPool" en="Free roll" />
       </span>
-      <div className="curse-controls" onClick={(e) => e.stopPropagation()}>
+      <div className="stepper-controls" onClick={(e) => e.stopPropagation()}>
         <button aria-label={`− ${t('gm.customPool')}`} disabled={value <= 0} onClick={() => setValue(value - 1)}>
           −
         </button>
@@ -349,7 +349,7 @@ function CampaignMomentumCard({ campaign }: { campaign: Campaign }) {
         onSelect={() => select(null, 'custom')}
         onChange={(n) => patch({ customPool: n })}
       />
-      <div className={`curse-row momentum-row ${sendable.active ? 'sendable-active' : ''}`}>
+      <div className={`card-row momentum-row ${sendable.active ? 'sendable-active' : ''}`}>
         <span className="field-label">
           <FieldLabel i18nKey="gm.momentum" en="Momentum" />
         </span>
@@ -418,7 +418,7 @@ function TurnTracker({ campaign }: { campaign: Campaign }) {
         |
       </span>
       <span className="field-label">{t('gm.round')}</span>
-      <div className="curse-controls">
+      <div className="stepper-controls">
         <button
           aria-label={`− ${t('gm.round')}`}
           disabled={round <= 1}

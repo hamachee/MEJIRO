@@ -8,7 +8,7 @@ interface Props {
 
 /**
  * A `− [value] +` counter with double-click-to-type editing, matching the
- * EXP tracker / Free Roll pool interaction (same `.curse-controls` /
+ * EXP tracker / Free Roll pool interaction (same `.stepper-controls` /
  * `.exp-value` styling, just outside their sticky-bar / selectable-card
  * contexts).
  */
@@ -26,7 +26,7 @@ export function Counter({ value, onChange, ariaLabel }: Props) {
   };
 
   return (
-    <div className="curse-controls">
+    <div className="stepper-controls">
       <button aria-label={`− ${ariaLabel}`} disabled={value <= 0} onClick={() => setValue(value - 1)}>
         −
       </button>

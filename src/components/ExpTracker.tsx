@@ -53,7 +53,7 @@ export function ExpTracker({ character }: Props) {
       <span className="field-label">
         <FieldLabel i18nKey="sheet.exp" en="EXP" />
       </span>
-      <div className="curse-controls">
+      <div className="stepper-controls">
         <button
           aria-label={`− ${t('sheet.exp')}`}
           disabled={exp <= 0}
