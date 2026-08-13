@@ -53,6 +53,21 @@ function hitsLabel(lang: string, n: number): string {
 
 const THEME_COLOR = 0x5b4b8a;
 
+/**
+ * Embed `color` for a roll result — omitted entirely (no accent border) on
+ * a plain failure or cruel failure so those outcomes stay visually flat no
+ * matter what identity color is configured; the personal `color` override
+ * still applies to success, wicked success, and botch.
+ */
+function outcomeColor(
+  color: string | undefined,
+  result: RollResult,
+): { color: number } | Record<string, never> {
+  if (!result.botched && !result.passed) return {};
+  const c = parseHexColor(color) ?? (result.botched ? 0x8a1a1a : THEME_COLOR);
+  return { color: c };
+}
+
 export interface DiscordContext {
   webhookUrl: string;
   lang: string;
@@ -120,9 +135,7 @@ export function buildRollEmbed(
       {
         title: ctx.characterName || undefined,
         description: `${poolLine}\n${hitsLine}`,
-        color:
-          parseHexColor(ctx.color) ??
-          (result.botched ? 0x8a1a1a : result.passed ? THEME_COLOR : 0x555555),
+        ...outcomeColor(ctx.color, result),
       },
     ],
   };
@@ -168,9 +181,7 @@ export function buildAdversaryRollEmbed(
       {
         title: ctx.instanceLabel || undefined,
         description: `${poolLine}\n${hitsLine}`,
-        color:
-          parseHexColor(ctx.color) ??
-          (result.botched ? 0x8a1a1a : result.passed ? THEME_COLOR : 0x555555),
+        ...outcomeColor(ctx.color, result),
       },
     ],
   };
