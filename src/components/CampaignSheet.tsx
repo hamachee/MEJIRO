@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCampaignStore } from '../store/campaignStore';
 import { useGmRollStore } from '../store/gmRollStore';
@@ -323,18 +323,13 @@ function CampaignSettingsCard({ campaign }: { campaign: Campaign }) {
   );
 }
 
-/** Free-roll pool + Momentum counter, alongside the identity card. */
+/** Momentum counter, alongside the identity card. */
 function CampaignMomentumCard({ campaign }: { campaign: Campaign }) {
   const { t } = useTranslation();
   const patch = useCampaignStore((s) => s.patch);
-  const selectedInstanceId = useGmRollStore((s) => s.selectedInstanceId);
-  const selectedPool = useGmRollStore((s) => s.selectedPool);
-  const select = useGmRollStore((s) => s.select);
 
-  // Only the momentum counter itself is sendable — not the free-roll pool
-  // above it — so only that row gets the overlay/highlight below. A fixed
-  // "Momentum" title (not the campaign's name) since the number by itself
-  // is the whole point of the message.
+  // A fixed "Momentum" title (not the campaign's name) since the number by
+  // itself is the whole point of the message.
   const sendable = useSendableCard({
     webhookUrl: campaign.webhookUrl,
     embedColor: campaign.embedColor,
@@ -344,12 +339,6 @@ function CampaignMomentumCard({ campaign }: { campaign: Campaign }) {
 
   return (
     <section className="card">
-      <CustomPoolControl
-        value={campaign.customPool}
-        selected={selectedInstanceId === null && selectedPool === 'custom'}
-        onSelect={() => select(null, 'custom')}
-        onChange={(n) => patch({ customPool: n })}
-      />
       <div className={`card-row momentum-row ${sendable.active ? 'sendable-active' : ''}`}>
         <span className="field-label">
           <FieldLabel i18nKey="gm.momentum" en="Momentum" />
@@ -381,13 +370,16 @@ function CampaignMomentumCard({ campaign }: { campaign: Campaign }) {
  * navigation (◀/▶ walks the current-turn highlight through the cards in
  * display order, incrementing the round when it wraps from the last card
  * back to the first), the round counter, a reset (round 1, no highlight),
- * and an initiative sort — PCs by their Initiative rating, adversaries by
- * their Desperation pool, highest first.
+ * the free-roll pool, and an initiative sort — PCs by their Initiative
+ * rating, adversaries by their Desperation pool, highest first.
  */
 function TurnTracker({ campaign }: { campaign: Campaign }) {
   const { t } = useTranslation();
   const patch = useCampaignStore((s) => s.patch);
   const { instances, pcs, round, turnId } = campaign;
+  const selectedInstanceId = useGmRollStore((s) => s.selectedInstanceId);
+  const selectedPool = useGmRollStore((s) => s.selectedPool);
+  const select = useGmRollStore((s) => s.select);
 
   const initiativeOf = (card: TableCard) =>
     isPcInstance(card)
@@ -433,6 +425,15 @@ function TurnTracker({ campaign }: { campaign: Campaign }) {
         </button>
       </div>
       <button onClick={() => patch({ round: 1, turnId: null })}>{t('gm.resetRound')}</button>
+      <span className="turn-bar-divider" aria-hidden="true">
+        |
+      </span>
+      <CustomPoolControl
+        value={campaign.customPool}
+        selected={selectedInstanceId === null && selectedPool === 'custom'}
+        onSelect={() => select(null, 'custom')}
+        onChange={(n) => patch({ customPool: n })}
+      />
       <span className="grow" />
       <button
         onClick={() =>
@@ -459,11 +460,24 @@ export function CampaignSheet({ campaign }: Props) {
     (next) => patch({ instances: next }),
     'grid',
   );
+  const gridRef = useRef<HTMLDivElement>(null);
 
   const turnFor = (id: string) => ({
     current: turnId === id,
     onToggle: () => patch({ turnId: turnId === id ? null : id }),
   });
+
+  // Center the current-turn card in the viewport whenever the turn changes
+  // (next/previous buttons or a manual pin click) — an instant jump, not a
+  // smooth scroll, so it doesn't fight with the GM's own scrolling.
+  useEffect(() => {
+    if (turnId === null) return;
+    const index = instances.findIndex((i) => i.id === turnId);
+    if (index === -1) return;
+    const card = gridRef.current?.querySelector<HTMLElement>(`[data-drag-index="${index}"]`);
+    card?.scrollIntoView({ behavior: 'instant', block: 'center', inline: 'center' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [turnId]);
 
   return (
     <div className="stack">
@@ -472,70 +486,68 @@ export function CampaignSheet({ campaign }: Props) {
         <CampaignMomentumCard campaign={campaign} />
       </div>
       <AddInstanceRow campaign={campaign} />
+      <TurnTracker campaign={campaign} />
       {instances.length === 0 ? (
         <p className="muted">{t('gm.noAdversaries')}</p>
       ) : (
-        <>
-          <TurnTracker campaign={campaign} />
-          <div className="card-grid">
-            {instances.map((instance, i) => {
-              if (isPcInstance(instance)) {
-                const pc = pcs.find((p) => p.id === instance.pcId);
-                if (!pc) return null;
-                return (
-                  <PcTableCard
-                    key={instance.id}
-                    pc={pc}
-                    levels={levels}
-                    index={i}
-                    turn={turnFor(instance.id)}
-                    dragHandleProps={handleProps}
-                    dragItemProps={itemProps}
-                    onPatch={(p) =>
-                      patch({ pcs: pcs.map((x) => (x.id === pc.id ? { ...x, ...p } : x)) })
-                    }
-                    onRemove={() =>
-                      patch({ instances: instances.filter((x) => x.id !== instance.id) })
-                    }
-                  />
-                );
-              }
+        <div className="card-grid" ref={gridRef}>
+          {instances.map((instance, i) => {
+            if (isPcInstance(instance)) {
+              const pc = pcs.find((p) => p.id === instance.pcId);
+              if (!pc) return null;
               return (
-                <AdversaryCard
+                <PcTableCard
                   key={instance.id}
-                  instance={instance}
+                  pc={pc}
+                  levels={levels}
                   index={i}
                   turn={turnFor(instance.id)}
                   dragHandleProps={handleProps}
                   dragItemProps={itemProps}
-                  onChange={(updated) =>
-                    patch({ instances: instances.map((x) => (x.id === updated.id ? updated : x)) })
+                  onPatch={(p) =>
+                    patch({ pcs: pcs.map((x) => (x.id === pc.id ? { ...x, ...p } : x)) })
                   }
-                  onRemove={() => patch({ instances: instances.filter((x) => x.id !== instance.id) })}
-                  onDuplicate={() => {
-                    const baseName = instance.label.replace(/ #\d+$/, '');
-                    patch({
-                      instances: [
-                        ...instances,
-                        {
-                          id: uid(),
-                          label: nextInstanceLabel(baseName, instances),
-                          stats: { ...instance.stats },
-                          memo: '',
-                          conditions: [],
-                          marked: 0,
-                          armorMarked: 0,
-                          takenOut: false,
-                          usedDreadPowers: [],
-                        },
-                      ],
-                    });
-                  }}
+                  onRemove={() =>
+                    patch({ instances: instances.filter((x) => x.id !== instance.id) })
+                  }
                 />
               );
-            })}
-          </div>
-        </>
+            }
+            return (
+              <AdversaryCard
+                key={instance.id}
+                instance={instance}
+                index={i}
+                turn={turnFor(instance.id)}
+                dragHandleProps={handleProps}
+                dragItemProps={itemProps}
+                onChange={(updated) =>
+                  patch({ instances: instances.map((x) => (x.id === updated.id ? updated : x)) })
+                }
+                onRemove={() => patch({ instances: instances.filter((x) => x.id !== instance.id) })}
+                onDuplicate={() => {
+                  const baseName = instance.label.replace(/ #\d+$/, '');
+                  patch({
+                    instances: [
+                      ...instances,
+                      {
+                        id: uid(),
+                        label: nextInstanceLabel(baseName, instances),
+                        stats: { ...instance.stats },
+                        memo: '',
+                        conditions: [],
+                        marked: 0,
+                        armorMarked: 0,
+                        takenOut: false,
+                        usedDreadPowers: [],
+                      },
+                    ],
+                  });
+                }}
+              />
+            );
+          })}
+        </div>
       )}
     </div>
   );
